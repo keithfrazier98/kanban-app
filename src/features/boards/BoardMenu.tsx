@@ -6,9 +6,9 @@ import {
   SunHigh,
   MoonStars,
 } from "tabler-icons-react";
-import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
-import data from "../data.json";
-import { classNames, Context } from "./Context";
+import { ReactComponent as MobileLogo } from "../../assets/logo-mobile.svg";
+import data from "../../data.json";
+import { classNames, Context } from "../../components/Context";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -5,17 +5,26 @@ import { store } from "./app/store";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
+import { worker } from "./api/mock/browser";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
 
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>
-);
+async function main() {
+  if (process.env.NODE_ENV === "development") {
+    await worker.start({ onUnhandledRequest: "bypass" });
+  }
+
+  root.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </React.StrictMode>
+  );
+}
+
+main();
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

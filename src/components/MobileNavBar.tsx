@@ -1,5 +1,5 @@
 import { DotsVertical, Plus } from "tabler-icons-react";
-import BoardMenu from "./BoardMenu";
+import BoardMenu from "../features/boards/BoardMenu";
 
 export default function MobileNavBar() {
   return (

@@ -1,14 +1,26 @@
-import { useContext } from "react";
-import Column from "./Column";
-import { Context } from "./Context";
+import { useContext, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import Column from "../../components/Column";
+import { Context } from "../../components/Context";
+import { fetchBoards } from "./boardsSlice";
 
 export default function Board() {
-  const { currentBoard } = useContext(Context);
+  // const { currentBoard } = useContext(Context);
+
+  const boards = useAppSelector((state) => state.boards.entities);
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(fetchBoards());
+  }, []);
+
+  if (boards[0]) {
+  }
 
   return (
     <section className="h-full">
       <h1 className="sr-only">kanban board</h1>
-      {currentBoard?.columns ? (
+      {/* {currentBoard?.columns ? (
         <div className="grid grid-rows-1 grid-flow-col w-max h-full px-2">
           {currentBoard.columns.map((column) => (
             <Column column={column} />
@@ -23,7 +35,7 @@ export default function Board() {
             + Add New Column
           </button>
         </div>
-      )}
+      )} */}
     </section>
   );
 }
