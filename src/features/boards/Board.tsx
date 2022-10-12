@@ -1,28 +1,37 @@
 import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Column from "../../components/Column";
-import { Context } from "../../components/Context";
-import { fetchBoards } from "./boardsSlice";
+import {
+  boardSelected,
+  fetchBoards,
+  getSelectedBoard,
+  selectAllBoards,
+} from "./boardsSlice";
 
 export default function Board() {
   // const { currentBoard } = useContext(Context);
 
-  const boards = useAppSelector((state) => state.boards.entities);
+  const boards = useAppSelector(selectAllBoards);
+  const selectedBoard = useAppSelector(getSelectedBoard);
 
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     dispatch(fetchBoards());
   }, []);
 
-  if (boards[0]) {
-  }
+  useEffect(() => {
+    if (!selectedBoard && boards.length > 0) {
+      dispatch(boardSelected({ board: boards[0] }));
+    }
+  }, [boards]);
 
   return (
     <section className="h-full">
       <h1 className="sr-only">kanban board</h1>
-      {/* {currentBoard?.columns ? (
+      {selectedBoard?.columns ? (
         <div className="grid grid-rows-1 grid-flow-col w-max h-full px-2">
-          {currentBoard.columns.map((column) => (
+          {selectedBoard.columns.map((column) => (
             <Column column={column} />
           ))}{" "}
         </div>
@@ -35,7 +44,7 @@ export default function Board() {
             + Add New Column
           </button>
         </div>
-      )} */}
+      )}
     </section>
   );
 }

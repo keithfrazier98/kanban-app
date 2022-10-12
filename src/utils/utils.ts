@@ -8,3 +8,7 @@ export function countCompleted(subtasks: IBoardSubTask[]) {
 
   return count;
 }
+
+export function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}

@@ -1,14 +1,28 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
+import { IBoardTask, IBoardState, ITasksState } from "../../@types/types";
+import { RootState } from "../../app/store";
 
-const tasksAdapter = createEntityAdapter();
+const tasksAdapter = createEntityAdapter<IBoardTask>();
 
-const initialState = tasksAdapter.getInitialState();
+const initialState = tasksAdapter.getInitialState<ITasksState>({
+  ids: [],
+  entities: [],
+  openTask: null,
+});
 
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
-  reducers: {},
+  reducers: {
+    taskSelected(state, action) {
+      const { task } = action.payload;
+      state.openTask = task;
+    },
+  },
 });
 
+export const { taskSelected } = tasksSlice.actions;
 
-export default tasksSlice.reducer
+export const getOpenTask = (state: RootState) => state.tasks.openTask;
+
+export default tasksSlice.reducer;

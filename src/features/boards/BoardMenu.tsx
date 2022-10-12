@@ -8,12 +8,36 @@ import {
 } from "tabler-icons-react";
 import { ReactComponent as MobileLogo } from "../../assets/logo-mobile.svg";
 import data from "../../data.json";
-import { classNames, Context } from "../../components/Context";
+import { classNames } from "../../utils/utils";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  boardSelected,
+  getSelectedBoard,
+  selectAllBoards,
+  selectBoardById,
+} from "./boardsSlice";
+import { useSelector } from "react-redux";
+import { taskSelected } from "../tasks/tasksSlice";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { toggleTheme, theme } = useContext(Context);
-  const { currentBoard, setCurrentBoard } = useContext(Context);
+
+  const boards = useAppSelector(selectAllBoards);
+  const board = useAppSelector(getSelectedBoard);
+
+  const dispatch = useAppDispatch();
+  function toggleTheme(theme?: "dark" | "light") {
+    const htmlElement = document.querySelector("html");
+    if (theme === "light" || htmlElement?.classList.contains("dark")) {
+      htmlElement?.classList.remove("dark");
+      // setTheme("light");
+      localStorage.setItem("theme", "light");
+    } else {
+      htmlElement?.classList.add("dark");
+      // setTheme("dark");
+      localStorage.setItem("theme", "dark");
+    }
+  }
 
   return (
     <div className="flex items-center">
@@ -24,7 +48,7 @@ export default function BoardMenu() {
           <Menu.Button className="flex max-w-xs items-center rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
             <span className="sr-only">Open board menu</span>
             <span className="font-bold mr-1 text-lg dark:text-white">
-              {currentBoard?.name}
+              {board?.name}
             </span>
             <ChevronDown className="text-indigo-400 w-4 h-5 mt-1" />
           </Menu.Button>
@@ -40,17 +64,17 @@ export default function BoardMenu() {
         >
           <Menu.Items className="absolute flex flex-col z-10 top-full translate-y-5 rounded-lg bg-white dark:bg-primary-gray-600 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <span className="m-4 font-medium text-gray-400 min-w-[16rem]">
-              All Boards {`(${data.boards.length})`}
+              All Boards {`(${boards.length})`}
             </span>
             <div>
-              {data.boards.map((item) => (
+              {boards.map((item) => (
                 <Menu.Item key={item.name}>
                   {({ active }) => (
                     <div className="pr-5">
                       <button
-                        onClick={() => setCurrentBoard(item)}
+                        onClick={() => dispatch(boardSelected({ board: item }))}
                         className={`w-full flex items-center pl-4 py-3 rounded-r-full ${
-                          active || currentBoard?.id === item.id
+                          active || board?.id === item.id
                             ? "bg-primary-indigo-active text-white"
                             : " text-gray-400 "
                         }`}
@@ -79,9 +103,8 @@ export default function BoardMenu() {
                 >
                   <div
                     className={classNames(
-                      theme === "dark"
-                        ? "translate-x-full justify-end"
-                        : "translate-x-0 justify-start",
+                      "dark:translate-x-full dark:justify-end",
+                      "translate-x-0 justify-start",
                       "w-1/2 h-full transition-transform flex"
                     )}
                   >

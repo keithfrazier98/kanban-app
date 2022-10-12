@@ -1,24 +1,24 @@
-import { useContext } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { getOpenTask, taskSelected } from "../features/tasks/tasksSlice";
 import { countCompleted } from "../utils/utils";
-import { Context } from "./Context";
 import { DimModalBackdrop } from "./DimModalBackdrop";
 
 export default function ViewTask() {
-  const { openTask, setOpenTask } = useContext(Context);
-
+  const openTask = useAppSelector(getOpenTask);
+  const dispatch = useAppDispatch();
   if (!openTask) return <></>;
 
   const { description, status, subtasks, title } = openTask;
 
   return (
     <DimModalBackdrop>
-      <OutsideClickHandler onOutsideClick={() => setOpenTask(null)}>
+      <OutsideClickHandler
+        onOutsideClick={() => dispatch(taskSelected({ task: null }))}
+      >
         <div className="px-4 py-6 bg-white dark:bg-primary-gray-700 rounded-md w-full max-w-sm">
           <h3 className="font-bold mb-6 text-sm md:text-base">{title}</h3>
-          <p className="text-sm text-gray-500">
-            {description}
-          </p>
+          <p className="text-sm text-gray-500">{description}</p>
           <p className="text-xs font-bold mt-6 mb-4">
             Subtasks {`(${countCompleted(subtasks)} of ${subtasks.length})`}
           </p>{" "}

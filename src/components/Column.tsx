@@ -1,11 +1,11 @@
 import { useContext } from "react";
 import { IBoardColumn, IBoardSubTask, IBoardTask } from "../@types/types";
+import { useAppDispatch } from "../app/hooks";
+import { taskSelected } from "../features/tasks/tasksSlice";
 import { countCompleted } from "../utils/utils";
-import { Context } from "./Context";
 
 export default function Column({ column }: { column: IBoardColumn }) {
-  const { setOpenTask } = useContext(Context);
-
+  const dispatch = useAppDispatch();
 
   return (
     <div className="my-6 max-h-full">
@@ -19,7 +19,7 @@ export default function Column({ column }: { column: IBoardColumn }) {
           {column.tasks.map((task: IBoardTask) => (
             <button
               className="w-full px-2 text-left"
-              onClick={() => setOpenTask(task)}
+              onClick={() => dispatch(taskSelected({ task }))}
             >
               <div className="flex px-4 py-6 flex-col dark:bg-primary-gray-700 bg-white rounded-md shadow-lg">
                 <p className="font-bold text-sm dark:text-white">

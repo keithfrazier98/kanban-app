@@ -4,23 +4,22 @@ import {
   createAsyncThunk,
   SerializedError,
   PayloadAction,
+  createSelector,
 } from "@reduxjs/toolkit";
-import { IBoardData } from "../../@types/types";
+import { IBoardData, IBoardState } from "../../@types/types";
 import { client } from "../../api/mock/browser";
-interface IBoardState {
-  ids: string[];
-  entities: IBoardData[];
-  error?: string;
-  status: "idle" | "succeeded" | "loading" | "failed";
-}
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store";
+
 const boardsAdapter = createEntityAdapter<IBoardData>({
   selectId: (board) => board.id,
-  sortComparer: (a, b) => a.id - (b.id)
+  sortComparer: (a, b) => a.id - b.id,
 });
 const initialState = boardsAdapter.getInitialState<IBoardState>({
   ids: [],
   entities: [],
   status: "idle",
+  selectedBoard: null,
 });
 
 export const fetchBoards = createAsyncThunk("boards/fetchBoards", async () => {
@@ -31,7 +30,12 @@ export const fetchBoards = createAsyncThunk("boards/fetchBoards", async () => {
 const boardsSlice = createSlice({
   name: "boards",
   initialState,
-  reducers: {},
+  reducers: {
+    boardSelected(state, action) {
+      const { board } = action.payload;
+      state.selectedBoard = board;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchBoards.pending, (state, action) => {
@@ -55,3 +59,14 @@ const boardsSlice = createSlice({
 });
 
 export default boardsSlice.reducer;
+
+export const { boardSelected } = boardsSlice.actions;
+
+export const getSelectedBoard = ({ boards: { selectedBoard } }: RootState) =>
+  selectedBoard;
+
+export const {
+  selectAll: selectAllBoards,
+  selectById: selectBoardById,
+  selectIds: selectBoardIds,
+} = boardsAdapter.getSelectors<RootState>((state) => state.boards);

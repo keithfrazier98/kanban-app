@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
 import Board from "../features/boards/Board";
-import { Context } from "./Context";
 import { DimModalBackdrop } from "./DimModalBackdrop";
 import MobileNavBar from "./MobileNavBar";
 import ViewTask from "./ViewTask";

@@ -1,11 +1,12 @@
 import { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Context } from "./components/Context";
+import { useAppSelector } from "./app/hooks";
 import Dashboard from "./components/Dashboard";
 import ViewTask from "./components/ViewTask";
+import { getOpenTask } from "./features/tasks/tasksSlice";
 
 function App() {
-  const { openTask } = useContext(Context);
+  const openTask = useAppSelector(getOpenTask);
   return (
     <>
       <Router>
