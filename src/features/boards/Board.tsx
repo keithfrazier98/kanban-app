@@ -1,6 +1,7 @@
 import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import Column from "../../components/Column";
+import Column from "../columns/Column";
+import { columnsSelected, selectAllColumns } from "../columns/columnsSlice";
 import {
   boardSelected,
   fetchBoards,
@@ -9,10 +10,9 @@ import {
 } from "./boardsSlice";
 
 export default function Board() {
-  // const { currentBoard } = useContext(Context);
-
   const boards = useAppSelector(selectAllBoards);
   const selectedBoard = useAppSelector(getSelectedBoard);
+  const columns = useAppSelector(selectAllColumns);
 
   const dispatch = useAppDispatch();
 
@@ -21,19 +21,21 @@ export default function Board() {
   }, []);
 
   useEffect(() => {
+    //initialize the boards and columns when the app first opens
     if (!selectedBoard && boards.length > 0) {
       dispatch(boardSelected({ board: boards[0] }));
+      dispatch(columnsSelected({ columns: boards[0].columns }));
     }
   }, [boards]);
 
   return (
     <section className="h-full">
       <h1 className="sr-only">kanban board</h1>
-      {selectedBoard?.columns ? (
+      {columns ? (
         <div className="grid grid-rows-1 grid-flow-col w-max h-full px-2">
-          {selectedBoard.columns.map((column, i) => (
-            <Column key={`column-${i}`} column={column} />
-          ))}{" "}
+          {columns.map((column, i) =>
+            column ? <Column key={`column-${i}`} column={column} /> : <></>
+          )}{" "}
         </div>
       ) : (
         <div className="px-12 font-bold text-center">

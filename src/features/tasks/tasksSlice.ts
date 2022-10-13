@@ -23,6 +23,9 @@ const tasksSlice = createSlice({
 
 export const { openTaskUpdated } = tasksSlice.actions;
 
+export const { selectAll: selectAllTasks } =
+  tasksAdapter.getSelectors<RootState>((state) => state.tasks);
+
 export const getOpenTask = (state: RootState) => state.tasks.openTask;
 
 export default tasksSlice.reducer;

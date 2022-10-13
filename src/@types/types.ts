@@ -14,6 +14,7 @@ export interface IBoardTask {
 }
 
 export interface IBoardColumn {
+  id:number
   name: string;
   tasks: IBoardTask[];
 }

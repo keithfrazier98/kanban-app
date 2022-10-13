@@ -18,6 +18,7 @@ import {
 } from "./boardsSlice";
 import { useSelector } from "react-redux";
 import { openTaskUpdated } from "../tasks/tasksSlice";
+import { columnsSelected } from "../columns/columnsSlice";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -72,7 +73,10 @@ export default function BoardMenu() {
                   {({ active }) => (
                     <div className="pr-5">
                       <button
-                        onClick={() => dispatch(boardSelected({ board: item }))}
+                        onClick={() => {
+                          dispatch(boardSelected({ board: item }));
+                          dispatch(columnsSelected({ columns: item.columns }));
+                        }}
                         className={`w-full flex items-center pl-4 py-3 rounded-r-full ${
                           active || board?.id === item.id
                             ? "bg-primary-indigo-active text-white"

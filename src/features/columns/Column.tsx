@@ -1,11 +1,11 @@
-import { useContext } from "react";
-import { IBoardColumn, IBoardSubTask, IBoardTask } from "../@types/types";
-import { useAppDispatch } from "../app/hooks";
-import Task from "../features/tasks/Task";
-import { openTaskUpdated } from "../features/tasks/tasksSlice";
-import { countCompleted } from "../utils/utils";
+import { IBoardColumn, IBoardSubTask, IBoardTask } from "../../@types/types";
+import { useAppSelector } from "../../app/hooks";
+import Task from "../tasks/Task";
+import { selectAllTasks } from "../tasks/tasksSlice";
 
 export default function Column({ column }: { column: IBoardColumn }) {
+
+
   return (
     <div className="my-6 max-h-full">
       <div className="flex items-center mb-6 text-base text-gray-400 font-bold">
