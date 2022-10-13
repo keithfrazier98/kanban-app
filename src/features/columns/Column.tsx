@@ -17,7 +17,7 @@ export default function Column({ column }: { column: IBoardColumn }) {
       <div className="overflow-y-scroll no-scrollbar max-h-full pb-12 w-72">
         <div className="grid grid-cols-1 grid-flow-row gap-5">
           {columnTasks.map((task: IBoardTask, i) => (
-            <Task task={task} id={i} />
+            <Task key={`task-${i}`} task={task} id={i} />
           ))}
         </div>
       </div>

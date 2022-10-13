@@ -31,9 +31,9 @@ const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    openTaskUpdated(state, action) {
-      const { task } = action.payload;
-      state.openTask = task;
+    openTaskUpdated(state, action: { payload: { taskId: number | null } }) {
+      const { taskId } = action.payload;
+      state.openTask = taskId;
     },
   },
   extraReducers(builder) {
@@ -58,7 +58,7 @@ const tasksSlice = createSlice({
 
 export const { openTaskUpdated } = tasksSlice.actions;
 
-export const { selectAll: selectAllTasks } =
+export const { selectAll: selectAllTasks, selectById: selectTaskById } =
   tasksAdapter.getSelectors<RootState>((state) => state.tasks);
 
 export const tasksReqStatus = ({ tasks: { status } }: RootState) => status;

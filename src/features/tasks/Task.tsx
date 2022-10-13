@@ -10,7 +10,7 @@ export default function Task({ task, id }: { task: IBoardTask; id: number }) {
     <button
       key={`task-${id}`}
       className="w-full px-2 text-left"
-      onClick={() => dispatch(openTaskUpdated({ task }))}
+      onClick={() => dispatch(openTaskUpdated({ taskId: null }))}
     >
       <div className="flex px-4 py-6 flex-col dark:bg-primary-gray-700 bg-white rounded-md shadow-lg">
         <p className="font-bold text-sm dark:text-white">{task.title}</p>

@@ -30,13 +30,9 @@ const subtasksSlice = createSlice({
   name: "subtask",
   initialState,
   reducers: {
-    subtaskUpdated(
-      state,
-      action: { payload: { subtask: IBoardSubTask; id: number } }
-    ) {
-      const { subtask: changes, id } = action.payload;
-      console.log(action.payload);
-      subtasksAdapter.updateOne(state, { id, changes });
+    subtaskUpdated(state, action: { payload: { subtask: IBoardSubTask } }) {
+      const { subtask: changes } = action.payload;
+      subtasksAdapter.updateOne(state, { id: changes.id, changes });
     },
     setAllSubtasks(state, action) {
       subtasksAdapter.setAll(state, action.payload);

@@ -17,7 +17,7 @@ export default function DropdownList({
   onChange: (selected: string) => void;
 }) {
   return (
-    <Listbox value={selected}>
+    <Listbox value={selected} onChange={(e) => onChange(e)}>
       {({ open }) => (
         <>
           <Listbox.Label className="block text-sm font-medium text-gray-700 mt-6">

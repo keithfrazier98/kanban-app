@@ -47,7 +47,7 @@ export interface IColumnState {
 export interface ITasksState {
   ids: number[];
   entities: { [id: string]: IBoardTask };
-  openTask: IBoardTask | null;
+  openTask: number | null;
   error?: string;
   status: requestStatus;
 }
