@@ -11,6 +11,7 @@ import {
   setAllSubtasks,
   subtaskUpdated,
 } from "../subtasks/subtasksSlice";
+import Subtask from "../subtasks/Subtask";
 
 export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
@@ -54,37 +55,7 @@ export default function ViewTask() {
           </p>{" "}
           <ul className="grid grid-flow-row gap-2">
             {subtasks.map((subtask, id) => (
-              <li
-                key={`subtask-${id}`}
-                className="px-2 py-3 flex items-center rounded bg-primary-gray-200"
-              >
-                <label>
-                  <span className="sr-only">task completed</span>
-                  <input
-                    type="checkbox"
-                    checked={subtask.isCompleted}
-                    className="mr-4"
-                    onChange={() => {
-                      dispatch(
-                        subtaskUpdated({
-                          id,
-                          subtask: {
-                            ...subtask,
-                            isCompleted: !subtask.isCompleted,
-                          },
-                        })
-                      );
-                    }}
-                  />
-                </label>
-                <p
-                  className={`font-medium text-sm ${
-                    subtask.isCompleted ? "line-through text-gray-500" : ""
-                  }`}
-                >
-                  {subtask.title}
-                </p>
-              </li>
+              <Subtask id={id} subtask={subtask} />
             ))}
           </ul>
           <div></div>
