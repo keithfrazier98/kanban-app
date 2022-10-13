@@ -5,7 +5,11 @@ import { countCompleted } from "../../utils/utils";
 import { DimModalBackdrop } from "../../components/DimModalBackdrop";
 import { DotsVertical } from "tabler-icons-react";
 import { useEffect } from "react";
-import { selectAllSubtasks, setAllSubtasks } from "../subtasks/subtasksSlice";
+import {
+  fetchSubtasksByTaskId,
+  selectAllSubtasks,
+  setAllSubtasks,
+} from "../subtasks/subtasksSlice";
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
 
@@ -13,15 +17,15 @@ export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
   const dispatch = useAppDispatch();
 
-  const empty = { description: "", status: "", subtasks: [], title: "" };
-  const { description, status, subtasks: subs, title } = openTask || empty;
+  const empty = { description: "", status: "", title: "" };
+  const { description, status, title } = openTask || empty;
 
   const subtasks = useAppSelector(selectAllSubtasks);
   const columnNames = useAppSelector((state) => state.columns.ids);
 
   useEffect(() => {
     if (!!openTask && !!!subtasks.length) {
-      dispatch(setAllSubtasks(subs));
+      dispatch(fetchSubtasksByTaskId(openTask.id));
     }
   }, [openTask]);
 
@@ -35,7 +39,7 @@ export default function ViewTask() {
           dispatch(setAllSubtasks([]));
         }}
       >
-        <section className="px-4 py-6 bg-white dark:bg-primary-gray-700 rounded-md max-w-sm w-[22rem]">
+        <section className="px-4 py-6 bg-white dark:bg-primary-gray-700 rounded-md max-w-sm min-w-[22rem]">
           <div className="flex justify-between items-center w-full">
             <h3 className="font-bold text-lg md:text-base leading-6">
               {title}
@@ -46,7 +50,8 @@ export default function ViewTask() {
           </div>
           <p className="text-sm mt-7 text-gray-500 leading-7">{description}</p>
           <p className="text-xs font-bold mt-6 mb-4 text-gray-500">
-            Subtasks {`(${countCompleted(subtasks)} of ${subtasks.length})`}
+            Subtasks{" "}
+            {`(${openTask.subtasksCompleted} of ${openTask.totalSubtasks})`}
           </p>{" "}
           <ul className="grid grid-flow-row gap-2">
             {subtasks.map((subtask, id) => (
@@ -59,7 +64,6 @@ export default function ViewTask() {
             label={"Current Status"}
             onChange={(status: string) => {
               dispatch(openTaskUpdated({ ...openTask, status }));
-              
             }}
           />
         </section>

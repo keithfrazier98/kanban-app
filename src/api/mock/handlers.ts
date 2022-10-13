@@ -25,18 +25,29 @@ export const handlers = [
     );
   }),
 
-  //handles GET/ tasks requests
+  //handles GET /tasks requests
   rest.get("/tasks", (req, res, ctx) => {
-    const id = req.url.searchParams.get("columnId");
+    const id = req.url.searchParams.get("boardId");
     return res(
       ctx.status(200),
       ctx.json({
-        data: mockData.tasks.filter((task) => task.columnId.toString() === id),
+        data: mockData.tasks.filter((task) => task.boardId.toString() === id),
       })
     );
   }),
-  //handles POST /boards requests
-  // rest.post("/boards", () => {}),
+
+  //handles GET /tasks requests
+  rest.get("/subtasks", (req, res, ctx) => {
+    const id = req.url.searchParams.get("taskId");
+    return res(
+      ctx.status(200),
+      ctx.json({
+        data: mockData.subtasks.filter(
+          (subtask) => subtask.taskId.toString() === id
+        ),
+      })
+    );
+  }),
 ];
 
 //   // handles GET /columns requests

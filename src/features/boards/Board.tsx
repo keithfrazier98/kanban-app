@@ -1,32 +1,42 @@
 import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Column from "../columns/Column";
-import { columnsSelected, selectAllColumns } from "../columns/columnsSlice";
 import {
-  boardSelected,
+  columnsReqStatus,
+  columnsSelected,
+  fetchColumnsByBoardId,
+  selectAllColumns,
+} from "../columns/columnsSlice";
+import { fetchTasksByBoardId, tasksReqStatus } from "../tasks/tasksSlice";
+import {
+  boardRequestStatus,
   fetchBoards,
-  getSelectedBoard,
   selectAllBoards,
 } from "./boardsSlice";
 
 export default function Board() {
   const boards = useAppSelector(selectAllBoards);
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const boardsStatus = useAppSelector(boardRequestStatus);
+  const columnsStatus = useAppSelector(columnsReqStatus);
   const columns = useAppSelector(selectAllColumns);
+  const tasksStatus = useAppSelector(tasksReqStatus);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchBoards());
-  }, []);
-
-  useEffect(() => {
-    //initialize the boards and columns when the app first opens
-    if (!selectedBoard && boards.length > 0) {
-      dispatch(boardSelected({ board: boards[0] }));
-      dispatch(columnsSelected({ columns: boards[0].columns }));
+    // make needed requests when opening the app initially
+    if (boardsStatus === "idle") {
+      dispatch(fetchBoards());
     }
-  }, [boards]);
+
+    if (boards[0] && columnsStatus === "idle") {
+      dispatch(fetchColumnsByBoardId(boards[0].id));
+    }
+
+    if (columns[0] && tasksStatus === "idle") {
+      dispatch(fetchTasksByBoardId(boards[0].id));
+    }
+  }, [boards, columns]);
 
   return (
     <section className="h-full">

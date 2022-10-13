@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import {
   ChevronDown,
@@ -7,18 +7,15 @@ import {
   MoonStars,
 } from "tabler-icons-react";
 import { ReactComponent as MobileLogo } from "../../assets/logo-mobile.svg";
-import data from "../../data.json";
 import { classNames } from "../../utils/utils";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   boardSelected,
   getSelectedBoard,
   selectAllBoards,
-  selectBoardById,
 } from "./boardsSlice";
-import { useSelector } from "react-redux";
-import { openTaskUpdated } from "../tasks/tasksSlice";
-import { columnsSelected } from "../columns/columnsSlice";
+
+import { fetchColumnsByBoardId } from "../columns/columnsSlice";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -75,7 +72,7 @@ export default function BoardMenu() {
                       <button
                         onClick={() => {
                           dispatch(boardSelected({ board: item }));
-                          dispatch(columnsSelected({ columns: item.columns }));
+                          dispatch(fetchColumnsByBoardId(item?.id));
                         }}
                         className={`w-full flex items-center pl-4 py-3 rounded-r-full ${
                           active || board?.id === item.id

@@ -46,8 +46,7 @@ const boardsSlice = createSlice({
         (state, action: PayloadAction<IBoardData[]>) => {
           console.log(state, action);
           state.status = "succeeded";
-          // Add any fetched posts to the array
-          // Use the `upsertMany` reducer as a mutating update utility
+          // set boards state using the normalizing adapter
           boardsAdapter.setAll(state, action.payload);
         }
       )
@@ -64,6 +63,8 @@ export const { boardSelected } = boardsSlice.actions;
 
 export const getSelectedBoard = ({ boards: { selectedBoard } }: RootState) =>
   selectedBoard;
+
+export const boardRequestStatus = ({ boards: { status } }: RootState) => status;
 
 export const {
   selectAll: selectAllBoards,
