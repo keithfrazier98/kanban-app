@@ -38,7 +38,7 @@ export default function ViewTask() {
           dispatch(setAllSubtasks([]));
         }}
       >
-        <section className="px-4 py-6 bg-white dark:bg-primary-gray-700 rounded-md max-w-sm w-[24rem]">
+        <section className="px-4 py-6 bg-white dark:bg-primary-gray-700 rounded-md max-w-sm w-[22rem]">
           <div className="flex justify-between items-center w-full">
             <h3 className="font-bold text-lg md:text-base leading-6">
               {title}

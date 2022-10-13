@@ -8,14 +8,14 @@ import { getOpenTask } from "./features/tasks/tasksSlice";
 function App() {
   const openTask = useAppSelector(getOpenTask);
   return (
-    <>
+    <div className="w-full h-full overflow-hidden">
       <Router>
         <Routes>
           <Route path="/" element={<Dashboard />} />
         </Routes>
       </Router>
       {openTask ? <ViewTask /> : <></>}
-    </>
+    </div>
   );
 }
 
