@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 
 export interface IBoardSubTask {
+  id: number;
   title: string;
   isCompleted: boolean;
 }
@@ -35,6 +36,11 @@ export interface ITasksState {
   ids: number[];
   entities: IBoardTask[];
   openTask: IBoardTask | null;
+}
+
+export interface ISubtasksState {
+  ids: number[];
+  entities: IBoardSubTask[];
 }
 
 // export interface IContext {

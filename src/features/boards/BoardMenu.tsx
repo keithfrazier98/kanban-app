@@ -17,7 +17,7 @@ import {
   selectBoardById,
 } from "./boardsSlice";
 import { useSelector } from "react-redux";
-import { taskSelected } from "../tasks/tasksSlice";
+import { openTaskUpdated } from "../tasks/tasksSlice";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -67,8 +67,8 @@ export default function BoardMenu() {
               All Boards {`(${boards.length})`}
             </span>
             <div>
-              {boards.map((item) => (
-                <Menu.Item key={item.name}>
+              {boards.map((item, i) => (
+                <Menu.Item key={`board-${i}`}>
                   {({ active }) => (
                     <div className="pr-5">
                       <button

@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { IBoardColumn, IBoardSubTask, IBoardTask } from "../@types/types";
 import { useAppDispatch } from "../app/hooks";
-import { taskSelected } from "../features/tasks/tasksSlice";
+import { openTaskUpdated } from "../features/tasks/tasksSlice";
 import { countCompleted } from "../utils/utils";
 
 export default function Column({ column }: { column: IBoardColumn }) {
@@ -16,10 +16,11 @@ export default function Column({ column }: { column: IBoardColumn }) {
       </div>
       <div className="overflow-y-scroll no-scrollbar max-h-full pb-12 w-72">
         <div className="grid grid-cols-1 grid-flow-row gap-5">
-          {column.tasks.map((task: IBoardTask) => (
+          {column.tasks.map((task: IBoardTask, i) => (
             <button
+              key={`task-${i}`}
               className="w-full px-2 text-left"
-              onClick={() => dispatch(taskSelected({ task }))}
+              onClick={() => dispatch(openTaskUpdated({ task }))}
             >
               <div className="flex px-4 py-6 flex-col dark:bg-primary-gray-700 bg-white rounded-md shadow-lg">
                 <p className="font-bold text-sm dark:text-white">

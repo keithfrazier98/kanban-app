@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAppSelector } from "./app/hooks";
 import Dashboard from "./components/Dashboard";
-import ViewTask from "./components/ViewTask";
+import ViewTask from "./features/tasks/ViewTask";
 import { getOpenTask } from "./features/tasks/tasksSlice";
 
 function App() {

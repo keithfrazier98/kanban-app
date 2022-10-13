@@ -31,8 +31,8 @@ export default function Board() {
       <h1 className="sr-only">kanban board</h1>
       {selectedBoard?.columns ? (
         <div className="grid grid-rows-1 grid-flow-col w-max h-full px-2">
-          {selectedBoard.columns.map((column) => (
-            <Column column={column} />
+          {selectedBoard.columns.map((column, i) => (
+            <Column key={`column-${i}`} column={column} />
           ))}{" "}
         </div>
       ) : (

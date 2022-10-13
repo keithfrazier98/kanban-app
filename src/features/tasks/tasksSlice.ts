@@ -14,14 +14,14 @@ const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    taskSelected(state, action) {
+    openTaskUpdated(state, action) {
       const { task } = action.payload;
       state.openTask = task;
     },
   },
 });
 
-export const { taskSelected } = tasksSlice.actions;
+export const { openTaskUpdated } = tasksSlice.actions;
 
 export const getOpenTask = (state: RootState) => state.tasks.openTask;
 

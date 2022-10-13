@@ -3,7 +3,7 @@ import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
 import Board from "../features/boards/Board";
 import { DimModalBackdrop } from "./DimModalBackdrop";
 import MobileNavBar from "./MobileNavBar";
-import ViewTask from "./ViewTask";
+import ViewTask from "../features/tasks/ViewTask";
 
 export default function Dashboard() {
 
