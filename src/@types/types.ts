@@ -9,20 +9,20 @@ export interface IBoardSubTask {
 export interface IBoardTask {
   title: string;
   description: string;
+  columnId: number;
   status: string;
   subtasks: IBoardSubTask[];
 }
 
 export interface IBoardColumn {
-  id:number
+  id: number;
   name: string;
-  tasks: IBoardTask[];
+  boardId: number;
 }
 
 export interface IBoardData {
   id: number;
   name: string;
-  columns: IBoardColumn[];
 }
 
 export interface IBoardState {

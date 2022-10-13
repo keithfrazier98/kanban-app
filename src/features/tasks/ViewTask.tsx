@@ -5,11 +5,9 @@ import { countCompleted } from "../../utils/utils";
 import { DimModalBackdrop } from "../../components/DimModalBackdrop";
 import { DotsVertical } from "tabler-icons-react";
 import { useEffect } from "react";
-import {
-  selectAllSubtasks,
-  setAllSubtasks,
-} from "../subtasks/subtasksSlice";
+import { selectAllSubtasks, setAllSubtasks } from "../subtasks/subtasksSlice";
 import Subtask from "../subtasks/Subtask";
+import DropdownList from "../../components/DropdownList";
 
 export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
@@ -19,11 +17,10 @@ export default function ViewTask() {
   const { description, status, subtasks: subs, title } = openTask || empty;
 
   const subtasks = useAppSelector(selectAllSubtasks);
+  const columnNames = useAppSelector((state) => state.columns.ids);
 
   useEffect(() => {
     if (!!openTask && !!!subtasks.length) {
-      console.log(subs);
-
       dispatch(setAllSubtasks(subs));
     }
   }, [openTask]);
@@ -56,10 +53,17 @@ export default function ViewTask() {
               <Subtask id={id} subtask={subtask} />
             ))}
           </ul>
-         {/* <DropdownList items={}/> */}
+          <DropdownList
+            items={columnNames}
+            selected={status}
+            label={"Current Status"}
+            onChange={(status: string) => {
+              dispatch(openTaskUpdated({ ...openTask, status }));
+              
+            }}
+          />
         </section>
       </OutsideClickHandler>
     </DimModalBackdrop>
   );
 }
-

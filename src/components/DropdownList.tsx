@@ -3,16 +3,25 @@ import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { classNames } from "../utils/utils";
 import { Check, ChevronDown } from "tabler-icons-react";
+import { useAppDispatch } from "../app/hooks";
 
-export default function DropdownList({ items }: { items: string[] }) {
-  const [selected, setSelected] = useState(items[3]);
-
+export default function DropdownList({
+  items,
+  selected,
+  label,
+  onChange,
+}: {
+  items: string[];
+  selected: string;
+  label: string;
+  onChange: (selected: string) => void;
+}) {
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={selected}>
       {({ open }) => (
         <>
-          <Listbox.Label className="block text-sm font-medium text-gray-700">
-            Assigned to
+          <Listbox.Label className="block text-sm font-medium text-gray-700 mt-6">
+            {label}
           </Listbox.Label>
           <div className="relative mt-1">
             <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">

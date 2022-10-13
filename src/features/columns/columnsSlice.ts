@@ -1,6 +1,19 @@
-import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
-import { IBoardColumn, IColumnState } from "../../@types/types";
+import {
+  createSlice,
+  createEntityAdapter,
+  createAsyncThunk,
+} from "@reduxjs/toolkit";
+import { IBoardColumn, IBoardTask, IColumnState } from "../../@types/types";
+import { client } from "../../api/mock/browser";
 import { RootState } from "../../app/store";
+
+const fetchColumns = createAsyncThunk(
+  "columns/fetchColumns",
+  async (boardId) => {
+    const response = await client.get(`/columns?boardId=${boardId}`);
+    return response.data.data;
+  }
+);
 
 const columnsAdapter = createEntityAdapter<IBoardColumn>({
   selectId: (column) => column.name,
@@ -18,6 +31,9 @@ const columnsSlice = createSlice({
       const { columns: changes } = action.payload;
       columnsAdapter.setAll(state, changes);
     },
+  },
+  extraReducers() {
+    
   },
 });
 

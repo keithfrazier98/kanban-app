@@ -2,7 +2,9 @@ import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
 import { IBoardTask, IBoardState, ITasksState } from "../../@types/types";
 import { RootState } from "../../app/store";
 
-const tasksAdapter = createEntityAdapter<IBoardTask>();
+const tasksAdapter = createEntityAdapter<IBoardTask>({
+  selectId: (task) => task.title,
+});
 
 const initialState = tasksAdapter.getInitialState<ITasksState>({
   ids: [],
