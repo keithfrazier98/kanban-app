@@ -8,7 +8,7 @@ const subtasksAdapter = createEntityAdapter<IBoardSubTask>({
 
 const initialState = subtasksAdapter.getInitialState<ISubtasksState>({
   ids: [],
-  entities: [],
+  entities: {},
 });
 
 const subtasksSlice = createSlice({

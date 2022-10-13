@@ -6,7 +6,7 @@ const tasksAdapter = createEntityAdapter<IBoardTask>();
 
 const initialState = tasksAdapter.getInitialState<ITasksState>({
   ids: [],
-  entities: [],
+  entities: {},
   openTask: null,
 });
 

@@ -17,7 +17,7 @@ const boardsAdapter = createEntityAdapter<IBoardData>({
 });
 const initialState = boardsAdapter.getInitialState<IBoardState>({
   ids: [],
-  entities: [],
+  entities: {},
   status: "idle",
   selectedBoard: null,
 });

@@ -354,13 +354,11 @@
               "description": "",
               "status": "",
               "subtasks": [
-                {
-                  "id": 0,
+                {"id": 0,
                   "title": "Launch privately to our waitlist",
                   "isCompleted": false
                 },
-                {
-                  "id": 1,
+                {"id": 1,
                   "title": "Launch publicly on PH, HN, etc.",
                   "isCompleted": false
                 }
@@ -371,18 +369,15 @@
               "description": "Beyond the initial launch, we're keeping the initial roadmap completely empty. This meeting will help us plan out our next steps based on actual customer feedback.",
               "status": "",
               "subtasks": [
-                {
-                  "id": 0,
+                {"id": 0,
                   "title": "Interview 10 customers",
                   "isCompleted": false
                 },
-                {
-                  "id": 1,
+                {"id": 1,
                   "title": "Review common customer pain points and suggestions",
                   "isCompleted": false
                 },
-                {
-                  "id": 2,
+                {"id": 2,
                   "title": "Outline next steps for our roadmap",
                   "isCompleted": false
                 }

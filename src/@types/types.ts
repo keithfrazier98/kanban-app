@@ -26,21 +26,26 @@ export interface IBoardData {
 
 export interface IBoardState {
   ids: number[];
-  entities: IBoardData[];
+  entities: { [id: string]: IBoardData };
   error?: string;
   status: "idle" | "succeeded" | "loading" | "failed";
   selectedBoard: IBoardData | null;
 }
 
+export interface IColumnState {
+  ids: string[];
+  entities: { [id: string]: IBoardColumn };
+}
+
 export interface ITasksState {
   ids: number[];
-  entities: IBoardTask[];
+  entities: { [id: string]: IBoardTask };
   openTask: IBoardTask | null;
 }
 
 export interface ISubtasksState {
   ids: number[];
-  entities: IBoardSubTask[];
+  entities: { [id: string]: IBoardSubTask };
 }
 
 // export interface IContext {
