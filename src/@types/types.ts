@@ -1,29 +1,29 @@
-import { Dispatch, SetStateAction } from "react";
-
+export type datatypes = "boards" | "columns" | "tasks" | "subtasks";
 export interface IBoardSubTask {
-  id: number;
+  id: string;
   title: string;
   isCompleted: boolean;
+  taskId: string;
 }
 
 export interface IBoardTask {
-  id: number;
+  id: string;
   title: string;
   description: string;
-  columnId: number;
+  columnId: string;
   status: string;
   totalSubtasks: number;
   subtasksCompleted: number;
 }
 
 export interface IBoardColumn {
-  id: number;
+  id: string;
   name: string;
-  boardId: number;
+  boardId: string;
 }
 
 export interface IBoardData {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -47,7 +47,7 @@ export interface IColumnState {
 export interface ITasksState {
   ids: number[];
   entities: { [id: string]: IBoardTask };
-  openTask: number | null;
+  openTask: string | null;
   error?: string;
   status: requestStatus;
 }

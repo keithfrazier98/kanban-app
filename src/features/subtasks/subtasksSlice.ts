@@ -10,7 +10,7 @@ import { RootState } from "../../app/store";
 
 export const fetchSubtasksByTaskId = createAsyncThunk(
   "subtasks/fetchSubtasksByTaskId",
-  async (taskId: number) => {
+  async (taskId: string) => {
     const res = await client.get(`/subtasks?taskId=${taskId}`);
     return res.data.data;
   }

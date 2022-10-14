@@ -10,7 +10,7 @@ import { RootState } from "../../app/store";
 
 export const fetchTasksByBoardId = createAsyncThunk(
   "tasks/fetchTasksByBoardId",
-  async (boardId: number) => {
+  async (boardId: string) => {
     const res = await client.get(`/tasks?boardId=${boardId}`);
     return res.data.data;
   }
@@ -31,7 +31,7 @@ const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    openTaskUpdated(state, action: { payload: { taskId: number | null } }) {
+    openTaskUpdated(state, action: { payload: { taskId: string | null } }) {
       const { taskId } = action.payload;
       state.openTask = taskId;
     },

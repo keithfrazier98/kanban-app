@@ -13,7 +13,7 @@ import { RootState } from "../../app/store";
 
 const boardsAdapter = createEntityAdapter<IBoardData>({
   selectId: (board) => board.id,
-  sortComparer: (a, b) => a.id - b.id,
+  // sortComparer: (a, b) => a.id - b.id,
 });
 const initialState = boardsAdapter.getInitialState<IBoardState>({
   ids: [],

@@ -10,7 +10,7 @@ import { RootState } from "../../app/store";
 
 export const fetchColumnsByBoardId = createAsyncThunk(
   "columns/fetchColumnsById",
-  async (boardId: number) => {
+  async (boardId: string) => {
     const response = await client.get(`/columns?boardId=${boardId}`);
     return response.data.data;
   }
