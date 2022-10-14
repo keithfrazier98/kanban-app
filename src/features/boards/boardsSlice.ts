@@ -7,7 +7,7 @@ import {
   createSelector,
 } from "@reduxjs/toolkit";
 import { IBoardData, IBoardState } from "../../@types/types";
-import { client } from "../../api/mock/browser";
+import { client } from "../../api/mock/client";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store";
 

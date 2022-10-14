@@ -1,7 +1,6 @@
 import OutsideClickHandler from "react-outside-click-handler";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getOpenTask, openTaskUpdated, selectTaskById } from "./tasksSlice";
-import { countCompleted } from "../../utils/utils";
 import { DimModalBackdrop } from "../../components/DimModalBackdrop";
 import { DotsVertical } from "tabler-icons-react";
 import { useEffect } from "react";
@@ -12,7 +11,6 @@ import {
 } from "../subtasks/subtasksSlice";
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
-import { IBoardTask } from "../../@types/types";
 
 export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
@@ -33,7 +31,7 @@ export default function ViewTask() {
     const { description, status, title, subtasksCompleted, totalSubtasks } =
       task;
 
-      
+
     return (
       <DimModalBackdrop>
         <OutsideClickHandler

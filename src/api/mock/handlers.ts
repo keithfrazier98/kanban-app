@@ -1,5 +1,9 @@
 import { rest } from "msw";
 import mockData from "./data.json";
+import { factory, oneOf, manyOf, primaryKey } from "@mswjs/data";
+import { nanoid } from "@reduxjs/toolkit";
+
+// MSW REST API handlers
 
 export const handlers = [
   //handles GET /boards requests
@@ -50,11 +54,36 @@ export const handlers = [
   }),
 ];
 
-//   // handles GET /columns requests
-//   rest.get("/columns", () => {}),
+//MSWJS Data Model Setup
+export const dp = factory({
+  board: {
+    id: primaryKey(nanoid),
+    name: String,
+    columns: manyOf("column"),
+  },
+  columns: {
+    id: primaryKey(nanoid),
+    boardId: oneOf("board"),
+    name: String,
+    tasks: manyOf("task"),
+  },
+  task: {
+    id: primaryKey(nanoid),
+    boardId: oneOf("board"),
+    columnId: oneOf("column"),
+    title: String,
+    description: String,
+    status: String,
+    totalSubtasks: Number,
+    completedSubtasks: Number,
+    subtasks: manyOf("subtask"),
+  },
+  subtask: {
+    id: primaryKey(nanoid),
+    taskId: oneOf("task"),
+    title: String,
+    isCompleted: Boolean,
+  },
+});
 
-//   //handles GET /tasks requests
-//   rest.get("/tasks", () => {}),
-
-//   //handles GET /subtasks requests
-//   rest.get("/subtasks", () => {}),
+const mockDataMap = {};

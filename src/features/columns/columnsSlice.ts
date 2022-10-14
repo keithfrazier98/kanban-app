@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { IBoardColumn, IColumnState } from "../../@types/types";
-import { client } from "../../api/mock/browser";
+import { client } from "../../api/mock/client";
 import { RootState } from "../../app/store";
 
 export const fetchColumnsByBoardId = createAsyncThunk(

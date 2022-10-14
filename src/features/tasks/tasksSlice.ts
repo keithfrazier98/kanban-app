@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { IBoardTask, ITasksState } from "../../@types/types";
-import { client } from "../../api/mock/browser";
+import { client } from "../../api/mock/client";
 import { RootState } from "../../app/store";
 
 export const fetchTasksByBoardId = createAsyncThunk(
