@@ -12,7 +12,7 @@ export const fetchSubtasksByTaskId = createAsyncThunk(
   "subtasks/fetchSubtasksByTaskId",
   async (taskId: string) => {
     const res = await client.get(`/subtasks?taskId=${taskId}`);
-    return res.data.data;
+    return res.data;
   }
 );
 

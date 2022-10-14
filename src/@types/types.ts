@@ -10,7 +10,7 @@ export interface IBoardTask {
   id: string;
   title: string;
   description: string;
-  columnId: string;
+  column: IBoardColumn;
   status: string;
   totalSubtasks: number;
   subtasksCompleted: number;

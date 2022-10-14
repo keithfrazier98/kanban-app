@@ -3,14 +3,14 @@ import { useAppDispatch } from "../../app/hooks";
 import { countCompleted } from "../../utils/utils";
 import { openTaskUpdated } from "./tasksSlice";
 
-export default function Task({ task, id }: { task: IBoardTask; id: number }) {
+export default function Task({ task }: { task: IBoardTask }) {
   const dispatch = useAppDispatch();
 
   return (
     <button
-      key={`task-${id}`}
+      key={`task-${task.id}`}
       className="w-full px-2 text-left"
-      onClick={() => dispatch(openTaskUpdated({ taskId: null }))}
+      onClick={() => dispatch(openTaskUpdated({ taskId: task.id }))}
     >
       <div className="flex px-4 py-6 flex-col dark:bg-primary-gray-700 bg-white rounded-md shadow-lg">
         <p className="font-bold text-sm dark:text-white">{task.title}</p>

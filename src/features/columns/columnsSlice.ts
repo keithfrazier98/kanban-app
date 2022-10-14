@@ -12,7 +12,7 @@ export const fetchColumnsByBoardId = createAsyncThunk(
   "columns/fetchColumnsById",
   async (boardId: string) => {
     const response = await client.get(`/columns?boardId=${boardId}`);
-    return response.data.data;
+    return response.data;
   }
 );
 

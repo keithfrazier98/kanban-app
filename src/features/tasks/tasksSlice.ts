@@ -12,12 +12,12 @@ export const fetchTasksByBoardId = createAsyncThunk(
   "tasks/fetchTasksByBoardId",
   async (boardId: string) => {
     const res = await client.get(`/tasks?boardId=${boardId}`);
-    return res.data.data;
+    return res.data;
   }
 );
 
 const tasksAdapter = createEntityAdapter<IBoardTask>({
-  selectId: (task) => task.title,
+  selectId: (task) => task.id,
 });
 
 const initialState = tasksAdapter.getInitialState<ITasksState>({

@@ -6,7 +6,7 @@ import { nanoid } from "@reduxjs/toolkit";
 const RESPONSE_DELAY = 2000;
 
 //MSWJS Data Model Setup
-export const db = factory({
+const db = factory({
   board: {
     id: primaryKey(nanoid),
     name: String,
@@ -80,9 +80,7 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.delay(RESPONSE_DELAY),
-      ctx.json({
-        data: mockData.boards,
-      })
+      ctx.json(db.board.getAll())
     );
   }),
 
@@ -95,11 +93,11 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.delay(RESPONSE_DELAY),
-      ctx.json({
-        data: db.column.findMany({
+      ctx.json(
+        db.column.findMany({
           where: { board: { id: { equals: boardId } } },
-        }),
-      })
+        })
+      )
     );
   }),
 
@@ -112,11 +110,11 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.delay(RESPONSE_DELAY),
-      ctx.json({
-        data: db.task.findMany({
+      ctx.json(
+        db.task.findMany({
           where: { board: { id: { equals: boardId } } },
-        }),
-      })
+        })
+      )
     );
   }),
 
@@ -135,11 +133,11 @@ export const handlers = [
     return res(
       ctx.status(200),
       ctx.delay(RESPONSE_DELAY),
-      ctx.json({
-        data: db.subtask.findMany({
+      ctx.json(
+        db.subtask.findMany({
           where: { task: { id: { equals: taskId } } },
-        }),
-      })
+        })
+      )
     );
   }),
 ];
