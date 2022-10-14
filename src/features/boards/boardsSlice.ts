@@ -24,7 +24,7 @@ const initialState = boardsAdapter.getInitialState<IBoardState>({
 
 export const fetchBoards = createAsyncThunk("boards/fetchBoards", async () => {
   const response = await client.get("/boards");
-  return response.data.data as IBoardData[];
+  return response.data as IBoardData[];
 });
 
 const boardsSlice = createSlice({

@@ -3,6 +3,8 @@ import mockData from "./data.json";
 import { factory, oneOf, manyOf, primaryKey } from "@mswjs/data";
 import { nanoid } from "@reduxjs/toolkit";
 
+const RESPONSE_DELAY = 2000;
+
 //MSWJS Data Model Setup
 export const db = factory({
   board: {
@@ -63,6 +65,7 @@ function queryParamMissing(
 ) {
   return res(
     ctx.status(405),
+    ctx.delay(RESPONSE_DELAY),
     ctx.json({
       message: `No ${field} was found in the query paramaters.`,
     })
@@ -76,6 +79,7 @@ export const handlers = [
   rest.get("/boards", (req, res, ctx) => {
     return res(
       ctx.status(200),
+      ctx.delay(RESPONSE_DELAY),
       ctx.json({
         data: mockData.boards,
       })
@@ -90,6 +94,7 @@ export const handlers = [
     }
     return res(
       ctx.status(200),
+      ctx.delay(RESPONSE_DELAY),
       ctx.json({
         data: db.column.findMany({
           where: { board: { id: { equals: boardId } } },
@@ -106,6 +111,7 @@ export const handlers = [
     }
     return res(
       ctx.status(200),
+      ctx.delay(RESPONSE_DELAY),
       ctx.json({
         data: db.task.findMany({
           where: { board: { id: { equals: boardId } } },
@@ -120,6 +126,7 @@ export const handlers = [
     if (!taskId) {
       return res(
         ctx.status(405),
+        ctx.delay(RESPONSE_DELAY),
         ctx.json({
           message: "No boardId was found in the query paramaters.",
         })
@@ -127,6 +134,7 @@ export const handlers = [
     }
     return res(
       ctx.status(200),
+      ctx.delay(RESPONSE_DELAY),
       ctx.json({
         data: db.subtask.findMany({
           where: { task: { id: { equals: taskId } } },
