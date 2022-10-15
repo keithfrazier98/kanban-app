@@ -29,7 +29,7 @@ export default function BoardMenu() {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="flex items-center xl:hidden">
+    <div className="flex items-center">
       <MobileLogo />
       {/* Profile dropdown */}
       <Menu as="div" className="ml-3">
