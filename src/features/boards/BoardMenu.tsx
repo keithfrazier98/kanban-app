@@ -16,6 +16,7 @@ import {
 } from "./boardsSlice";
 
 import { fetchColumnsByBoardId } from "../columns/columnsSlice";
+import { fetchTasksByBoardId } from "../tasks/tasksSlice";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -73,6 +74,7 @@ export default function BoardMenu() {
                         onClick={() => {
                           dispatch(boardSelected({ board: item }));
                           dispatch(fetchColumnsByBoardId(item?.id));
+                          dispatch(fetchTasksByBoardId(item.id));
                         }}
                         className={`w-full flex items-center pl-4 py-3 rounded-r-full ${
                           active || board?.id === item.id

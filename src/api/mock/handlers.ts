@@ -2,8 +2,9 @@ import { DefaultBodyType, ResponseComposition, rest, RestContext } from "msw";
 import mockData from "./data.json";
 import { factory, oneOf, manyOf, primaryKey } from "@mswjs/data";
 import { nanoid } from "@reduxjs/toolkit";
+import { Entity } from "@mswjs/data/lib/glossary";
 
-const RESPONSE_DELAY = 2000;
+const RESPONSE_DELAY = 0;
 
 //MSWJS Data Model Setup
 const db = factory({

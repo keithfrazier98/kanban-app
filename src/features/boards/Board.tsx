@@ -10,7 +10,9 @@ import {
 import { fetchTasksByBoardId, tasksReqStatus } from "../tasks/tasksSlice";
 import {
   boardRequestStatus,
+  boardSelected,
   fetchBoards,
+  getSelectedBoard,
   selectAllBoards,
 } from "./boardsSlice";
 
@@ -20,6 +22,7 @@ export default function Board() {
   const columnsStatus = useAppSelector(columnsReqStatus);
   const columns = useAppSelector(selectAllColumns);
   const tasksStatus = useAppSelector(tasksReqStatus);
+  const selectedBoard = useAppSelector(getSelectedBoard);
 
   const dispatch = useAppDispatch();
 
@@ -29,14 +32,18 @@ export default function Board() {
       dispatch(fetchBoards());
     }
 
-    if (boards[0] && columnsStatus === "idle") {
-      dispatch(fetchColumnsByBoardId(boards[0].id));
+    if (!selectedBoard && boards[0]) {
+      dispatch(boardSelected({ board: boards[0] }));
     }
 
-    if (columns[0] && tasksStatus === "idle") {
-      dispatch(fetchTasksByBoardId(boards[0].id));
+    if (selectedBoard && columnsStatus === "idle") {
+      dispatch(fetchColumnsByBoardId(selectedBoard.id));
     }
-  }, [boards, columns]);
+
+    if (selectedBoard && tasksStatus === "idle") {
+      dispatch(fetchTasksByBoardId(selectedBoard.id));
+    }
+  }, [boards, columns, selectedBoard]);
 
   return (
     <section className="h-full">
