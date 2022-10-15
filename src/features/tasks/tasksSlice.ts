@@ -31,9 +31,18 @@ const tasksSlice = createSlice({
   name: "tasks",
   initialState,
   reducers: {
-    openTaskUpdated(state, action: { payload: { taskId: string | null } }) {
-      const { taskId } = action.payload;
+    // selects a task or deselects task when passed null
+    taskSelected(state, { payload }: { payload: { taskId: string | null } }) {
+      const { taskId } = payload;
       state.openTask = taskId;
+    },
+    // updates one task
+    taskUpdated(
+      state,
+      { payload: { task: changes } }: { payload: { task: IBoardTask } }
+    ) {
+      const { id } = changes;
+      tasksAdapter.updateOne(state, { id, changes });
     },
   },
   extraReducers(builder) {
@@ -56,7 +65,7 @@ const tasksSlice = createSlice({
   },
 });
 
-export const { openTaskUpdated } = tasksSlice.actions;
+export const { taskSelected, taskUpdated } = tasksSlice.actions;
 
 export const { selectAll: selectAllTasks, selectById: selectTaskById } =
   tasksAdapter.getSelectors<RootState>((state) => state.tasks);

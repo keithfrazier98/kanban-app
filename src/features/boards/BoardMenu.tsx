@@ -17,6 +17,8 @@ import {
 
 import { fetchColumnsByBoardId } from "../columns/columnsSlice";
 import { fetchTasksByBoardId } from "../tasks/tasksSlice";
+import ToggleTheme from "../../components/ToggleTheme";
+import BoardListItem from "./BoardListItem";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,21 +27,9 @@ export default function BoardMenu() {
   const board = useAppSelector(getSelectedBoard);
 
   const dispatch = useAppDispatch();
-  function toggleTheme(theme?: "dark" | "light") {
-    const htmlElement = document.querySelector("html");
-    if (theme === "light" || htmlElement?.classList.contains("dark")) {
-      htmlElement?.classList.remove("dark");
-      // setTheme("light");
-      localStorage.setItem("theme", "light");
-    } else {
-      htmlElement?.classList.add("dark");
-      // setTheme("dark");
-      localStorage.setItem("theme", "dark");
-    }
-  }
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center xl:hidden">
       <MobileLogo />
       {/* Profile dropdown */}
       <Menu as="div" className="ml-3">
@@ -69,23 +59,7 @@ export default function BoardMenu() {
               {boards.map((item, i) => (
                 <Menu.Item key={`board-${i}`}>
                   {({ active }) => (
-                    <div className="pr-5">
-                      <button
-                        onClick={() => {
-                          dispatch(boardSelected({ board: item }));
-                          dispatch(fetchColumnsByBoardId(item?.id));
-                          dispatch(fetchTasksByBoardId(item.id));
-                        }}
-                        className={`w-full flex items-center pl-4 py-3 rounded-r-full ${
-                          active || board?.id === item.id
-                            ? "bg-primary-indigo-active text-white"
-                            : " text-gray-400 "
-                        }`}
-                      >
-                        <LayoutBoardSplit className="w-5 h-5 mr-4" />
-                        {item.name}
-                      </button>
-                    </div>
+                    <BoardListItem active={active} item={item} />
                   )}
                 </Menu.Item>
               ))}
@@ -95,28 +69,7 @@ export default function BoardMenu() {
                 <LayoutBoardSplit className="w-5 h-5 mr-4" />+ Create New Board
               </button>
             </div>
-            <div className="w-full p-4">
-              <div className="bg-primary-gray-200 dark:bg-primary-gray-700 p-3 rounded flex justify-center items-center">
-                <SunHigh className="w-5 h-5 text-gray-500" />
-                <button
-                  onClick={() => {
-                    toggleTheme();
-                  }}
-                  className="w-12 h-6 mx-4 p-1 rounded-full bg-primary-indigo-active"
-                >
-                  <div
-                    className={classNames(
-                      "dark:translate-x-full dark:justify-end",
-                      "translate-x-0 justify-start",
-                      "w-1/2 h-full transition-transform flex"
-                    )}
-                  >
-                    <div className="rounded-full bg-white w-4 h-4" />
-                  </div>
-                </button>
-                <MoonStars className="w-5 h-5 text-gray-500" />
-              </div>
-            </div>
+            <ToggleTheme />
           </Menu.Items>
         </Transition>
       </Menu>

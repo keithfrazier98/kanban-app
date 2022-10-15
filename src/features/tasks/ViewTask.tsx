@@ -1,9 +1,16 @@
 import OutsideClickHandler from "react-outside-click-handler";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { getOpenTask, openTaskUpdated, selectTaskById } from "./tasksSlice";
+import {
+  getOpenTask,
+  taskSelected,
+  selectTaskById,
+  taskUpdated,
+} from "./tasksSlice";
+
 import { DimModalBackdrop } from "../../components/DimModalBackdrop";
 import { DotsVertical } from "tabler-icons-react";
 import { useEffect } from "react";
+
 import {
   fetchSubtasksByTaskId,
   selectAllSubtasks,
@@ -31,12 +38,11 @@ export default function ViewTask() {
     const { description, status, title, subtasksCompleted, totalSubtasks } =
       task;
 
-
     return (
       <DimModalBackdrop>
         <OutsideClickHandler
           onOutsideClick={() => {
-            dispatch(openTaskUpdated({ taskId: null }));
+            dispatch(taskSelected({ taskId: null }));
             dispatch(setAllSubtasks([]));
           }}
         >
@@ -66,7 +72,7 @@ export default function ViewTask() {
               label={"Current Status"}
               onChange={(status: string) => {
                 console.log(status);
-                // dispatch(openTaskUpdated({ task: { ...openTask, status } }));
+                dispatch(taskUpdated({ task: { ...task, status } }));
               }}
             />
           </section>
