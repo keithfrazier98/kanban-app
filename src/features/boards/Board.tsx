@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import AddNewColumn from "../columns/AddNewColumn";
+import AddNewColumnBtn from "../columns/AddNewColumnBtn";
 import Column from "../columns/Column";
 import {
   columnsReqStatus,
@@ -54,7 +54,7 @@ export default function Board() {
           {columns.map((column, i) =>
             column ? <Column key={`column-${i}`} column={column} /> : <></>
           )}{" "}
-          <AddNewColumn />
+          <AddNewColumnBtn />
         </div>
       ) : (
         <div className="px-12 font-bold text-center">

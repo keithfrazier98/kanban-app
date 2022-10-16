@@ -2,23 +2,19 @@ import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import {
   ChevronDown,
-  LayoutBoardSplit,
-  SunHigh,
-  MoonStars,
+
 } from "tabler-icons-react";
 import { ReactComponent as MobileLogo } from "../../assets/logo-mobile.svg";
-import { classNames } from "../../utils/utils";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {  useAppSelector } from "../../app/hooks";
 import {
   boardSelected,
   getSelectedBoard,
   selectAllBoards,
 } from "./boardsSlice";
 
-import { fetchColumnsByBoardId } from "../columns/columnsSlice";
-import { fetchTasksByBoardId } from "../tasks/tasksSlice";
 import ToggleTheme from "../../components/ToggleTheme";
 import BoardListItem from "./BoardListItem";
+import NewBoardBtn from "./NewBoardBtn";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,11 +57,7 @@ export default function BoardMenu() {
                   )}
                 </Menu.Item>
               ))}
-              <button
-                className={`mr-4 text-indigo-500 flex items-center pl-4 py-3 rounded-r-full`}
-              >
-                <LayoutBoardSplit className="w-5 h-5 mr-4" />+ Create New Board
-              </button>
+              <NewBoardBtn />
             </div>
             <ToggleTheme />
           </Menu.Items>

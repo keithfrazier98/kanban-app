@@ -7,6 +7,7 @@ import {
   getSelectedBoard,
   selectAllBoards,
 } from "../features/boards/boardsSlice";
+import NewBoardBtn from "../features/boards/NewBoardBtn";
 import ToggleTheme from "./ToggleTheme";
 /**
  * Static Sidebar for desktop
@@ -26,21 +27,28 @@ export default function SideBar() {
         }`}
       >
         {/* Sidebar component, swap this element with another sidebar if you like */}
-        <div className="flex flex-grow flex-col overflow-y-auto bg-primary-gray-100 border-r border-primary-gray-300 pt-5">
-          <div className="flex flex-shrink-0 items-center px-4">
+        <div className="flex flex-grow flex-col overflow-y-auto dark:bg-primary-gray-600 dark:border-primary-gray-500 bg-primary-gray-100 border-r border-primary-gray-300 pt-5">
+          <div className="flex flex-shrink-0 items-center px-4 mb-8 dark:text-white">
             <MobileLogo />
             <h1 className="font-bold text-2xl ml-2">kanban</h1>
           </div>
           <div className="mt-5 flex flex-1 flex-col justify-between">
-            <ul>
-              {boards.map((boardItem, i) => (
-                <BoardListItem
-                  active={board?.id === boardItem.id}
-                  item={boardItem}
-                  key={"board-" + i}
-                />
-              ))}
-            </ul>
+            <div>
+              <h2 className="tracking-[.2em] mb-4 font-semibold text-xs text-gray-400 ml-6">
+                ALL BOARDS {`(${boards.length})`}
+              </h2>
+              <ul>
+                {boards.map((boardItem, i) => (
+                  <BoardListItem
+                    active={board?.id === boardItem.id}
+                    item={boardItem}
+                    key={"board-" + i}
+                  />
+                ))}
+              </ul>
+              <NewBoardBtn />
+            </div>
+
             <div className="mb-12">
               <ToggleTheme />
               <button
