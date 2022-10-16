@@ -35,7 +35,7 @@ export default function ViewTask() {
   }, [openTask]);
 
   if (!!task) {
-    const { description, status, title, subtasksCompleted, totalSubtasks } =
+    const { description, status, title, completedSubtasks, totalSubtasks } =
       task;
 
     return (
@@ -59,7 +59,7 @@ export default function ViewTask() {
               {description}
             </p>
             <p className="text-xs font-bold mt-6 mb-4 text-gray-500">
-              Subtasks {`(${subtasksCompleted} of ${totalSubtasks})`}
+              Subtasks {`(${completedSubtasks} of ${totalSubtasks})`}
             </p>{" "}
             <ul className="grid grid-flow-row gap-2">
               {subtasks.map((subtask, id) => (

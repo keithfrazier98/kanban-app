@@ -52,9 +52,22 @@ boards.forEach(({ columns, name }) => {
         title,
         column,
         board,
+        totalSubtasks: subtasks.length,
+        completedSubtasks: 0,
       });
+
+      let completedCount = 0
+
       subtasks.forEach(({ isCompleted, title }) => {
         db.subtask.create({ isCompleted, title, task });
+        if (isCompleted) {
+          completedCount ++
+        }
+      });
+
+      db.task.update({
+        where: { id: { equals: task.id } },
+        data: { completedSubtasks: completedCount },
       });
     });
   });

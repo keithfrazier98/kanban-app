@@ -13,7 +13,7 @@ export interface IBoardTask {
   column: IBoardColumn;
   status: string;
   totalSubtasks: number;
-  subtasksCompleted: number;
+  completedSubtasks: number;
 }
 
 export interface IBoardColumn {
