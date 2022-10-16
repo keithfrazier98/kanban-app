@@ -3,6 +3,7 @@ import mockData from "./data.json";
 import { factory, oneOf, manyOf, primaryKey } from "@mswjs/data";
 import { nanoid } from "@reduxjs/toolkit";
 import { Entity } from "@mswjs/data/lib/glossary";
+import { IBoardColumn } from "../../@types/types";
 
 const RESPONSE_DELAY = 0;
 
@@ -99,6 +100,24 @@ export const handlers = [
           where: { board: { id: { equals: boardId } } },
         })
       )
+    );
+  }),
+
+  //handles POST /columns (adds new column)
+  rest.post("/columns", async (req, res, ctx) => {
+    const { column } = await req.json<{ column: IBoardColumn }>();
+    if (!column) {
+      return res(
+        ctx.status(405),
+        ctx.delay(RESPONSE_DELAY),
+        ctx.json({ error: "Missing column data in json body." })
+      );
+    }
+    const entity = db.column.create(column);
+    return res(
+      ctx.status(201),
+      ctx.delay(RESPONSE_DELAY),
+      ctx.json({ column: entity })
     );
   }),
 

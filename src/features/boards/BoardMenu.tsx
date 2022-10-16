@@ -26,8 +26,6 @@ export default function BoardMenu() {
   const boards = useAppSelector(selectAllBoards);
   const board = useAppSelector(getSelectedBoard);
 
-  const dispatch = useAppDispatch();
-
   return (
     <div className="flex items-center">
       <MobileLogo />
