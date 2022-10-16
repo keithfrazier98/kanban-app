@@ -3,22 +3,23 @@ import { handlers } from "./handlers";
 
 // This configures a Service Worker with the given request
 export const worker = setupWorker(...handlers);
-
+type acceptedMethods = "POST" | "GET" | "DELETE" | "PUT";
 export async function client(
   endpoint: string,
   {
     body,
+    method,
     ...customConfig
-  }: { body?: any; headers?: any; method?: "POST" | "GET" } = {}
+  }: { body?: any; headers?: any; method: acceptedMethods }
 ) {
   const headers = { "Content-Type": "application/json" };
 
   const config: {
-    method: "GET" | "POST";
+    method: acceptedMethods;
     headers: any;
     body?: any;
   } = {
-    method: body ? "POST" : "GET",
+    method,
     ...customConfig,
     headers: {
       ...headers,
@@ -54,5 +55,9 @@ client.get = function (endpoint: string, customConfig = {}) {
 };
 
 client.post = function (endpoint: string, body: any, customConfig = {}) {
-  return client(endpoint, { ...customConfig, body });
+  return client(endpoint, { ...customConfig, body, method: "POST" });
+};
+
+client.delete = function (endpoint: string, customConfig = {}) {
+  return client(endpoint, { ...customConfig, method: "DELETE" });
 };

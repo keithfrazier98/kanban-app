@@ -56,12 +56,12 @@ boards.forEach(({ columns, name }) => {
         completedSubtasks: 0,
       });
 
-      let completedCount = 0
+      let completedCount = 0;
 
       subtasks.forEach(({ isCompleted, title }) => {
         db.subtask.create({ isCompleted, title, task });
         if (isCompleted) {
-          completedCount ++
+          completedCount++;
         }
       });
 
@@ -73,16 +73,33 @@ boards.forEach(({ columns, name }) => {
   });
 });
 
-function queryParamMissing(
+function send405WithBody(
   res: ResponseComposition<DefaultBodyType>,
   ctx: RestContext,
-  field: string
+  error: any,
+  message: string
 ) {
   return res(
     ctx.status(405),
     ctx.delay(RESPONSE_DELAY),
     ctx.json({
-      message: `No ${field} was found in the query paramaters.`,
+      error,
+      message,
+    })
+  );
+}
+
+function paramMissing(
+  res: ResponseComposition<DefaultBodyType>,
+  ctx: RestContext,
+  field: string,
+  type: string
+) {
+  return res(
+    ctx.status(405),
+    ctx.delay(RESPONSE_DELAY),
+    ctx.json({
+      message: `No ${field} was found in the ${type} paramaters.`,
     })
   );
 }
@@ -103,7 +120,7 @@ export const handlers = [
   rest.get("/columns", (req, res, ctx) => {
     const boardId = req.url.searchParams.get("boardId");
     if (!boardId) {
-      return queryParamMissing(res, ctx, "boardID");
+      return paramMissing(res, ctx, "boardID", "query");
     }
     return res(
       ctx.status(200),
@@ -134,11 +151,34 @@ export const handlers = [
     );
   }),
 
+  // handles DELETE /columns (deletes col by id)
+  rest.delete("/columns/:id", async (req, res, ctx) => {
+    const { id } = req.params;
+
+    if (!id) {
+      return paramMissing(res, ctx, "ID", "url");
+    } else if (typeof id === "string") {
+      try {
+        db.column.delete({ where: { id: { equals: id } } });
+        return res(ctx.status(204), ctx.delay(RESPONSE_DELAY));
+      } catch (error) {
+        return send405WithBody(
+          res,
+          ctx,
+          error,
+          "Failed to delete entity from the DB. Check the ID."
+        );
+      }
+    } else {
+      return send405WithBody(res, ctx, null, "Invalid ID in URL parameters");
+    }
+  }),
+
   //handles GET /tasks requests
   rest.get("/tasks", (req, res, ctx) => {
     const boardId = req.url.searchParams.get("boardId");
     if (!boardId) {
-      return queryParamMissing(res, ctx, "boardID");
+      return paramMissing(res, ctx, "boardID", "query");
     }
     return res(
       ctx.status(200),

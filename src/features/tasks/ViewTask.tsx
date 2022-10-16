@@ -7,7 +7,7 @@ import {
   taskUpdated,
 } from "./tasksSlice";
 
-import { DimModalBackdrop } from "../../components/DimModalBackdrop";
+import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { DotsVertical } from "tabler-icons-react";
 import { useEffect } from "react";
 
@@ -39,14 +39,13 @@ export default function ViewTask() {
       task;
 
     return (
-      <DimModalBackdrop>
+      <ModalWBackdrop>
         <OutsideClickHandler
           onOutsideClick={() => {
             dispatch(taskSelected({ taskId: null }));
             dispatch(setAllSubtasks([]));
           }}
         >
-          <section className="px-4 py-6 bg-white dark:bg-primary-gray-700 rounded-md max-w-sm min-w-[22rem]">
             <div className="flex justify-between items-center w-full">
               <h3 className="font-bold text-lg md:text-base leading-6">
                 {title}
@@ -75,9 +74,8 @@ export default function ViewTask() {
                 dispatch(taskUpdated({ task: { ...task, status } }));
               }}
             />
-          </section>
         </OutsideClickHandler>
-      </DimModalBackdrop>
+      </ModalWBackdrop>
     );
   }
 
