@@ -1,44 +1,26 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import {
   ChevronDown,
-  LayoutBoardSplit,
-  SunHigh,
-  MoonStars,
+
 } from "tabler-icons-react";
 import { ReactComponent as MobileLogo } from "../../assets/logo-mobile.svg";
-import data from "../../data.json";
-import { classNames } from "../../utils/utils";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {  useAppSelector } from "../../app/hooks";
 import {
   boardSelected,
   getSelectedBoard,
   selectAllBoards,
-  selectBoardById,
 } from "./boardsSlice";
-import { useSelector } from "react-redux";
-import { openTaskUpdated } from "../tasks/tasksSlice";
-import { columnsSelected } from "../columns/columnsSlice";
+
+import ToggleTheme from "../../components/ToggleTheme";
+import BoardListItem from "./BoardListItem";
+import NewBoardBtn from "./NewBoardBtn";
 
 export default function BoardMenu() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const boards = useAppSelector(selectAllBoards);
   const board = useAppSelector(getSelectedBoard);
-
-  const dispatch = useAppDispatch();
-  function toggleTheme(theme?: "dark" | "light") {
-    const htmlElement = document.querySelector("html");
-    if (theme === "light" || htmlElement?.classList.contains("dark")) {
-      htmlElement?.classList.remove("dark");
-      // setTheme("light");
-      localStorage.setItem("theme", "light");
-    } else {
-      htmlElement?.classList.add("dark");
-      // setTheme("dark");
-      localStorage.setItem("theme", "dark");
-    }
-  }
 
   return (
     <div className="flex items-center">
@@ -71,53 +53,13 @@ export default function BoardMenu() {
               {boards.map((item, i) => (
                 <Menu.Item key={`board-${i}`}>
                   {({ active }) => (
-                    <div className="pr-5">
-                      <button
-                        onClick={() => {
-                          dispatch(boardSelected({ board: item }));
-                          dispatch(columnsSelected({ columns: item.columns }));
-                        }}
-                        className={`w-full flex items-center pl-4 py-3 rounded-r-full ${
-                          active || board?.id === item.id
-                            ? "bg-primary-indigo-active text-white"
-                            : " text-gray-400 "
-                        }`}
-                      >
-                        <LayoutBoardSplit className="w-5 h-5 mr-4" />
-                        {item.name}
-                      </button>
-                    </div>
+                    <BoardListItem active={active} item={item} />
                   )}
                 </Menu.Item>
               ))}
-              <button
-                className={`mr-4 text-indigo-500 flex items-center pl-4 py-3 rounded-r-full`}
-              >
-                <LayoutBoardSplit className="w-5 h-5 mr-4" />+ Create New Board
-              </button>
+              <NewBoardBtn />
             </div>
-            <div className="w-full p-4">
-              <div className="bg-primary-gray-200 dark:bg-primary-gray-700 p-3 rounded flex justify-center items-center">
-                <SunHigh className="w-5 h-5 text-gray-500" />
-                <button
-                  onClick={() => {
-                    toggleTheme();
-                  }}
-                  className="w-12 h-6 mx-4 p-1 rounded-full bg-primary-indigo-active"
-                >
-                  <div
-                    className={classNames(
-                      "dark:translate-x-full dark:justify-end",
-                      "translate-x-0 justify-start",
-                      "w-1/2 h-full transition-transform flex"
-                    )}
-                  >
-                    <div className="rounded-full bg-white w-4 h-4" />
-                  </div>
-                </button>
-                <MoonStars className="w-5 h-5 text-gray-500" />
-              </div>
-            </div>
+            <ToggleTheme />
           </Menu.Items>
         </Transition>
       </Menu>

@@ -1,19 +1,12 @@
 import { IBoardSubTask } from "../../@types/types";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectAllSubtasks, subtaskUpdated } from "./subtasksSlice";
+import { useAppDispatch } from "../../app/hooks";
+import { subtaskUpdated } from "./subtasksSlice";
 
-export default function Subtask({
-  subtask,
-  id,
-}: {
-  subtask: IBoardSubTask;
-  id: number;
-}) {
+export default function Subtask({ subtask }: { subtask: IBoardSubTask }) {
   const dispatch = useAppDispatch();
-  const subtasks = useAppSelector(selectAllSubtasks);
   return (
     <li
-      key={`subtask-${id}`}
+      key={`subtask-${subtask.id}`}
       className="px-2 py-3 flex items-center rounded bg-primary-gray-200"
     >
       <label>
@@ -25,7 +18,6 @@ export default function Subtask({
           onChange={() => {
             dispatch(
               subtaskUpdated({
-                id,
                 subtask: {
                   ...subtask,
                   isCompleted: !subtask.isCompleted,

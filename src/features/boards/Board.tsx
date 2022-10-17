@@ -1,8 +1,16 @@
 import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import AddNewColumnBtn from "../columns/AddNewColumnBtn";
 import Column from "../columns/Column";
-import { columnsSelected, selectAllColumns } from "../columns/columnsSlice";
 import {
+  columnsReqStatus,
+  columnsSelected,
+  fetchColumnsByBoardId,
+  selectAllColumns,
+} from "../columns/columnsSlice";
+import { fetchTasksByBoardId, tasksReqStatus } from "../tasks/tasksSlice";
+import {
+  boardRequestStatus,
   boardSelected,
   fetchBoards,
   getSelectedBoard,
@@ -11,22 +19,32 @@ import {
 
 export default function Board() {
   const boards = useAppSelector(selectAllBoards);
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const boardsStatus = useAppSelector(boardRequestStatus);
+  const columnsStatus = useAppSelector(columnsReqStatus);
   const columns = useAppSelector(selectAllColumns);
+  const tasksStatus = useAppSelector(tasksReqStatus);
+  const selectedBoard = useAppSelector(getSelectedBoard);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(fetchBoards());
-  }, []);
-
-  useEffect(() => {
-    //initialize the boards and columns when the app first opens
-    if (!selectedBoard && boards.length > 0) {
-      dispatch(boardSelected({ board: boards[0] }));
-      dispatch(columnsSelected({ columns: boards[0].columns }));
+    // make needed requests when opening the app initially
+    if (boardsStatus === "idle") {
+      dispatch(fetchBoards());
     }
-  }, [boards]);
+
+    if (!selectedBoard && boards[0]) {
+      dispatch(boardSelected({ board: boards[0] }));
+    }
+
+    if (selectedBoard && columnsStatus === "idle") {
+      dispatch(fetchColumnsByBoardId(selectedBoard.id));
+    }
+
+    if (selectedBoard && tasksStatus === "idle") {
+      dispatch(fetchTasksByBoardId(selectedBoard.id));
+    }
+  }, [boards, columns, selectedBoard]);
 
   return (
     <section className="h-full">
@@ -36,6 +54,7 @@ export default function Board() {
           {columns.map((column, i) =>
             column ? <Column key={`column-${i}`} column={column} /> : <></>
           )}{" "}
+          <AddNewColumnBtn />
         </div>
       ) : (
         <div className="px-12 font-bold text-center">

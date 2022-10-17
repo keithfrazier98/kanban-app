@@ -1,9 +1,10 @@
 import { DotsVertical, Plus } from "tabler-icons-react";
 import BoardMenu from "../features/boards/BoardMenu";
+import HeaderWrapper from "./HeaderWrapper";
 
-export default function MobileNavBar() {
+export default function MobileHeader() {
   return (
-    <div className="sticky top-0 z-10 flex h-16 flex-shrink-0 bg-white dark:bg-primary-gray-700 shadow">
+    <HeaderWrapper className="block lg:hidden">
       <div className="flex flex-1 justify-between pl-4 items-center">
         <BoardMenu />
         <div className="flex items-center">
@@ -21,6 +22,6 @@ export default function MobileNavBar() {
           <DotsVertical className="text-gray-400 mr-2" />
         </div>
       </div>
-    </div>
+    </HeaderWrapper>
   );
 }

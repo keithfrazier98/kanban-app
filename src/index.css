@@ -14,7 +14,7 @@ body {
 
 body,
 #root {
-  @apply h-full bg-primary-gray-200 dark:bg-primary-gray-800;
+  @apply h-full bg-primary-gray-200 dark:bg-primary-gray-700;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

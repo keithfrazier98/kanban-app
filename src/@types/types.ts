@@ -1,52 +1,62 @@
-import { Dispatch, SetStateAction } from "react";
-
+export type datatypes = "boards" | "columns" | "tasks" | "subtasks";
 export interface IBoardSubTask {
-  id: number;
+  id: string;
   title: string;
   isCompleted: boolean;
+  taskId: string;
 }
 
 export interface IBoardTask {
+  id: string;
   title: string;
   description: string;
+  column: IBoardColumn;
   status: string;
-  subtasks: IBoardSubTask[];
+  totalSubtasks: number;
+  completedSubtasks: number;
 }
 
 export interface IBoardColumn {
-  id:number
+  id: string;
   name: string;
-  tasks: IBoardTask[];
+  boardId: string;
 }
 
 export interface IBoardData {
-  id: number;
+  id: string;
   name: string;
-  columns: IBoardColumn[];
 }
+
+export type requestStatus = "idle" | "succeeded" | "loading" | "failed";
 
 export interface IBoardState {
   ids: number[];
   entities: { [id: string]: IBoardData };
   error?: string;
-  status: "idle" | "succeeded" | "loading" | "failed";
+  status: requestStatus;
   selectedBoard: IBoardData | null;
 }
 
 export interface IColumnState {
   ids: string[];
   entities: { [id: string]: IBoardColumn };
+  error?: string;
+  status: requestStatus;
 }
 
 export interface ITasksState {
   ids: number[];
   entities: { [id: string]: IBoardTask };
-  openTask: IBoardTask | null;
+  openTask: string | null;
+  error?: string;
+  status: requestStatus;
 }
 
 export interface ISubtasksState {
   ids: number[];
   entities: { [id: string]: IBoardSubTask };
+  error?: string;
+  status: requestStatus;
 }
 
 // export interface IContext {

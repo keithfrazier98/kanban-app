@@ -7,13 +7,13 @@ import {
   createSelector,
 } from "@reduxjs/toolkit";
 import { IBoardData, IBoardState } from "../../@types/types";
-import { client } from "../../api/mock/browser";
+import { client } from "../../api/mock/client";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store";
 
 const boardsAdapter = createEntityAdapter<IBoardData>({
   selectId: (board) => board.id,
-  sortComparer: (a, b) => a.id - b.id,
+  // sortComparer: (a, b) => a.id - b.id,
 });
 const initialState = boardsAdapter.getInitialState<IBoardState>({
   ids: [],
@@ -23,8 +23,8 @@ const initialState = boardsAdapter.getInitialState<IBoardState>({
 });
 
 export const fetchBoards = createAsyncThunk("boards/fetchBoards", async () => {
-  const response = await client.get("/boards");
-  return response.data.data as IBoardData[];
+  const { data } = await client.get("/boards");
+  return data as IBoardData[];
 });
 
 const boardsSlice = createSlice({
@@ -46,8 +46,7 @@ const boardsSlice = createSlice({
         (state, action: PayloadAction<IBoardData[]>) => {
           console.log(state, action);
           state.status = "succeeded";
-          // Add any fetched posts to the array
-          // Use the `upsertMany` reducer as a mutating update utility
+          // set boards state using the normalizing adapter
           boardsAdapter.setAll(state, action.payload);
         }
       )
@@ -64,6 +63,8 @@ export const { boardSelected } = boardsSlice.actions;
 
 export const getSelectedBoard = ({ boards: { selectedBoard } }: RootState) =>
   selectedBoard;
+
+export const boardRequestStatus = ({ boards: { status } }: RootState) => status;
 
 export const {
   selectAll: selectAllBoards,

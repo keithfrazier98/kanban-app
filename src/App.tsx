@@ -1,19 +1,23 @@
-import { useContext } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useAppSelector } from "./app/hooks";
-import Dashboard from "./components/Dashboard";
-import ViewTask from "./features/tasks/ViewTask";
+import DesktopHeader from "./components/DesktopHeader";
+import MobileHeader from "./components/MobileHeader";
+import SideBar from "./components/SideBar";
+import Board from "./features/boards/Board";
 import { getOpenTask } from "./features/tasks/tasksSlice";
+import ViewTask from "./features/tasks/ViewTask";
 
 function App() {
   const openTask = useAppSelector(getOpenTask);
   return (
     <div className="w-full h-full overflow-hidden">
-      <Router>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-        </Routes>
-      </Router>
+      <SideBar />
+      <div className="flex h-full flex-col md:pl-64 w-full overflow-hidden">
+        <MobileHeader />
+        <DesktopHeader />
+        <main className="overflow-x-scroll overflow-y-hidden no-scrollbar h-full">
+          <Board />
+        </main>
+      </div>
       {openTask ? <ViewTask /> : <></>}
     </div>
   );
