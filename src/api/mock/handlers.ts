@@ -2,7 +2,6 @@ import { DefaultBodyType, ResponseComposition, rest, RestContext } from "msw";
 import mockData from "./data.json";
 import { factory, oneOf, manyOf, primaryKey } from "@mswjs/data";
 import { nanoid } from "@reduxjs/toolkit";
-import { Entity } from "@mswjs/data/lib/glossary";
 import { IBoardColumn, IBoardSubTask, IBoardTask } from "../../@types/types";
 
 const RESPONSE_DELAY = 0;
@@ -145,6 +144,9 @@ function dbActionErrorWrapper(
 
 const idToString = (id: any): string => (typeof id === "string" ? id : "");
 
+/**
+ *  Definitions for CRUD opertations on the boards table.
+ */
 const boardHandlers = [
   //handles GET /boards requests
   rest.get("/kbapi/boards", (req, res, ctx) => {
@@ -156,6 +158,9 @@ const boardHandlers = [
   }),
 ];
 
+/**
+ *  Definitions for CRUD opertations on the columns table.
+ */
 const columnHandlers = [
   //handles GET /columns requests
   rest.get("/kbapi/columns", (req, res, ctx) => {
@@ -210,6 +215,9 @@ const columnHandlers = [
   }),
 ];
 
+/**
+ *  Definitions for CRUD opertations on the tasks table.
+ */
 const taskHandlers = [
   //handles GET /tasks requests
   rest.get("/kbapi/tasks", (req, res, ctx) => {
@@ -240,6 +248,9 @@ const taskHandlers = [
   }),
 ];
 
+/**
+ *  Definitions for CRUD opertations on the subtasks table.
+ */
 const subtaskHandlers = [
   //handles GET /subtask requests
   rest.get("/kbapi/subtasks", (req, res, ctx) => {
@@ -267,21 +278,49 @@ const subtaskHandlers = [
   //handles PATCH /subtasks requests
   rest.patch("/kbapi/subtasks", async (req, res, ctx) => {
     const { id, task, ...rest }: IBoardSubTask = await req.json();
-    return dbActionErrorWrapper(id, res, ctx, () =>
+    return dbActionErrorWrapper(id, res, ctx, () => {
+      const addOrSubtract = rest.isCompleted ? 1 : -1;
+
+      db.task.update({
+        where: { id: { equals: task.id } },
+        data: { completedSubtasks: task.completedSubtasks + addOrSubtract },
+      });
+
       db.subtask.update({
         where: { id: { equals: id } },
         data: { ...rest },
-      })
-    );
+      });
+    });
   }),
 
   //handles DELETE /subtask requests
-  rest.delete("/kbapi/subtasks/:id", async (req, res, ctx) => {
-    let { id: idParam } = req.params;
-    const id = idToString(idParam);
-    return dbActionErrorWrapper(id, res, ctx, () =>
-      db.subtask.delete({ where: { id: { equals: id } } })
-    );
+  rest.delete("/kbapi/subtasks", async (req, res, ctx) => {
+    let subtaskIdParam = req.url.searchParams.get("subtaskId");
+    let taskIdParam = req.url.searchParams.get("taskId");
+
+    const subtaskId = idToString(subtaskIdParam);
+    const taskId = idToString(taskIdParam);
+    return dbActionErrorWrapper(subtaskId, res, ctx, () => {
+      const oldTask = db.task.findFirst({ where: { id: { equals: taskId } } });
+
+      try {
+        if (!oldTask)
+          throw "An old task couldn't be found with supplied taskId.";
+        db.task.update({
+          where: { id: { equals: taskId } },
+          data: { totalSubtasks: oldTask?.totalSubtasks - 1 },
+        });
+      } catch (error) {
+        return send405WithBody(
+          res,
+          ctx,
+          error,
+          "Aborting subtask deletion: failed to update totalSubtasks in parent task."
+        );
+      }
+
+      db.subtask.delete({ where: { id: { equals: subtaskId } } });
+    });
   }),
 ];
 

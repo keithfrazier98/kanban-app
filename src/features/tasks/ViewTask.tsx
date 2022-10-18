@@ -15,8 +15,8 @@ import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
 import { useGetColumnsQuery } from "../columns/columnsSlice";
 import { getSelectedBoard } from "../boards/boardsSlice";
-import { useGetSubtaskQuery } from "../subtasks/subtasksSlice";
-import { IBoardSubTask, IBoardTask } from "../../@types/types";
+import { useGetSubtasksQuery } from "../subtasks/subtasksSlice";
+import { IBoardSubTask, IBoardTask, ITaskQuery } from "../../@types/types";
 import { createSelector } from "@reduxjs/toolkit";
 
 export default function ViewTask() {
@@ -27,8 +27,7 @@ export default function ViewTask() {
     return createSelector(
       (res: any) => res.data,
       (res: any, taskId: string) => taskId,
-      (data: IBoardTask[], taskId: string) =>
-        data.find((task) => task.id === taskId)
+      (data: ITaskQuery, taskId: string) => data.entities[taskId]
     );
   }, []);
 
@@ -43,7 +42,7 @@ export default function ViewTask() {
 
   const dispatch = useAppDispatch();
 
-  const { data: subtasks } = useGetSubtaskQuery(openTask);
+  const { data: subtasks } = useGetSubtasksQuery(openTask);
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
 
   const columnNames = columns?.ids ?? [];

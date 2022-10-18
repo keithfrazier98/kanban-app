@@ -1,19 +1,32 @@
-import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createEntityAdapter,
+  EntityState,
+} from "@reduxjs/toolkit";
 import { IBoardTask, ITaskQuery, ITaskState } from "../../@types/types";
 // import { client } from "../../api/mock/client";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
 
 // Use an adapther for the task data to be used in the extendedTasksApi
-const tasksAdapter = createEntityAdapter<IBoardTask>({
+export const tasksAdapter = createEntityAdapter<IBoardTask>({
   selectId: (task) => task.id,
 });
 
+const intitialTasksQueryState = tasksAdapter.getInitialState<ITaskQuery>({
+  ids: [],
+  entities: {},
+  status: "idle",
+});
+
 // Extend the apiSlice with the task queries and mutations
-const extendedTasksApi = apiSlice.injectEndpoints({
+export const extendedTasksApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getTasks: builder.query({
       query: (boardId: string | undefined) => `/tasks?boardId=${boardId}`,
+      transformResponse: (response: IBoardTask[]) => {
+        return tasksAdapter.setAll(intitialTasksQueryState, response);
+      },
       providesTags: ["Task"],
     }),
     updateTask: builder.mutation({
@@ -47,10 +60,7 @@ const extendedTasksApi = apiSlice.injectEndpoints({
 export const { useGetTasksQuery, useUpdateTaskMutation } = extendedTasksApi;
 
 // Setup slice to hold the openTask state
-
-const initialState = tasksAdapter.getInitialState<ITaskState>({
-  openTask: null,
-});
+const initialState: ITaskState = { openTask: null };
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,

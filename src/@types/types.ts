@@ -55,10 +55,10 @@ export interface ITaskState {
 
 export interface ITaskQuery {
   ids: string[];
-  entities: { [id: string]: IBoardColumn };
+  entities: { [id: string]: IBoardTask };
   error?: string;
   status: requestStatus;
-  
+
 }
 //All subtask data will be held in the apiSlice, no need for ISubtaskState
 export interface ISubtaskQuery {

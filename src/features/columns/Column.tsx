@@ -1,17 +1,10 @@
-import { createSelector, EntityState, Slice } from "@reduxjs/toolkit";
-import { UseQueryHookResult } from "@reduxjs/toolkit/dist/query/react/buildHooks";
+import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
-import {
-  IBoardColumn,
-  IBoardSubTask,
-  IBoardTask,
-  IColumnQuery,
-} from "../../@types/types";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { RootState } from "../../app/store";
+import { IBoardColumn, IBoardTask, ITaskQuery } from "../../@types/types";
+import { useAppSelector } from "../../app/hooks";
 import { getSelectedBoard } from "../boards/boardsSlice";
+import { useGetTasksQuery } from "../tasks/tasksSlice";
 import Task from "../tasks/Task";
-import { selectAllTasks, useGetTasksQuery } from "../tasks/tasksSlice";
 
 export default function Column({ column }: { column: IBoardColumn }) {
   // const tasks = useAppSelector(selectAllTasks);
@@ -19,14 +12,14 @@ export default function Column({ column }: { column: IBoardColumn }) {
   const selectedBoard = useAppSelector(getSelectedBoard);
 
   const selectTasksForColumn = useMemo(() => {
-    const emptyArray: IBoardColumn[] = [];
+    const emptyArray: IBoardTask[] = [];
 
     return createSelector(
       (res: any) => res.data,
       (res: any, columnId: string) => columnId,
-      (data: IBoardTask[], columnId:string) =>
-        data?.filter(
-          (task: IBoardTask) => task.column.id === columnId
+      (data: ITaskQuery | undefined, columnId: string) =>
+        Object.values(data?.entities || {}).filter(
+          (task) => task.column.id === columnId
         ) ?? emptyArray
     );
   }, []);
