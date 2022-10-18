@@ -3,7 +3,7 @@ import DesktopHeader from "./components/DesktopHeader";
 import MobileHeader from "./components/MobileHeader";
 import SideBar from "./components/SideBar";
 import Board from "./features/boards/Board";
-import { getOpenTask } from "./features/tasks/tasksSlice";
+import { getOpenTask } from "./features/tasks/tasksSlice"; 
 import ViewTask from "./features/tasks/ViewTask";
 
 function App() {
