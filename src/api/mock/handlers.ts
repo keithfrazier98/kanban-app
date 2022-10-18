@@ -230,7 +230,7 @@ const taskHandlers = [
 
   //handles PATCH /task requests (update single task)
   rest.patch("/kbapi/tasks", async (req, res, ctx) => {
-    const { id, column, ...rest }: IBoardTask = await req.json();
+    const { id, column, board, ...rest }: IBoardTask = await req.json();
     return dbActionErrorWrapper(id, res, ctx, () =>
       db.task.update({
         where: { id: { equals: id } },
@@ -249,7 +249,7 @@ const subtaskHandlers = [
         ctx.status(405),
         ctx.delay(RESPONSE_DELAY),
         ctx.json({
-          message: "No boardId was found in the query paramaters.",
+          message: "No taskId was found in the query paramaters.",
         })
       );
     }

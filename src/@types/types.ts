@@ -11,6 +11,7 @@ export interface IBoardTask {
   title: string;
   description: string;
   column: IBoardColumn;
+  board: IBoardData;
   status: string;
   totalSubtasks: number;
   completedSubtasks: number;

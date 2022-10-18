@@ -24,11 +24,37 @@ const extendedTasksApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getTasks: builder.query({
       query: (boardId: string | undefined) => `/tasks?boardId=${boardId}`,
+      providesTags:["Task"]
+    }),
+    updateTask: builder.mutation({
+      query: (task: IBoardTask) => ({
+        url: `/tasks`,
+        method: "PATCH",
+        body: task,
+      }),
+      invalidatesTags: ["Task"], // needs task id
+      async onQueryStarted(task, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          extendedTasksApi.util.updateQueryData(
+            "getTasks",
+            task.board.id,
+            (draft) => {
+              tasksAdapter.updateOne(draft, { id: task.id, changes: task });
+            }
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          patchResult.undo();
+        }
+      },
     }),
   }),
 });
 
-export const { useGetTasksQuery } = extendedTasksApi;
+export const { useGetTasksQuery, useUpdateTaskMutation } = extendedTasksApi;
 
 const tasksSlice = createSlice({
   name: "tasks",
@@ -39,18 +65,10 @@ const tasksSlice = createSlice({
       const { taskId } = payload;
       state.openTask = taskId;
     },
-    // updates one task
-    taskUpdated(
-      state,
-      { payload: { task: changes } }: { payload: { task: IBoardTask } }
-    ) {
-      const { id } = changes;
-      tasksAdapter.updateOne(state, { id, changes });
-    },
   },
 });
 
-export const { taskSelected, taskUpdated } = tasksSlice.actions;
+export const { taskSelected } = tasksSlice.actions;
 
 export const { selectAll: selectAllTasks, selectById: selectTaskById } =
   tasksAdapter.getSelectors<RootState>((state) => state.tasks);

@@ -3,14 +3,13 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   getOpenTask,
   taskSelected,
-  selectTaskById,
-  taskUpdated,
   useGetTasksQuery,
+  useUpdateTaskMutation,
 } from "./tasksSlice";
 
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { DotsVertical } from "tabler-icons-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
@@ -33,6 +32,8 @@ export default function ViewTask() {
     );
   }, []);
 
+  const [updateTask] = useUpdateTaskMutation();
+
   const { task } = useGetTasksQuery(selectedBoard?.id, {
     selectFromResult: (result: any) => ({
       ...result,
@@ -44,7 +45,7 @@ export default function ViewTask() {
 
   const { data: subtasks } = useGetSubtaskQuery(openTask);
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
-  
+
   const columnNames = columns?.ids ?? [];
 
   if (!!task) {
@@ -87,8 +88,7 @@ export default function ViewTask() {
             selected={status}
             label={"Current Status"}
             onChange={(status: string) => {
-              console.log(status);
-              dispatch(taskUpdated({ task: { ...task, status } }));
+              updateTask({ ...task, status });
             }}
           />
         </OutsideClickHandler>
