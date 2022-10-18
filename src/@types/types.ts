@@ -32,6 +32,7 @@ export type requestStatus = "idle" | "succeeded" | "loading" | "failed";
 
 export interface IBoardState {
   selectedBoard: IBoardData | null;
+  editBoardModalOpen: boolean;
 }
 
 export interface IBoardQuery {
@@ -58,7 +59,6 @@ export interface ITaskQuery {
   entities: { [id: string]: IBoardTask };
   error?: string;
   status: requestStatus;
-
 }
 //All subtask data will be held in the apiSlice, no need for ISubtaskState
 export interface ISubtaskQuery {

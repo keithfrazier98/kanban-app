@@ -10,9 +10,9 @@ import { useMemo } from "react";
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
-import { getSelectedBoard } from "../boards/boardsEndpoints";
+import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
-import { IBoardSubTask, IBoardTask, ITaskQuery } from "../../@types/types";
+import { IBoardSubTask, ITaskQuery } from "../../@types/types";
 import { createSelector } from "@reduxjs/toolkit";
 
 export default function ViewTask() {
@@ -48,45 +48,41 @@ export default function ViewTask() {
       task;
 
     return (
-      <ModalWBackdrop>
-        <OutsideClickHandler
-          onOutsideClick={() => {
-            dispatch(taskSelected({ taskId: null }));
-          }}
-        >
-          <div className="flex justify-between items-center w-full">
-            <h3 className="font-bold text-lg md:text-base leading-6">
-              {title}
-            </h3>
-            <div>
-              <DotsVertical className="text-gray-400 ml-3" size={28} />
-            </div>
+      <ModalWBackdrop
+        onOutsideClick={() => {
+          dispatch(taskSelected({ taskId: null }));
+        }}
+      >
+        <div className="flex justify-between items-center w-full">
+          <h3 className="font-bold text-lg md:text-base leading-6">{title}</h3>
+          <div>
+            <DotsVertical className="text-gray-400 ml-3" size={28} />
           </div>
-          <p className="text-sm mt-7 text-gray-500 leading-7">{description}</p>
-          <p className="text-xs font-bold mt-6 mb-4 text-gray-500">
-            Subtasks {`(${completedSubtasks} of ${totalSubtasks})`}
-          </p>{" "}
-          <ul className="grid grid-flow-row gap-2">
-            {subtasks ? (
-              Object.values(subtasks.entities).map((subtask, id) => (
-                <Subtask
-                  key={`subtask-${id}`}
-                  subtask={subtask || ({} as IBoardSubTask)}
-                />
-              ))
-            ) : (
-              <></>
-            )}
-          </ul>
-          <DropdownList
-            items={columnNames}
-            selected={status}
-            label={"Current Status"}
-            onChange={(status: string) => {
-              updateTask({ ...task, status });
-            }}
-          />
-        </OutsideClickHandler>
+        </div>
+        <p className="text-sm mt-7 text-gray-500 leading-7">{description}</p>
+        <p className="text-xs font-bold mt-6 mb-4 text-gray-500">
+          Subtasks {`(${completedSubtasks} of ${totalSubtasks})`}
+        </p>
+        <ul className="grid grid-flow-row gap-2">
+          {subtasks ? (
+            Object.values(subtasks.entities).map((subtask, id) => (
+              <Subtask
+                key={`subtask-${id}`}
+                subtask={subtask || ({} as IBoardSubTask)}
+              />
+            ))
+          ) : (
+            <></>
+          )}
+        </ul>
+        <DropdownList
+          items={columnNames}
+          selected={status}
+          label={"Current Status"}
+          onChange={(status: string) => {
+            updateTask({ ...task, status });
+          }}
+        />
       </ModalWBackdrop>
     );
   }

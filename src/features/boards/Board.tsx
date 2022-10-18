@@ -5,11 +5,8 @@ import Column from "../columns/Column";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 import { useGetTasksQuery } from "../tasks/tasksEnpoints";
 // import { fetchTasksByBoardId, tasksReqStatus } from "../tasks/tasksSlice";
-import {
-  boardSelected,
-  getSelectedBoard,
-  useGetBoardsQuery,
-} from "./boardsEndpoints";
+import { useGetBoardsQuery } from "./boardsEndpoints";
+import { boardSelected, getSelectedBoard } from "./boardsSlice";
 
 export default function Board() {
   const { data: boards } = useGetBoardsQuery(undefined);
@@ -23,7 +20,10 @@ export default function Board() {
 
   useEffect(() => {
     if (!selectedBoard && boards) {
-      dispatch(boardSelected({ board: boards.entities[boards.ids[0]] }));
+      const firstBoard = boards.entities[boards.ids[0]];
+      if (firstBoard) {
+        dispatch(boardSelected({ board: firstBoard }));
+      }
     }
   }, [boards, columns, selectedBoard]);
 

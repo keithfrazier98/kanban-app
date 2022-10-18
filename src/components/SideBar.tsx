@@ -3,10 +3,8 @@ import { Eye, EyeCheck, EyeglassOff, EyeOff } from "tabler-icons-react";
 import { useAppSelector } from "../app/hooks";
 import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
 import BoardListItem from "../features/boards/BoardListItem";
-import {
-  getSelectedBoard,
-  selectAllBoards,
-} from "../features/boards/boardsEndpoints";
+import { getSelectedBoard } from "../features/boards/boardsSlice";
+import { selectAllBoards } from "../features/boards/boardsEndpoints";
 import NewBoardBtn from "../features/boards/NewBoardBtn";
 import ToggleTheme from "./ToggleTheme";
 /**

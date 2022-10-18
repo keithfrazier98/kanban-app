@@ -1,8 +1,7 @@
 import { LayoutBoardSplit } from "tabler-icons-react";
 import { IBoardData } from "../../@types/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-
-import { boardSelected, getSelectedBoard } from "./boardsEndpoints";
+import { boardSelected, getSelectedBoard } from "./boardsSlice";
 
 export default function BoardListItem({
   item,

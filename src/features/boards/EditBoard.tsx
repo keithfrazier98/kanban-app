@@ -1,9 +1,10 @@
 import { useState } from "react";
+import OutsideClickHandler from "react-outside-click-handler";
 import { X } from "tabler-icons-react";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
-import { getSelectedBoard } from "./boardsEndpoints";
+import { editBoardModalOpened, getSelectedBoard } from "./boardsSlice";
 
 function ColumnInput({ name }: { name: string }) {
   const [input, setInput] = useState<string>(name);
@@ -28,11 +29,16 @@ function ColumnInput({ name }: { name: string }) {
 
 export default function EditBoard() {
   const selectedBoard = useAppSelector(getSelectedBoard);
+  const dispatch = useAppDispatch();
   const [boardName, setBoardName] = useState<string>(selectedBoard?.name || "");
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
 
   return (
-    <ModalWBackdrop>
+    <ModalWBackdrop
+      onOutsideClick={() => {
+        dispatch(editBoardModalOpened({ open: false }));
+      }}
+    >
       <h2 className="mb-6">Edit Board</h2>
       <label className="mb-2">Board Name</label>
       <input
@@ -43,6 +49,8 @@ export default function EditBoard() {
           setBoardName(e.target.value);
         }}
       />
+
+      {/**Wrap this in a fragment to avoid TS error */}
       <>
         {columns?.entities ? (
           Object.values(columns.entities)?.map((column, index) => (

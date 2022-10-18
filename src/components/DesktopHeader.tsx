@@ -1,6 +1,6 @@
 import { DotsVertical } from "tabler-icons-react";
 import { useAppSelector } from "../app/hooks";
-import { getSelectedBoard } from "../features/boards/boardsEndpoints";
+import { getSelectedBoard } from "../features/boards/boardsSlice";
 import HeaderWrapper from "./HeaderWrapper";
 
 export default function DesktopHeader() {

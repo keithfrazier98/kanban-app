@@ -54,22 +54,4 @@ export const {
 );
 
 
-// Setup boards slice to hold the current board state
-const initialState: IBoardState = { selectedBoard: null };
-const boardsSlice = createSlice({
-  name: "boards",
-  initialState,
-  reducers: {
-    boardSelected(state, action) {
-      const { board } = action.payload;
-      state.selectedBoard = board;
-    },
-  },
-});
 
-export default boardsSlice.reducer;
-
-export const { boardSelected } = boardsSlice.actions;
-
-export const getSelectedBoard = ({ boards: { selectedBoard } }: RootState) =>
-  selectedBoard;

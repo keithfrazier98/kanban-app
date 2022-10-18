@@ -2,7 +2,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 import { IBoardColumn, IBoardTask, ITaskQuery } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
-import { getSelectedBoard } from "../boards/boardsEndpoints";
+import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetTasksQuery } from "../tasks/tasksEnpoints";
 import Task from "../tasks/Task";
 
