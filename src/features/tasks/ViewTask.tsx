@@ -5,38 +5,47 @@ import {
   taskSelected,
   selectTaskById,
   taskUpdated,
+  useGetTasksQuery,
 } from "./tasksSlice";
 
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { DotsVertical } from "tabler-icons-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
-import {
-  fetchSubtasksByTaskId,
-  selectAllSubtasks,
-  setAllSubtasks,
-} from "../subtasks/subtasksSlice";
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
 import { useGetColumnsQuery } from "../columns/columnsSlice";
 import { getSelectedBoard } from "../boards/boardsSlice";
+import { useGetSubtaskQuery } from "../subtasks/subtasksSlice";
+import { IBoardSubTask, IBoardTask } from "../../@types/types";
+import { createSelector } from "@reduxjs/toolkit";
 
 export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
-  const task = useAppSelector((state) => selectTaskById(state, openTask || ""));
+  const selectedBoard = useAppSelector(getSelectedBoard);
+
+  const selectTaskById = useMemo(() => {
+    return createSelector(
+      (res: any) => res.data,
+      (res: any, taskId: string) => taskId,
+      (data: IBoardTask[], taskId: string) =>
+        data.find((task) => task.id === openTask)
+    );
+  }, []);
+
+  const { task } = useGetTasksQuery(selectedBoard?.id, {
+    selectFromResult: (result: any) => ({
+      ...result,
+      task: selectTaskById(result, openTask ?? ""),
+    }),
+  });
 
   const dispatch = useAppDispatch();
 
-  const subtasks = useAppSelector(selectAllSubtasks);
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const { data: subtasks } = useGetSubtaskQuery(openTask);
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
+  
   const columnNames = columns?.ids ?? [];
-
-  useEffect(() => {
-    if (!!openTask && !!!subtasks.length) {
-      dispatch(fetchSubtasksByTaskId(openTask));
-    }
-  }, [openTask]);
 
   if (!!task) {
     const { description, status, title, completedSubtasks, totalSubtasks } =
@@ -47,7 +56,6 @@ export default function ViewTask() {
         <OutsideClickHandler
           onOutsideClick={() => {
             dispatch(taskSelected({ taskId: null }));
-            dispatch(setAllSubtasks([]));
           }}
         >
           <div className="flex justify-between items-center w-full">
@@ -63,9 +71,16 @@ export default function ViewTask() {
             Subtasks {`(${completedSubtasks} of ${totalSubtasks})`}
           </p>{" "}
           <ul className="grid grid-flow-row gap-2">
-            {subtasks.map((subtask, id) => (
-              <Subtask key={`subtask-${id}`} subtask={subtask} />
-            ))}
+            {subtasks ? (
+              Object.values(subtasks.entities).map((subtask, id) => (
+                <Subtask
+                  key={`subtask-${id}`}
+                  subtask={subtask || ({} as IBoardSubTask)}
+                />
+              ))
+            ) : (
+              <></>
+            )}
           </ul>
           <DropdownList
             items={columnNames}

@@ -1,20 +1,8 @@
-import {
-  createSlice,
-  createEntityAdapter,
-  createAsyncThunk,
-  PayloadAction,
-} from "@reduxjs/toolkit";
-import { IBoardSubTask, ISubtasksState } from "../../@types/types";
-import { client } from "../../api/mock/client";
-import { RootState } from "../../app/store";
+import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
 
-export const fetchSubtasksByTaskId = createAsyncThunk(
-  "subtasks/fetchSubtasksByTaskId",
-  async (taskId: string) => {
-    const res = await client.get(`/subtasks?taskId=${taskId}`);
-    return res.data;
-  }
-);
+import { IBoardSubTask, ISubtasksState } from "../../@types/types";
+import { RootState } from "../../app/store";
+import { apiSlice } from "../api/apiSlice";
 
 const subtasksAdapter = createEntityAdapter<IBoardSubTask>({
   selectId: (subtask) => subtask.id,
@@ -26,44 +14,55 @@ const initialState = subtasksAdapter.getInitialState<ISubtasksState>({
   status: "idle",
 });
 
-const subtasksSlice = createSlice({
-  name: "subtask",
-  initialState,
-  reducers: {
-    subtaskUpdated(state, action: { payload: { subtask: IBoardSubTask } }) {
-      const { subtask: changes } = action.payload;
-      subtasksAdapter.updateOne(state, { id: changes.id, changes });
-    },
-    setAllSubtasks(state, action) {
-      subtasksAdapter.setAll(state, action.payload);
-    },
-  },
-  extraReducers(builder) {
-    builder
-      .addCase(fetchSubtasksByTaskId.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(
-        fetchSubtasksByTaskId.fulfilled,
-        (state, action: PayloadAction<IBoardSubTask[]>) => {
-          state.status = "succeeded";
-          // set boards state using the normalizing adapter
-          subtasksAdapter.setAll(state, action.payload);
-        }
-      )
-      .addCase(fetchSubtasksByTaskId.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
-  },
+const extendedSubtaskApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getSubtask: builder.query({
+      query: (taskId: string | null) => `/subtasks?taskId=${taskId}`,
+      transformResponse: (response: IBoardSubTask[]) => {
+        return subtasksAdapter.setAll(initialState, response);
+      },
+      // TODO: add id specific tags
+      // ...result.map(({ id }) => ({ type: 'Post', id })),
+      providesTags: ["Subtask"],
+    }),
+    updateSubtask: builder.mutation({
+      query: (subtask: IBoardSubTask) => ({
+        url: `/subtasks`,
+        method: "PATCH",
+        body: subtask,
+      }),
+      invalidatesTags: ["Subtask"],
+      onQueryStarted(subtask, { dispatch }) {
+        dispatch(
+          extendedSubtaskApi.util.updateQueryData(
+            "getSubtask",
+            subtask.task.id,
+            (draft) => {
+              subtasksAdapter.updateOne(draft, {
+                id: subtask.task.id,
+                changes: subtask,
+              });
+            }
+          )
+        );
+      },
+    }),
+  }),
 });
 
-export const { setAllSubtasks, subtaskUpdated } = subtasksSlice.actions;
+export const { useGetSubtaskQuery, useUpdateSubtaskMutation } =
+  extendedSubtaskApi;
 
-export const {
-  selectAll: selectAllSubtasks,
-  selectById: selectSubtaskById,
-  selectIds: selectSubtaskIds,
-} = subtasksAdapter.getSelectors<RootState>((state) => state.subtasks);
-
-export default subtasksSlice.reducer;
+// const subtasksSlice = createSlice({
+//   name: "subtask",
+//   initialState,
+//   reducers: {
+//     subtaskUpdated(state, action: { payload: { subtask: IBoardSubTask } }) {
+//       const { subtask: changes } = action.payload;
+//       subtasksAdapter.updateOne(state, { id: changes.id, changes });
+//     },
+//     setAllSubtasks(state, action) {
+//       subtasksAdapter.setAll(state, action.payload);
+//     },
+//   },
+// });

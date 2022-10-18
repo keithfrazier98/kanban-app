@@ -1,9 +1,10 @@
 import { IBoardSubTask } from "../../@types/types";
 import { useAppDispatch } from "../../app/hooks";
-import { subtaskUpdated } from "./subtasksSlice";
+import { useUpdateSubtaskMutation } from "./subtasksSlice";
 
 export default function Subtask({ subtask }: { subtask: IBoardSubTask }) {
-  const dispatch = useAppDispatch();
+  const [updateSubtask] = useUpdateSubtaskMutation();
+
   return (
     <li
       key={`subtask-${subtask.id}`}
@@ -16,14 +17,7 @@ export default function Subtask({ subtask }: { subtask: IBoardSubTask }) {
           checked={subtask.isCompleted}
           className="mr-4"
           onChange={() => {
-            dispatch(
-              subtaskUpdated({
-                subtask: {
-                  ...subtask,
-                  isCompleted: !subtask.isCompleted,
-                },
-              })
-            );
+            updateSubtask({ ...subtask, isCompleted: !subtask.isCompleted });
           }}
         />
       </label>

@@ -3,7 +3,7 @@ import mockData from "./data.json";
 import { factory, oneOf, manyOf, primaryKey } from "@mswjs/data";
 import { nanoid } from "@reduxjs/toolkit";
 import { Entity } from "@mswjs/data/lib/glossary";
-import { IBoardColumn } from "../../@types/types";
+import { IBoardColumn, IBoardSubTask, IBoardTask } from "../../@types/types";
 
 const RESPONSE_DELAY = 0;
 
@@ -104,9 +104,48 @@ function paramMissing(
   );
 }
 
-// MSW REST API handlers
+/**
+ * Wraps the supplied adAction in a try/catch and responds with a 405
+ * if an error is caught or the id is falsy.
+ * @param id
+ * @param res
+ * @param ctx
+ * @param dbAction
+ * @returns
+ */
+function dbActionErrorWrapper(
+  id: string,
+  res: ResponseComposition<DefaultBodyType>,
+  ctx: RestContext,
+  dbAction: () => void
+) {
+  if (!id) {
+    return send405WithBody(
+      res,
+      ctx,
+      {},
+      `Depending on your request, no ID was found in either 
+      the search parameters, request parameters, or the 
+      request body.`
+    );
+  }
 
-export const handlers = [
+  try {
+    dbAction();
+    return res(ctx.status(204), ctx.delay(RESPONSE_DELAY));
+  } catch (error) {
+    return send405WithBody(
+      res,
+      ctx,
+      error,
+      "Failed to perform operation in the DB."
+    );
+  }
+}
+
+const idToString = (id: any): string => (typeof id === "string" ? id : "");
+
+const boardHandlers = [
   //handles GET /boards requests
   rest.get("/kbapi/boards", (req, res, ctx) => {
     return res(
@@ -115,7 +154,9 @@ export const handlers = [
       ctx.json(db.board.getAll())
     );
   }),
+];
 
+const columnHandlers = [
   //handles GET /columns requests
   rest.get("/kbapi/columns", (req, res, ctx) => {
     const boardId = req.url.searchParams.get("boardId");
@@ -153,27 +194,23 @@ export const handlers = [
 
   // handles DELETE /columns (deletes col by id)
   rest.delete("/kbapi/columns/:id", async (req, res, ctx) => {
-    const { id } = req.params;
-
-    if (!id) {
-      return paramMissing(res, ctx, "ID", "url");
-    } else if (typeof id === "string") {
-      try {
-        db.column.delete({ where: { id: { equals: id } } });
-        return res(ctx.status(204), ctx.delay(RESPONSE_DELAY));
-      } catch (error) {
-        return send405WithBody(
-          res,
-          ctx,
-          error,
-          "Failed to delete entity from the DB. Check the ID."
-        );
-      }
-    } else {
-      return send405WithBody(res, ctx, null, "Invalid ID in URL parameters");
-    }
+    const { id: idParam } = req.params;
+    const id = idToString(idParam);
+    return dbActionErrorWrapper(id, res, ctx, () =>
+      db.column.delete({ where: { id: { equals: id } } })
+    );
   }),
 
+  // handles PATCH /columns (updates single column)
+  rest.patch("/kbapi/columns", async (req, res, ctx) => {
+    const { id, name }: IBoardColumn = await req.json();
+    return dbActionErrorWrapper(id, res, ctx, () =>
+      db.column.update({ where: { id: { equals: id } }, data: { name } })
+    );
+  }),
+];
+
+const taskHandlers = [
   //handles GET /tasks requests
   rest.get("/kbapi/tasks", (req, res, ctx) => {
     const boardId = req.url.searchParams.get("boardId");
@@ -191,6 +228,19 @@ export const handlers = [
     );
   }),
 
+  //handles PATCH /task requests (update single task)
+  rest.patch("/kbapi/tasks", async (req, res, ctx) => {
+    const { id, column, ...rest }: IBoardTask = await req.json();
+    return dbActionErrorWrapper(id, res, ctx, () =>
+      db.task.update({
+        where: { id: { equals: id } },
+        data: { ...rest },
+      })
+    );
+  }),
+];
+
+const subtaskHandlers = [
   //handles GET /subtask requests
   rest.get("/kbapi/subtasks", (req, res, ctx) => {
     const taskId = req.url.searchParams.get("taskId");
@@ -213,4 +263,32 @@ export const handlers = [
       )
     );
   }),
+
+  //handles PATCH /subtasks requests
+  rest.patch("/kbapi/subtasks", async (req, res, ctx) => {
+    const { id, task, ...rest }: IBoardSubTask = await req.json();
+    return dbActionErrorWrapper(id, res, ctx, () =>
+      db.subtask.update({
+        where: { id: { equals: id } },
+        data: { ...rest },
+      })
+    );
+  }),
+
+  //handles DELETE /subtask requests
+  rest.delete("/kbapi/subtasks/:id", async (req, res, ctx) => {
+    let { id: idParam } = req.params;
+    const id = idToString(idParam);
+    return dbActionErrorWrapper(id, res, ctx, () =>
+      db.subtask.delete({ where: { id: { equals: id } } })
+    );
+  }),
+];
+
+// MSW REST API handlers
+export const handlers = [
+  ...boardHandlers,
+  ...columnHandlers,
+  ...taskHandlers,
+  ...subtaskHandlers,
 ];

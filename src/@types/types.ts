@@ -3,7 +3,7 @@ export interface IBoardSubTask {
   id: string;
   title: string;
   isCompleted: boolean;
-  taskId: string;
+  task: IBoardTask;
 }
 
 export interface IBoardTask {
