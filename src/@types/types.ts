@@ -31,42 +31,39 @@ export interface IBoardData {
 export type requestStatus = "idle" | "succeeded" | "loading" | "failed";
 
 export interface IBoardState {
+  selectedBoard: IBoardData | null;
+}
+
+export interface IBoardQuery {
   ids: number[];
   entities: { [id: string]: IBoardData };
   error?: string;
   status: requestStatus;
-  selectedBoard: IBoardData | null;
 }
 
-export interface IColumnState {
+//All column data will be held in the apiSlice, no need for IColumnState
+export interface IColumnQuery {
   ids: string[];
   entities: { [id: string]: IBoardColumn };
   error?: string;
   status: requestStatus;
 }
 
-export interface ITasksState {
-  ids: number[];
-  entities: { [id: string]: IBoardTask };
+export interface ITaskState {
   openTask: string | null;
-  error?: string;
-  status: requestStatus;
 }
 
-export interface ISubtasksState {
+export interface ITaskQuery {
+  ids: string[];
+  entities: { [id: string]: IBoardColumn };
+  error?: string;
+  status: requestStatus;
+  
+}
+//All subtask data will be held in the apiSlice, no need for ISubtaskState
+export interface ISubtaskQuery {
   ids: number[];
   entities: { [id: string]: IBoardSubTask };
   error?: string;
   status: requestStatus;
 }
-
-// export interface IContext {
-//   allBoards?: IBoardData[];
-//   setAllBoards: Dispatch<SetStateAction<IBoardData[] | undefined>>;
-//   currentBoard?: IBoardData;
-//   setCurrentBoard: Dispatch<SetStateAction<IBoardData | undefined>>;
-//   toggleTheme: (theme?: "dark" | "light") => void;
-//   theme: "dark" | "light";
-//   openTask: IBoardTask | null;
-//   setOpenTask: Dispatch<SetStateAction<IBoardTask | null>>;
-// }

@@ -28,7 +28,7 @@ export default function ViewTask() {
       (res: any) => res.data,
       (res: any, taskId: string) => taskId,
       (data: IBoardTask[], taskId: string) =>
-        data.find((task) => task.id === openTask)
+        data.find((task) => task.id === taskId)
     );
   }, []);
 

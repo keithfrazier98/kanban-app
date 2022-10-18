@@ -3,34 +3,59 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { IBoardData, IBoardState } from "../../@types/types";
+import { IBoardData, IBoardQuery, IBoardState } from "../../@types/types";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
 
+// use an entity adapter for the extendedBoardApi (normalizes query response)
 const boardsAdapter = createEntityAdapter<IBoardData>({
   selectId: (board) => board.id,
   // sortComparer: (a, b) => a.id - b.id,
 });
-const initialState = boardsAdapter.getInitialState<IBoardState>({
+
+// get the initial query state from the adapter
+const boardQueryInitialState = boardsAdapter.getInitialState<IBoardQuery>({
   ids: [],
   entities: {},
   status: "idle",
-  selectedBoard: null,
 });
 
-export const extendedBoardApiSlice = apiSlice.injectEndpoints({
+// extend the apiSlice with the board queries
+export const extendedBoardAPi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getBoards: builder.query({
       query: () => "/boards",
       transformResponse: (responseData: IBoardData[]) => {
-        return boardsAdapter.setAll(initialState, responseData);
+        return boardsAdapter.setAll(boardQueryInitialState, responseData);
       },
     }),
   }),
 });
 
-export const { useGetBoardsQuery } = extendedBoardApiSlice;
+export const { useGetBoardsQuery } = extendedBoardAPi;
 
+// get the response for the getBoards query
+export const selectBoardsResult =
+  extendedBoardAPi.endpoints.getBoards.select(undefined);
+
+// create a memoized selector for the boards query
+const selectAllBoardsResult = createSelector(
+  selectBoardsResult,
+  (boardResult) => boardResult.data
+);
+
+// use the boardsAdapter to access getSeletors, normalize the getBoards result
+export const {
+  selectAll: selectAllBoards,
+  selectById: selectBoardById,
+  selectIds: selectBoardIds,
+} = boardsAdapter.getSelectors<RootState>(
+  (state) => selectAllBoardsResult(state) ?? boardQueryInitialState
+);
+
+
+// Setup boards slice to hold the current board state
+const initialState: IBoardState = { selectedBoard: null };
 const boardsSlice = createSlice({
   name: "boards",
   initialState,
@@ -48,19 +73,3 @@ export const { boardSelected } = boardsSlice.actions;
 
 export const getSelectedBoard = ({ boards: { selectedBoard } }: RootState) =>
   selectedBoard;
-
-export const selectBoardsResult =
-  extendedBoardApiSlice.endpoints.getBoards.select(undefined);
-
-const selectUsersData = createSelector(
-  selectBoardsResult,
-  (boardResult) => boardResult.data
-);
-
-export const {
-  selectAll: selectAllBoards,
-  selectById: selectBoardById,
-  selectIds: selectBoardIds,
-} = boardsAdapter.getSelectors<RootState>(
-  (state) => selectUsersData(state) ?? initialState
-);

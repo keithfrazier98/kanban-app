@@ -1,12 +1,12 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import { IBoardColumn, IColumnState } from "../../@types/types";
+import { IBoardColumn, IColumnQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
 const columnsAdapter = createEntityAdapter<IBoardColumn>({
   selectId: (column) => column.name,
 });
 
-const initialState = columnsAdapter.getInitialState<IColumnState>({
+const initialColumnQueryState = columnsAdapter.getInitialState<IColumnQuery>({
   ids: [],
   entities: {},
   status: "idle",
@@ -17,7 +17,7 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
     getColumns: builder.query({
       query: (boardId: string | undefined) => `/columns?boardId=${boardId}`,
       transformResponse: (response: IBoardColumn[]) => {
-        return columnsAdapter.setAll(initialState, response);
+        return columnsAdapter.setAll(initialColumnQueryState, response);
       },
     }),
     deleteColumn: builder.mutation({

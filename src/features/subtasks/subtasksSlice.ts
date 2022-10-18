@@ -1,6 +1,6 @@
 import { createSlice, createEntityAdapter } from "@reduxjs/toolkit";
 
-import { IBoardSubTask, ISubtasksState } from "../../@types/types";
+import { IBoardSubTask, ISubtaskQuery } from "../../@types/types";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
 
@@ -8,7 +8,7 @@ const subtasksAdapter = createEntityAdapter<IBoardSubTask>({
   selectId: (subtask) => subtask.id,
 });
 
-const initialState = subtasksAdapter.getInitialState<ISubtasksState>({
+const initialState = subtasksAdapter.getInitialState<ISubtaskQuery>({
   ids: [],
   entities: {},
   status: "idle",
@@ -53,16 +53,3 @@ const extendedSubtaskApi = apiSlice.injectEndpoints({
 export const { useGetSubtaskQuery, useUpdateSubtaskMutation } =
   extendedSubtaskApi;
 
-// const subtasksSlice = createSlice({
-//   name: "subtask",
-//   initialState,
-//   reducers: {
-//     subtaskUpdated(state, action: { payload: { subtask: IBoardSubTask } }) {
-//       const { subtask: changes } = action.payload;
-//       subtasksAdapter.updateOne(state, { id: changes.id, changes });
-//     },
-//     setAllSubtasks(state, action) {
-//       subtasksAdapter.setAll(state, action.payload);
-//     },
-//   },
-// });

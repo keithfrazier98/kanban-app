@@ -5,7 +5,7 @@ import {
   IBoardColumn,
   IBoardSubTask,
   IBoardTask,
-  IColumnState,
+  IColumnQuery,
 } from "../../@types/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store";
