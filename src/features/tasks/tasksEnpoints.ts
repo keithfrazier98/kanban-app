@@ -46,7 +46,6 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
             }
           )
         );
-
         try {
           await queryFulfilled;
         } catch (error) {

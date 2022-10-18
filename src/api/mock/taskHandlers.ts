@@ -27,12 +27,28 @@ export const taskHandlers = [
 
   //handles PATCH /task requests (update single task)
   rest.patch("/kbapi/tasks", async (req, res, ctx) => {
-    const { id, column, board, ...rest }: IBoardTask = await req.json();
-    return dbActionErrorWrapper(id, res, ctx, () =>
+    const {
+      id,
+      column: oldColumn,
+      board,
+      ...rest
+    }: IBoardTask = await req.json();
+    return dbActionErrorWrapper(id, res, ctx, () => {
+      const task = db.task.findFirst({ where: { id: { equals: id } } });
+
+      let newColumn = task?.column;
+      if (rest.status !== oldColumn.name) {
+        const entity = db.column.findFirst({
+          where: { name: { equals: rest.status } },
+        });
+
+        if (entity) newColumn = entity;
+      }
+
       db.task.update({
         where: { id: { equals: id } },
-        data: { ...rest },
-      })
-    );
+        data: { ...rest, column: newColumn },
+      });
+    });
   }),
 ];
