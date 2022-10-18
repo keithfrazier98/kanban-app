@@ -3,7 +3,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { ChevronDown } from "tabler-icons-react";
 import { ReactComponent as MobileLogo } from "../../assets/logo-mobile.svg";
 import { useAppSelector } from "../../app/hooks";
-import { getSelectedBoard, selectAllBoards } from "./boardsSlice";
+import { getSelectedBoard, selectAllBoards } from "./boardsEndpoints";
 
 import ToggleTheme from "../../components/ToggleTheme";
 import BoardListItem from "./BoardListItem";

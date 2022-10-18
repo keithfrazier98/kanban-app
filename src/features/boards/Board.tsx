@@ -2,14 +2,14 @@ import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import AddNewColumnBtn from "../columns/AddNewColumnBtn";
 import Column from "../columns/Column";
-import { useGetColumnsQuery } from "../columns/columnsSlice";
-import { useGetTasksQuery } from "../tasks/tasksSlice";
+import { useGetColumnsQuery } from "../columns/columnsEndpoints";
+import { useGetTasksQuery } from "../tasks/tasksEnpoints";
 // import { fetchTasksByBoardId, tasksReqStatus } from "../tasks/tasksSlice";
 import {
   boardSelected,
   getSelectedBoard,
   useGetBoardsQuery,
-} from "./boardsSlice";
+} from "./boardsEndpoints";
 
 export default function Board() {
   const { data: boards } = useGetBoardsQuery(undefined);

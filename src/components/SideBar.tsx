@@ -6,7 +6,7 @@ import BoardListItem from "../features/boards/BoardListItem";
 import {
   getSelectedBoard,
   selectAllBoards,
-} from "../features/boards/boardsSlice";
+} from "../features/boards/boardsEndpoints";
 import NewBoardBtn from "../features/boards/NewBoardBtn";
 import ToggleTheme from "./ToggleTheme";
 /**

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { X } from "tabler-icons-react";
 import { useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
-import { useGetColumnsQuery } from "../columns/columnsSlice";
-import { getSelectedBoard } from "./boardsSlice";
+import { useGetColumnsQuery } from "../columns/columnsEndpoints";
+import { getSelectedBoard } from "./boardsEndpoints";
 
 function ColumnInput({ name }: { name: string }) {
   const [input, setInput] = useState<string>(name);

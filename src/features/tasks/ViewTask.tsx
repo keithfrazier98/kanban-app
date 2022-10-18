@@ -1,11 +1,7 @@
 import OutsideClickHandler from "react-outside-click-handler";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  getOpenTask,
-  taskSelected,
-  useGetTasksQuery,
-  useUpdateTaskMutation,
-} from "./tasksSlice";
+import { useGetTasksQuery, useUpdateTaskMutation } from "./tasksEnpoints";
+import { getOpenTask, taskSelected } from "./tasksSlice";
 
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { DotsVertical } from "tabler-icons-react";
@@ -13,9 +9,9 @@ import { useMemo } from "react";
 
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
-import { useGetColumnsQuery } from "../columns/columnsSlice";
-import { getSelectedBoard } from "../boards/boardsSlice";
-import { useGetSubtasksQuery } from "../subtasks/subtasksSlice";
+import { useGetColumnsQuery } from "../columns/columnsEndpoints";
+import { getSelectedBoard } from "../boards/boardsEndpoints";
+import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
 import { IBoardSubTask, IBoardTask, ITaskQuery } from "../../@types/types";
 import { createSelector } from "@reduxjs/toolkit";
 

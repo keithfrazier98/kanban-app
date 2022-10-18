@@ -2,7 +2,7 @@ import { createEntityAdapter } from "@reduxjs/toolkit";
 
 import { IBoardSubTask, ISubtaskQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
-import { extendedTasksApi, tasksAdapter } from "../tasks/tasksSlice";
+import { extendedTasksApi, tasksAdapter } from "../tasks/tasksEnpoints";
 
 const subtasksAdapter = createEntityAdapter<IBoardSubTask>({
   selectId: (subtask) => subtask.id,

@@ -1,5 +1,5 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
-import boardsSlice from "../features/boards/boardsSlice";
+import boardsSlice from "../features/boards/boardsEndpoints";
 import tasksSlice from "../features/tasks/tasksSlice";
 import { apiSlice } from "../features/api/apiSlice";
 
