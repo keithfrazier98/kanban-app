@@ -1,15 +1,11 @@
 import {
-  createSlice,
   createEntityAdapter,
-  createAsyncThunk,
-  SerializedError,
-  PayloadAction,
   createSelector,
+  createSlice,
 } from "@reduxjs/toolkit";
 import { IBoardData, IBoardState } from "../../@types/types";
-import { client } from "../../api/mock/client";
-import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store";
+import { apiSlice } from "../api/apiSlice";
 
 const boardsAdapter = createEntityAdapter<IBoardData>({
   selectId: (board) => board.id,
@@ -22,10 +18,18 @@ const initialState = boardsAdapter.getInitialState<IBoardState>({
   selectedBoard: null,
 });
 
-export const fetchBoards = createAsyncThunk("boards/fetchBoards", async () => {
-  const { data } = await client.get("/boards");
-  return data as IBoardData[];
+export const extendedBoardApiSlice = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getBoards: builder.query({
+      query: () => "/boards",
+      transformResponse: (responseData: IBoardData[]) => {
+        return boardsAdapter.setAll(initialState, responseData);
+      },
+    }),
+  }),
 });
+
+export const { useGetBoardsQuery } = extendedBoardApiSlice;
 
 const boardsSlice = createSlice({
   name: "boards",
@@ -36,25 +40,6 @@ const boardsSlice = createSlice({
       state.selectedBoard = board;
     },
   },
-  extraReducers(builder) {
-    builder
-      .addCase(fetchBoards.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(
-        fetchBoards.fulfilled,
-        (state, action: PayloadAction<IBoardData[]>) => {
-          console.log(state, action);
-          state.status = "succeeded";
-          // set boards state using the normalizing adapter
-          boardsAdapter.setAll(state, action.payload);
-        }
-      )
-      .addCase(fetchBoards.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
-  },
 });
 
 export default boardsSlice.reducer;
@@ -64,10 +49,18 @@ export const { boardSelected } = boardsSlice.actions;
 export const getSelectedBoard = ({ boards: { selectedBoard } }: RootState) =>
   selectedBoard;
 
-export const boardRequestStatus = ({ boards: { status } }: RootState) => status;
+export const selectBoardsResult =
+  extendedBoardApiSlice.endpoints.getBoards.select(undefined);
+
+const selectUsersData = createSelector(
+  selectBoardsResult,
+  (boardResult) => boardResult.data
+);
 
 export const {
   selectAll: selectAllBoards,
   selectById: selectBoardById,
   selectIds: selectBoardIds,
-} = boardsAdapter.getSelectors<RootState>((state) => state.boards);
+} = boardsAdapter.getSelectors<RootState>(
+  (state) => selectUsersData(state) ?? initialState
+);

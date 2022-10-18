@@ -1,11 +1,8 @@
 import { Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import {
-  ChevronDown,
-
-} from "tabler-icons-react";
+import { ChevronDown } from "tabler-icons-react";
 import { ReactComponent as MobileLogo } from "../../assets/logo-mobile.svg";
-import {  useAppSelector } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import {
   boardSelected,
   getSelectedBoard,
@@ -17,8 +14,6 @@ import BoardListItem from "./BoardListItem";
 import NewBoardBtn from "./NewBoardBtn";
 
 export default function BoardMenu() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const boards = useAppSelector(selectAllBoards);
   const board = useAppSelector(getSelectedBoard);
 

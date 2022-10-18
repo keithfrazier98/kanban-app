@@ -2,47 +2,28 @@ import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import AddNewColumnBtn from "../columns/AddNewColumnBtn";
 import Column from "../columns/Column";
+import { useGetColumnsQuery } from "../columns/columnsSlice";
+import { useGetTasksQuery } from "../tasks/tasksSlice";
+// import { fetchTasksByBoardId, tasksReqStatus } from "../tasks/tasksSlice";
 import {
-  columnsReqStatus,
-  columnsSelected,
-  fetchColumnsByBoardId,
-  selectAllColumns,
-} from "../columns/columnsSlice";
-import { fetchTasksByBoardId, tasksReqStatus } from "../tasks/tasksSlice";
-import {
-  boardRequestStatus,
   boardSelected,
-  fetchBoards,
   getSelectedBoard,
-  selectAllBoards,
+  useGetBoardsQuery,
 } from "./boardsSlice";
 
 export default function Board() {
-  const boards = useAppSelector(selectAllBoards);
-  const boardsStatus = useAppSelector(boardRequestStatus);
-  const columnsStatus = useAppSelector(columnsReqStatus);
-  const columns = useAppSelector(selectAllColumns);
-  const tasksStatus = useAppSelector(tasksReqStatus);
+  const { data: boards } = useGetBoardsQuery(undefined);
   const selectedBoard = useAppSelector(getSelectedBoard);
+
+  const { data: columns } = useGetColumnsQuery(selectedBoard?.id, {
+    skip: !selectedBoard,
+  });
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // make needed requests when opening the app initially
-    if (boardsStatus === "idle") {
-      dispatch(fetchBoards());
-    }
-
-    if (!selectedBoard && boards[0]) {
-      dispatch(boardSelected({ board: boards[0] }));
-    }
-
-    if (selectedBoard && columnsStatus === "idle") {
-      dispatch(fetchColumnsByBoardId(selectedBoard.id));
-    }
-
-    if (selectedBoard && tasksStatus === "idle") {
-      dispatch(fetchTasksByBoardId(selectedBoard.id));
+    if (!selectedBoard && boards) {
+      dispatch(boardSelected({ board: boards.entities[boards.ids[0]] }));
     }
   }, [boards, columns, selectedBoard]);
 
@@ -51,7 +32,7 @@ export default function Board() {
       <h1 className="sr-only">kanban board</h1>
       {columns ? (
         <div className="grid grid-rows-1 grid-flow-col w-max h-full px-2">
-          {columns.map((column, i) =>
+          {Object.values(columns.entities).map((column, i) =>
             column ? <Column key={`column-${i}`} column={column} /> : <></>
           )}{" "}
           <AddNewColumnBtn />

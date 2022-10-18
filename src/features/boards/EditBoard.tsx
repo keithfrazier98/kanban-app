@@ -2,7 +2,7 @@ import { useState } from "react";
 import { X } from "tabler-icons-react";
 import { useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
-import { selectAllColumns } from "../columns/columnsSlice";
+import { useGetColumnsQuery } from "../columns/columnsSlice";
 import { getSelectedBoard } from "./boardsSlice";
 
 function ColumnInput({ name }: { name: string }) {
@@ -19,7 +19,7 @@ function ColumnInput({ name }: { name: string }) {
           setInput(e.target.value);
         }}
       />
-      <button className="w-6 h-6 text-gray-400" onClick={()=>{}}>
+      <button className="w-6 h-6 text-gray-400" onClick={() => {}}>
         <X />
       </button>
     </div>
@@ -29,7 +29,7 @@ function ColumnInput({ name }: { name: string }) {
 export default function EditBoard() {
   const selectedBoard = useAppSelector(getSelectedBoard);
   const [boardName, setBoardName] = useState<string>(selectedBoard?.name || "");
-  const columns = useAppSelector(selectAllColumns);
+  const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
 
   return (
     <ModalWBackdrop>
@@ -44,9 +44,16 @@ export default function EditBoard() {
         }}
       />
       <>
-        {columns?.map(({ name }, index) => (
-          <ColumnInput name={name} key={`column-input-${index}`} />
-        ))}
+        {columns?.entities ? (
+          Object.values(columns.entities)?.map((column, index) => (
+            <ColumnInput
+              name={column?.name || ""}
+              key={`column-input-${index}`}
+            />
+          ))
+        ) : (
+          <></>
+        )}
       </>
     </ModalWBackdrop>
   );

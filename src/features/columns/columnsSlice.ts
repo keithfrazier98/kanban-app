@@ -1,85 +1,51 @@
-import {
-  createSlice,
-  createEntityAdapter,
-  createAsyncThunk,
-  PayloadAction,
-  EntityState,
-} from "@reduxjs/toolkit";
+import { createEntityAdapter } from "@reduxjs/toolkit";
 import { IBoardColumn, IColumnState } from "../../@types/types";
-import { client } from "../../api/mock/client";
-import { RootState } from "../../app/store";
-
-export const fetchColumnsByBoardId = createAsyncThunk(
-  "columns/fetchColumnsById",
-  async (boardId: string) => {
-    const response = await client.get(`/columns?boardId=${boardId}`);
-    return response.data;
-  }
-);
-
-export const deleteColumnById = createAsyncThunk(
-  "columns/deleteColumnById",
-  async (columnId: string) => {
-    const response = await client.delete(`/columns/${columnId}`);
-    return response.data;
-  }
-);
+import { apiSlice } from "../api/apiSlice";
 
 const columnsAdapter = createEntityAdapter<IBoardColumn>({
   selectId: (column) => column.name,
 });
+
 const initialState = columnsAdapter.getInitialState<IColumnState>({
   ids: [],
   entities: {},
   status: "idle",
 });
 
-const columnsSlice = createSlice({
-  name: "columns",
-  initialState,
-  reducers: {
-    columnsSelected(state, action: { payload: { columns: IBoardColumn[] } }) {
-      const { columns: changes } = action.payload;
-      columnsAdapter.setAll(state, changes);
-    },
-    columnDeleted(state, action: { payload: { id: string } }) {
-      const {
-        payload: { id },
-      } = action;
+export const extendedColumnsApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getColumns: builder.query({
+      query: (boardId: string | undefined) => `/columns?boardId=${boardId}`,
+      transformResponse: (response: IBoardColumn[]) => {
+        return columnsAdapter.setAll(initialState, response);
+      },
+    }),
+    deleteColumn: builder.mutation({
+      query: (columnId) => ({
+        url: `/columns/${columnId}}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, arg) => [{ type: "Column", id: arg }],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const deleteResult = dispatch(
+          extendedColumnsApi.util.updateQueryData(
+            "getColumns",
+            undefined,
+            (draft) => {
+              columnsAdapter.removeOne(draft, arg);
+            }
+          )
+        );
 
-      columnsAdapter.removeOne(state, id);
-    },
-  },
-  extraReducers(builder) {
-    builder
-      .addCase(fetchColumnsByBoardId.pending, (state, action) => {
-        state.status = "loading";
-      })
-      .addCase(
-        fetchColumnsByBoardId.fulfilled,
-        (state, action: PayloadAction<IBoardColumn[]>) => {
-          console.log(state, action);
-          state.status = "succeeded";
-          // set boards state using the normalizing adapter
-          columnsAdapter.setAll(state, action.payload);
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          deleteResult.undo();
         }
-      )
-      .addCase(fetchColumnsByBoardId.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      })
-      // This is not DRY, need HOF or RTK Query
-      .addCase(deleteColumnById.pending, (state, action) => {
-        state.status = "loading";
-      });
-  },
+      },
+    }),
+  }),
 });
 
-export const { columnsSelected } = columnsSlice.actions;
+export const { useGetColumnsQuery } = extendedColumnsApi;
 
-export const { selectAll: selectAllColumns, selectIds } =
-  columnsAdapter.getSelectors<RootState>((state) => state.columns);
-
-export const columnsReqStatus = ({ columns: { status } }: RootState) => status;
-
-export default columnsSlice.reducer;

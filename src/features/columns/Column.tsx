@@ -1,22 +1,54 @@
-import { IBoardColumn, IBoardSubTask, IBoardTask } from "../../@types/types";
-import { useAppSelector } from "../../app/hooks";
+import { createSelector, EntityState, Slice } from "@reduxjs/toolkit";
+import { UseQueryHookResult } from "@reduxjs/toolkit/dist/query/react/buildHooks";
+import { useMemo } from "react";
+import {
+  IBoardColumn,
+  IBoardSubTask,
+  IBoardTask,
+  IColumnState,
+} from "../../@types/types";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store";
+import { getSelectedBoard } from "../boards/boardsSlice";
 import Task from "../tasks/Task";
-import { selectAllTasks } from "../tasks/tasksSlice";
+import { selectAllTasks, useGetTasksQuery } from "../tasks/tasksSlice";
 
 export default function Column({ column }: { column: IBoardColumn }) {
-  const tasks = useAppSelector(selectAllTasks);
-  const columnTasks = tasks.filter((task) => task.column.id === column.id);
+  // const tasks = useAppSelector(selectAllTasks);
+
+  const selectedBoard = useAppSelector(getSelectedBoard);
+
+  const selectTasksForColumn = useMemo(() => {
+    const emptyArray: IBoardColumn[] = [];
+
+    return createSelector(
+      (res: any) => res.data,
+      (res: any, columnId: string) => columnId,
+      (data: IBoardTask[], columnId:string) =>
+        data?.filter(
+          (task: IBoardTask) => task.column.id === columnId
+        ) ?? emptyArray
+    );
+  }, []);
+
+  const { tasksForColumn } = useGetTasksQuery(selectedBoard?.id, {
+    skip: !selectedBoard,
+    selectFromResult: (result) => ({
+      ...result,
+      tasksForColumn: selectTasksForColumn(result, column.id),
+    }),
+  });
 
   return (
     <div className="my-6 max-h-full">
       <div className="flex items-center mb-6 text-base text-gray-400 font-bold">
         <div className="rounded-full w-3 h-3 bg-primary-indigo-active"></div>
         <h2 className="mx-2 tracking-widest">{column.name.toUpperCase()}</h2>
-        <p> {`( ${columnTasks.length} )`}</p>
+        <p> {`( ${tasksForColumn.length} )`}</p>
       </div>
       <div className="overflow-y-scroll no-scrollbar max-h-full pb-12 w-72">
         <div className="grid grid-cols-1 grid-flow-row gap-5">
-          {columnTasks.map((task: IBoardTask, i) => (
+          {tasksForColumn.map((task: IBoardTask, i: number) => (
             <Task key={`task-${i}`} task={task} />
           ))}
         </div>

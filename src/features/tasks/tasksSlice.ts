@@ -5,16 +5,9 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { IBoardTask, ITasksState } from "../../@types/types";
-import { client } from "../../api/mock/client";
+// import { client } from "../../api/mock/client";
 import { RootState } from "../../app/store";
-
-export const fetchTasksByBoardId = createAsyncThunk(
-  "tasks/fetchTasksByBoardId",
-  async (boardId: string) => {
-    const res = await client.get(`/tasks?boardId=${boardId}`);
-    return res.data;
-  }
-);
+import { apiSlice } from "../api/apiSlice";
 
 const tasksAdapter = createEntityAdapter<IBoardTask>({
   selectId: (task) => task.id,
@@ -26,6 +19,16 @@ const initialState = tasksAdapter.getInitialState<ITasksState>({
   openTask: null,
   status: "idle",
 });
+
+const extendedTasksApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getTasks: builder.query({
+      query: (boardId: string | undefined) => `/tasks?boardId=${boardId}`,
+    }),
+  }),
+});
+
+export const { useGetTasksQuery } = extendedTasksApi;
 
 const tasksSlice = createSlice({
   name: "tasks",
@@ -44,24 +47,6 @@ const tasksSlice = createSlice({
       const { id } = changes;
       tasksAdapter.updateOne(state, { id, changes });
     },
-  },
-  extraReducers(builder) {
-    builder
-      .addCase(fetchTasksByBoardId.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(
-        fetchTasksByBoardId.fulfilled,
-        (state, action: PayloadAction<IBoardTask[]>) => {
-          state.status = "succeeded";
-          // set boards state using the normalizing adapter
-          tasksAdapter.setAll(state, action.payload);
-        }
-      )
-      .addCase(fetchTasksByBoardId.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
-      });
   },
 });
 

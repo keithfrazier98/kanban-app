@@ -108,7 +108,7 @@ function paramMissing(
 
 export const handlers = [
   //handles GET /boards requests
-  rest.get("/boards", (req, res, ctx) => {
+  rest.get("/kbapi/boards", (req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.delay(RESPONSE_DELAY),
@@ -117,7 +117,7 @@ export const handlers = [
   }),
 
   //handles GET /columns requests
-  rest.get("/columns", (req, res, ctx) => {
+  rest.get("/kbapi/columns", (req, res, ctx) => {
     const boardId = req.url.searchParams.get("boardId");
     if (!boardId) {
       return paramMissing(res, ctx, "boardID", "query");
@@ -134,7 +134,7 @@ export const handlers = [
   }),
 
   //handles POST /columns (adds new column)
-  rest.post("/columns", async (req, res, ctx) => {
+  rest.post("/kbapi/columns", async (req, res, ctx) => {
     const { column } = await req.json<{ column: IBoardColumn }>();
     if (!column) {
       return res(
@@ -152,7 +152,7 @@ export const handlers = [
   }),
 
   // handles DELETE /columns (deletes col by id)
-  rest.delete("/columns/:id", async (req, res, ctx) => {
+  rest.delete("/kbapi/columns/:id", async (req, res, ctx) => {
     const { id } = req.params;
 
     if (!id) {
@@ -175,7 +175,7 @@ export const handlers = [
   }),
 
   //handles GET /tasks requests
-  rest.get("/tasks", (req, res, ctx) => {
+  rest.get("/kbapi/tasks", (req, res, ctx) => {
     const boardId = req.url.searchParams.get("boardId");
     if (!boardId) {
       return paramMissing(res, ctx, "boardID", "query");
@@ -192,7 +192,7 @@ export const handlers = [
   }),
 
   //handles GET /subtask requests
-  rest.get("/subtasks", (req, res, ctx) => {
+  rest.get("/kbapi/subtasks", (req, res, ctx) => {
     const taskId = req.url.searchParams.get("taskId");
     if (!taskId) {
       return res(
