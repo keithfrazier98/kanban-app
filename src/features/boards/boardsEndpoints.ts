@@ -28,6 +28,18 @@ export const extendedBoardAPi = apiSlice.injectEndpoints({
       transformResponse: (responseData: IBoardData[]) => {
         return boardsAdapter.setAll(boardQueryInitialState, responseData);
       },
+      providesTags: ["Board"],
+    }),
+    updateBoard: builder.mutation({
+      query: (board: IBoardData) => ({
+        url: "/boards",
+        body: { board },
+        method: "PUT",
+      }),
+      invalidatesTags: ["Board"],
+      onCacheEntryAdded(board, {dispatch}){
+        //optimistic update for board
+      }
     }),
   }),
 });
@@ -52,6 +64,3 @@ export const {
 } = boardsAdapter.getSelectors<RootState>(
   (state) => selectAllBoardsResult(state) ?? boardQueryInitialState
 );
-
-
-
