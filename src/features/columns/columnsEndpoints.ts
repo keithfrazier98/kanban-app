@@ -3,7 +3,7 @@ import { IBoardColumn, IColumnQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
 const columnsAdapter = createEntityAdapter<IBoardColumn>({
-  selectId: (column) => column.name,
+  selectId: (column) => column.id,
 });
 
 const initialColumnQueryState = columnsAdapter.getInitialState<IColumnQuery>({

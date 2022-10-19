@@ -42,10 +42,14 @@ export interface IBoardQuery {
   status: requestStatus;
 }
 
+export interface IColumnEntities {
+  [id: string]: IBoardColumn;
+}
+
 //All column data will be held in the apiSlice, no need for IColumnState
 export interface IColumnQuery {
   ids: string[];
-  entities: { [id: string]: IBoardColumn };
+  entities: IColumnEntities;
   error?: string;
   status: requestStatus;
 }
