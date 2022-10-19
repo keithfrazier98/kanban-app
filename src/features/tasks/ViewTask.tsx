@@ -41,7 +41,12 @@ export default function ViewTask() {
   const { data: subtasks } = useGetSubtasksQuery(openTask);
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
 
-  const columnNames = columns?.ids ?? [];
+  const columnNames = useMemo(() => {
+    if (!columns?.entities) return [];
+    const entities = Object.values(columns?.entities);
+    const names = entities.map((col) => col?.name || "");
+    return names
+  }, [columns]);
 
   if (!!task) {
     const { description, status, title, completedSubtasks, totalSubtasks } =
