@@ -1,8 +1,8 @@
-import { IBoardTask } from "../../@types/types";
+import { ITask } from "../../@types/types";
 import { useAppDispatch } from "../../app/hooks";
 import { taskSelected } from "./tasksSlice";
 
-export default function Task({ task }: { task: IBoardTask }) {
+export default function Task({ task }: { task: ITask }) {
   const dispatch = useAppDispatch();
 
   return (

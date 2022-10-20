@@ -12,7 +12,7 @@ import DropdownList from "../../components/DropdownList";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
-import { IBoardSubTask, ITaskQuery } from "../../@types/types";
+import { ISubtask, ITaskQuery } from "../../@types/types";
 import { createSelector } from "@reduxjs/toolkit";
 
 export default function ViewTask() {
@@ -73,7 +73,7 @@ export default function ViewTask() {
             Object.values(subtasks.entities).map((subtask, id) => (
               <Subtask
                 key={`subtask-${id}`}
-                subtask={subtask || ({} as IBoardSubTask)}
+                subtask={subtask || ({} as ISubtask)}
               />
             ))
           ) : (

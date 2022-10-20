@@ -1,8 +1,8 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import { IBoardColumn, IColumnQuery } from "../../@types/types";
+import { IColumn, IColumnPostBody, IColumnQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
-const columnsAdapter = createEntityAdapter<IBoardColumn>({
+const columnsAdapter = createEntityAdapter<IColumn>({
   selectId: (column) => column.id,
 });
 
@@ -17,17 +17,15 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
     // getall columns given a boardId in search param
     getColumns: builder.query({
       query: (boardId: string | undefined) => `/columns?boardId=${boardId}`,
-      transformResponse: (response: IBoardColumn[]) => {
+      transformResponse: (response: IColumn[]) => {
         return columnsAdapter.setAll(initialColumnQueryState, response);
       },
       providesTags: ["Column"],
     }),
-    // Columns with id's not created by the db will get added
-    // Columns missing from previous state will be deleted
     updateColumns: builder.mutation({
-      query: (columns: IBoardColumn[]) => ({
+      query: (columns: IColumnPostBody) => ({
         url: `/columns`,
-        method: "PUT",
+        method: "POST",
         body: { columns },
       }),
       invalidatesTags: ["Column"],

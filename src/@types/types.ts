@@ -1,26 +1,30 @@
 export type datatypes = "boards" | "columns" | "tasks" | "subtasks";
-export interface IBoardSubTask {
+export interface ISubtask {
   id: string;
   title: string;
   isCompleted: boolean;
-  task: IBoardTask;
+  task: ITask;
 }
 
-export interface IBoardTask {
+export interface ITask {
   id: string;
   title: string;
   description: string;
-  column: IBoardColumn;
+  column: IColumn;
   board: IBoardData;
   status: string;
   totalSubtasks: number;
   completedSubtasks: number;
 }
 
-export interface IBoardColumn {
+export interface IColumnConstructor {
+  name: string;
+  id: string;
+}
+export interface IColumn {
   id: string;
   name: string;
-  boardId: string;
+  board: IBoardData;
 }
 
 export interface IBoardData {
@@ -43,7 +47,7 @@ export interface IBoardQuery {
 }
 
 export interface IColumnEntities {
-  [id: string]: IBoardColumn;
+  [id: string]: IColumn;
 }
 
 //All column data will be held in the apiSlice, no need for IColumnState
@@ -60,14 +64,20 @@ export interface ITaskState {
 
 export interface ITaskQuery {
   ids: string[];
-  entities: { [id: string]: IBoardTask };
+  entities: { [id: string]: ITask };
   error?: string;
   status: requestStatus;
 }
 //All subtask data will be held in the apiSlice, no need for ISubtaskState
 export interface ISubtaskQuery {
   ids: number[];
-  entities: { [id: string]: IBoardSubTask };
+  entities: { [id: string]: ISubtask };
   error?: string;
   status: requestStatus;
+}
+
+export interface IColumnPostBody {
+  additions: IColumnConstructor[];
+  updates: IColumn[];
+  boardId: string;
 }

@@ -1,10 +1,10 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
 
-import { IBoardSubTask, ISubtaskQuery } from "../../@types/types";
+import { ISubtask, ISubtaskQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 import { extendedTasksApi, tasksAdapter } from "../tasks/tasksEnpoints";
 
-const subtasksAdapter = createEntityAdapter<IBoardSubTask>({
+const subtasksAdapter = createEntityAdapter<ISubtask>({
   selectId: (subtask) => subtask.id,
 });
 
@@ -18,7 +18,7 @@ const extendedSubtaskApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getSubtasks: builder.query({
       query: (taskId: string | null) => `/subtasks?taskId=${taskId}`,
-      transformResponse: (response: IBoardSubTask[]) => {
+      transformResponse: (response: ISubtask[]) => {
         return subtasksAdapter.setAll(initialState, response);
       },
       // TODO: add id specific tags
@@ -26,7 +26,7 @@ const extendedSubtaskApi = apiSlice.injectEndpoints({
       providesTags: ["Subtask"],
     }),
     updateSubtask: builder.mutation({
-      query: (subtask: IBoardSubTask) => ({
+      query: (subtask: ISubtask) => ({
         url: `/subtasks`,
         method: "PATCH",
         body: subtask,

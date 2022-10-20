@@ -3,13 +3,13 @@ import {
   createEntityAdapter,
   EntityState,
 } from "@reduxjs/toolkit";
-import { IBoardTask, ITaskQuery, ITaskState } from "../../@types/types";
+import { ITask, ITaskQuery, ITaskState } from "../../@types/types";
 // import { client } from "../../api/mock/client";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
 
 // Use an adapther for the task data to be used in the extendedTasksApi
-export const tasksAdapter = createEntityAdapter<IBoardTask>({
+export const tasksAdapter = createEntityAdapter<ITask>({
   selectId: (task) => task.id,
 });
 
@@ -24,13 +24,13 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getTasks: builder.query({
       query: (boardId: string | undefined) => `/tasks?boardId=${boardId}`,
-      transformResponse: (response: IBoardTask[]) => {
+      transformResponse: (response: ITask[]) => {
         return tasksAdapter.setAll(intitialTasksQueryState, response);
       },
       providesTags: ["Task"],
     }),
     updateTask: builder.mutation({
-      query: (task: IBoardTask) => ({
+      query: (task: ITask) => ({
         url: `/tasks`,
         method: "PATCH",
         body: task,

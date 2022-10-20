@@ -1,18 +1,18 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
-import { IBoardColumn, IBoardTask, ITaskQuery } from "../../@types/types";
+import { IColumn, ITask, ITaskQuery } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetTasksQuery } from "../tasks/tasksEnpoints";
 import Task from "../tasks/Task";
 
-export default function Column({ column }: { column: IBoardColumn }) {
+export default function Column({ column }: { column: IColumn }) {
   // const tasks = useAppSelector(selectAllTasks);
 
   const selectedBoard = useAppSelector(getSelectedBoard);
 
   const selectTasksForColumn = useMemo(() => {
-    const emptyArray: IBoardTask[] = [];
+    const emptyArray: ITask[] = [];
 
     return createSelector(
       (res: any) => res.data,
@@ -41,7 +41,7 @@ export default function Column({ column }: { column: IBoardColumn }) {
       </div>
       <div className="overflow-y-scroll no-scrollbar max-h-full pb-12 w-72">
         <div className="grid grid-cols-1 grid-flow-row gap-5">
-          {tasksForColumn.map((task: IBoardTask, i: number) => (
+          {tasksForColumn.map((task: ITask, i: number) => (
             <Task key={`task-${i}`} task={task} />
           ))}
         </div>

@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { db } from ".";
-import { IBoardSubTask } from "../../@types/types";
+import { ISubtask } from "../../@types/types";
 import { dbActionErrorWrapper, idToString, send405WithBody } from "./utils";
 const RESPONSE_DELAY = 0;
 
@@ -33,7 +33,7 @@ export const subtaskHandlers = [
 
   //handles PATCH /subtasks requests
   rest.patch("/kbapi/subtasks", async (req, res, ctx) => {
-    const { id, task, ...rest }: IBoardSubTask = await req.json();
+    const { id, task, ...rest }: ISubtask = await req.json();
     return dbActionErrorWrapper(id, res, ctx, () => {
       const addOrSubtract = rest.isCompleted ? 1 : -1;
 

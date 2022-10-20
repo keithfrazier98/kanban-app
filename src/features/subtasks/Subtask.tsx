@@ -1,8 +1,8 @@
-import { IBoardSubTask } from "../../@types/types";
+import { ISubtask } from "../../@types/types";
 import { useAppDispatch } from "../../app/hooks";
 import { useUpdateSubtaskMutation } from "./subtasksEndpoints";
 
-export default function Subtask({ subtask }: { subtask: IBoardSubTask }) {
+export default function Subtask({ subtask }: { subtask: ISubtask }) {
   const [updateSubtask] = useUpdateSubtaskMutation();
 
   return (

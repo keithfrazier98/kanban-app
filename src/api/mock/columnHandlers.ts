@@ -1,7 +1,16 @@
 import { rest } from "msw";
 import { db } from ".";
-import { IBoardColumn } from "../../@types/types";
-import { dbActionErrorWrapper, idToString, paramMissing } from "./utils";
+import {
+  IColumn,
+  IColumnConstructor,
+  IColumnPostBody,
+} from "../../@types/types";
+import {
+  dbActionErrorWrapper,
+  idToString,
+  paramMissing,
+  send405WithBody,
+} from "./utils";
 
 const RESPONSE_DELAY = 0;
 /**
@@ -25,22 +34,55 @@ export const columnHandlers = [
     );
   }),
 
-  //handles POST /columns (adds new column)
+  //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
-    const { column } = await req.json<{ column: IBoardColumn }>();
-    if (!column) {
+    const { additions, updates, boardId } = await req.json<IColumnPostBody>();
+
+    const board = db.board.findFirst({
+      where: { id: { equals: boardId } },
+    });
+
+    if (!board)
+      return send405WithBody(
+        res,
+        ctx,
+        {},
+        `No board was found with provided id: ${boardId}`
+      );
+
+    if (!updates && !additions) {
       return res(
         ctx.status(405),
         ctx.delay(RESPONSE_DELAY),
-        ctx.json({ error: "Missing column data in json body." })
+        ctx.json({
+          error: "No additions or updates found in the request body.",
+        })
       );
     }
-    const entity = db.column.create(column);
-    return res(
-      ctx.status(201),
-      ctx.delay(RESPONSE_DELAY),
-      ctx.json({ column: entity })
-    );
+
+    let response: any = [];
+
+    try {
+      updates.forEach((col) => {
+        const { board: old, ...rest } = col;
+        db.column.update({
+          where: { id: { equals: col.id } },
+          data: { ...rest, board },
+        });
+      });
+
+      additions.forEach((col) => {
+        response.push(db.column.create({ ...col, board }));
+      });
+
+      return res(
+        ctx.status(201),
+        ctx.delay(RESPONSE_DELAY),
+        ctx.json({ column: response })
+      );
+    } catch (error) {
+      return send405WithBody(res, ctx, error, "");
+    }
   }),
 
   // handles DELETE /columns (deletes col by id)
@@ -54,7 +96,7 @@ export const columnHandlers = [
 
   // handles PATCH /columns (updates single column)
   rest.patch("/kbapi/columns", async (req, res, ctx) => {
-    const { id, name }: IBoardColumn = await req.json();
+    const { id, name }: IColumn = await req.json();
     return dbActionErrorWrapper(id, res, ctx, () =>
       db.column.update({ where: { id: { equals: id } }, data: { name } })
     );

@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { db } from ".";
-import { IBoardTask } from "../../@types/types";
+import { ITask } from "../../@types/types";
 import { dbActionErrorWrapper, paramMissing } from "./utils";
 
 const RESPONSE_DELAY = 0;
@@ -32,7 +32,7 @@ export const taskHandlers = [
       column: oldColumn,
       board,
       ...rest
-    }: IBoardTask = await req.json();
+    }: ITask = await req.json();
     return dbActionErrorWrapper(id, res, ctx, () => {
       const task = db.task.findFirst({ where: { id: { equals: id } } });
 

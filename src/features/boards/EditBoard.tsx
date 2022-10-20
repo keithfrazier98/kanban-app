@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import { X } from "tabler-icons-react";
-import { IBoardColumn, IColumnEntities } from "../../@types/types";
+import { IColumn, IColumnEntities, IColumnPostBody } from "../../@types/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import {
@@ -21,7 +21,7 @@ function ColumnInput({
   setNewColumns,
   columnAmt,
 }: {
-  column: IBoardColumn;
+  column: IColumn;
   setNewColumns: Dispatch<SetStateAction<IColumnEntities | undefined>>;
   columnAmt: MutableRefObject<number | null>;
 }) {
@@ -113,35 +113,52 @@ export default function EditBoard() {
     </>
   );
 
+  const newColPrefix = "newCol";
   function handleAddColumn() {
     //increment columnsAmt for proper id generation
     columnsAmt.current =
       columnsAmt.current === null ? 1 : columnsAmt.current + 1;
 
-    setNewColumns((prevState) => {
-      // use a naming convention for the backend to generate new ids
-      // (if its this convention => create new id)
-      const newId = `newCol-${columnsAmt.current}`;
-      return {
-        ...prevState,
-        [newId]: {
-          name: "",
-          boardId: "",
-          id: newId,
-        },
-      };
-    });
+    if (selectedBoard)
+      setNewColumns((prevState) => {
+        // use a naming convention for the backend to generate new ids
+        // (if its this convention => create new id)
+        const newId = `${newColPrefix}-${columnsAmt.current}`;
+        return {
+          ...prevState,
+          [newId]: {
+            name: "",
+            board: selectedBoard,
+            id: newId,
+          },
+        };
+      });
   }
 
   const [updateColumns] = useUpdateColumnsMutation();
 
   function handleSaveBoard() {
-    if (newColumns) {
-      updateColumns(Object.values(newColumns));
-    }
+    if (!selectedBoard || !newColumns) return;
+    const postBody: IColumnPostBody = {
+      additions: [],
+      updates: [],
+      boardId: selectedBoard.id,
+    };
 
-    if(selectedBoard?.name !== boardName){
-      
+    Object.values(newColumns).forEach((col) => {
+      const id = col.id.split("-");
+      if (id.includes(newColPrefix)) {
+        postBody.additions.push(col);
+      } else {
+        postBody.updates.push(col);
+      }
+    });
+
+    console.log(postBody);
+
+    updateColumns(postBody);
+
+    if (selectedBoard?.name !== boardName) {
     }
   }
 
@@ -172,7 +189,10 @@ export default function EditBoard() {
         >
           + Add New Column
         </button>
-        <button className="w-full py-2 bg-primary-indigo-active text-white rounded-full text-xs my-2">
+        <button
+          onClick={handleSaveBoard}
+          className="w-full py-2 bg-primary-indigo-active text-white rounded-full text-xs my-2"
+        >
           Save Changes
         </button>
       </div>
