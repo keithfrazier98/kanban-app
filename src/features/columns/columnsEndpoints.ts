@@ -32,11 +32,11 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
     }),
     // delete a single column given an in the path params
     deleteColumn: builder.mutation({
-      query: (columnId) => ({
-        url: `/columns/${columnId}}`,
+      query: (columnId:string) => ({
+        url: `/columns/${columnId}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, arg) => [{ type: "Column", id: arg }],
+      invalidatesTags: ["Column"],
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         const deleteResult = dispatch(
           extendedColumnsApi.util.updateQueryData(

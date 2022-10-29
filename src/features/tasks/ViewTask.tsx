@@ -1,4 +1,3 @@
-import OutsideClickHandler from "react-outside-click-handler";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetTasksQuery, useUpdateTaskMutation } from "./tasksEnpoints";
 import { getOpenTask, taskSelected } from "./tasksSlice";

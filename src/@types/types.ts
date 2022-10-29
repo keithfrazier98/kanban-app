@@ -19,7 +19,7 @@ export interface ITask {
 
 export interface IColumnConstructor {
   name: string;
-  id: string;
+  id?: string;
 }
 export interface IColumn {
   id: string;
@@ -36,6 +36,7 @@ export type requestStatus = "idle" | "succeeded" | "loading" | "failed";
 
 export interface IBoardState {
   selectedBoard: IBoardData | null;
+  addBoardModalOpen: boolean;
   editBoardModalOpen: boolean;
 }
 

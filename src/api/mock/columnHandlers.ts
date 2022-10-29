@@ -36,7 +36,9 @@ export const columnHandlers = [
 
   //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
-    const { additions, updates, boardId } = await req.json<IColumnPostBody>();
+    const {
+      columns: { additions, updates, boardId },
+    } = await req.json<{ columns: IColumnPostBody }>();
 
     const board = db.board.findFirst({
       where: { id: { equals: boardId } },

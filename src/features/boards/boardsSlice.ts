@@ -5,6 +5,7 @@ import { RootState } from "../../app/store";
 // Setup boards slice to hold the current board state
 const initialState: IBoardState = {
   selectedBoard: null,
+  addBoardModalOpen: false,
   editBoardModalOpen: false,
 };
 const boardsSlice = createSlice({
@@ -19,12 +20,17 @@ const boardsSlice = createSlice({
       const { open } = action.payload;
       state.editBoardModalOpen = open;
     },
+    addBoardModalOpened(state, action: { payload: { open: boolean } }) {
+      const { open } = action.payload;
+      state.addBoardModalOpen = open;
+    },
   },
 });
 
 export default boardsSlice.reducer;
 
-export const { boardSelected, editBoardModalOpened } = boardsSlice.actions;
+export const { boardSelected, editBoardModalOpened, addBoardModalOpened } =
+  boardsSlice.actions;
 
 export const getSelectedBoard = ({ boards: { selectedBoard } }: RootState) =>
   selectedBoard;
