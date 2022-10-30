@@ -21,11 +21,14 @@ export interface IColumnConstructor {
   name: string;
   id?: string;
 }
+
+export type opTypes = "delete" | "update" | "create" | undefined;
 export interface IColumn {
   id: string;
   name: string;
   board: IBoardData;
-  delete: boolean
+  index: number;
+  operation?: opTypes;
 }
 
 export interface IBoardData {
@@ -83,4 +86,5 @@ export interface IColumnPostBody {
   deletions: IColumn[];
   updates: IColumn[];
   boardId: string;
+  newName: null | string;
 }

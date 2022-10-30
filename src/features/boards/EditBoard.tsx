@@ -1,48 +1,31 @@
-import {
-  Dispatch,
-  MutableRefObject,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { X } from "tabler-icons-react";
-import {
-  IColumn,
-  IColumnConstructor,
-  IColumnEntities,
-  IColumnPostBody,
-} from "../../@types/types";
+import { Dispatch, SetStateAction, useId } from "react";
+import { IColumnEntities, IColumnPostBody } from "../../@types/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { useUpdateColumnsMutation } from "../columns/columnsEndpoints";
 import BoardModifier from "./BoardModifier";
 import { editBoardModalOpened, getSelectedBoard } from "./boardsSlice";
+import { uniqueId } from "lodash";
+
 
 export default function EditBoard() {
   const selectedBoard = useAppSelector(getSelectedBoard);
   const dispatch = useAppDispatch();
 
-  const newColPrefix = "newCol";
   function handleAddColumn(
-    columnsAmt: MutableRefObject<number>,
-    setNewColumns: Dispatch<SetStateAction<IColumnEntities | undefined>>
+    setNewColumns: Dispatch<SetStateAction<IColumnEntities>>
   ) {
-    //increment columnsAmt for proper id generation
-    columnsAmt.current = columnsAmt.current + 1;
-
     if (selectedBoard)
       setNewColumns((prevState) => {
-        // use a naming convention for the backend to generate new ids
-        // (if its this convention => create new id)
-        const newId = `${newColPrefix}-${columnsAmt.current}`;
+        const randomId = uniqueId("z");
         return {
           ...prevState,
-          [newId]: {
+          [randomId]: {
             name: "",
             board: selectedBoard,
-            id: newId,
-            delete: false
+            id: randomId,
+            operation: "create",
+            index: Object.keys(prevState || {}).length,
           },
         };
       });
@@ -51,8 +34,8 @@ export default function EditBoard() {
   const [updateColumns] = useUpdateColumnsMutation();
 
   function handleSaveBoard(
-    newColumns: IColumnEntities | undefined,
-    boardName: string
+    newColumns: IColumnEntities,
+    boardName: string | null
   ) {
     if (!selectedBoard || !newColumns) return;
     const postBody: IColumnPostBody = {
@@ -60,26 +43,31 @@ export default function EditBoard() {
       deletions: [],
       updates: [],
       boardId: selectedBoard.id,
+      newName: boardName,
     };
 
     Object.values(newColumns).forEach((col) => {
-      const id = col.id.split("-");
-      if (id.includes(newColPrefix)) {
-        const { id, ...rest } = col;
-        postBody.additions.push(rest);
-      } else if (col.delete) {
-        postBody.deletions.push(col);
-      } else {
-        postBody.updates.push(col);
+      switch (col.operation) {
+        case "create":
+          const { id, ...rest } = col;
+          postBody.additions.push(rest);
+          break;
+        case "update":
+          postBody.deletions.push(col);
+          break;
+        case "delete":
+          postBody.updates.push(col);
+          break;
+        case undefined:
+          break;
+        default:
+          throw new Error(
+            `"Column has an invalid operation type: ${col.operation}"`
+          );
       }
     });
 
-    console.log(postBody);
-
     updateColumns(postBody);
-
-    if (selectedBoard?.name !== boardName) {
-    }
   }
 
   return (

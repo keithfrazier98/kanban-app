@@ -18,6 +18,7 @@ export const db = factory({
     id: primaryKey(nanoid),
     board: oneOf("board"),
     name: String,
+    index: Number,
     tasks: manyOf("task"),
   },
   task: {
@@ -43,8 +44,8 @@ const { boards } = mockData;
 
 boards.forEach(({ columns, name }) => {
   const board = db.board.create({ name });
-  columns.forEach(({ name, tasks }) => {
-    const column = db.column.create({ name, board });
+  columns.forEach(({ name, tasks }, index) => {
+    const column = db.column.create({ name, board, index });
     tasks.forEach(({ description, status, subtasks, title }) => {
       const task = db.task.create({
         description,
