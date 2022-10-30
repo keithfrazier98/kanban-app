@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Eye, EyeCheck, EyeglassOff, EyeOff } from "tabler-icons-react";
 import { useAppSelector } from "../app/hooks";
 import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
@@ -11,17 +11,22 @@ import ToggleTheme from "./ToggleTheme";
  * Static Sidebar for desktop
  * @returns
  */
-export default function SideBar() {
+export default function SideBar({
+  sidebarOpen,
+  setSidebarOpen,
+}: {
+  sidebarOpen: boolean;
+  setSidebarOpen: Dispatch<SetStateAction<boolean>>;
+}) {
   const boards = useAppSelector(selectAllBoards);
   const board = useAppSelector(getSelectedBoard);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   return (
     <>
       <div
         className={`  ${
           sidebarOpen
             ? "hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col"
-            : "hidden"
+            : "hidden w-0"
         }`}
       >
         {/* Sidebar component, swap this element with another sidebar if you like */}
