@@ -25,6 +25,7 @@ export interface IColumn {
   id: string;
   name: string;
   board: IBoardData;
+  delete: boolean
 }
 
 export interface IBoardData {
@@ -79,6 +80,7 @@ export interface ISubtaskQuery {
 
 export interface IColumnPostBody {
   additions: IColumnConstructor[];
+  deletions: IColumn[];
   updates: IColumn[];
   boardId: string;
 }

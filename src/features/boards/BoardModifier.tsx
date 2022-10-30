@@ -2,12 +2,13 @@ import {
   Dispatch,
   MutableRefObject,
   SetStateAction,
+  useEffect,
   useRef,
   useState,
 } from "react";
-import { X } from "tabler-icons-react";
+import { ArrowBack, ArrowDownLeftCircle, X } from "tabler-icons-react";
 import { IBoardData, IColumn, IColumnEntities } from "../../@types/types";
-import { useDeleteColumnMutation } from "../columns/columnsEndpoints";
+import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 
 function ColumnInput({
   column,
@@ -16,11 +17,16 @@ function ColumnInput({
 }: {
   column: IColumn;
   setNewColumns: Dispatch<SetStateAction<IColumnEntities | undefined>>;
-  columnAmt: MutableRefObject<number | null>;
+  columnAmt: MutableRefObject<number>;
 }) {
-  const [deleteColumn] = useDeleteColumnMutation();
   return (
-    <div className="flex items-center my-3">
+    <div className="relative flex items-center my-3">
+      {column.delete ? (
+        <div className="absolute h-[1px] bg-primary-red-active -left-1 right-7" />
+      ) : (
+        <></>
+      )}
+
       <label className="sr-only">Column {column.name} input</label>
       <input
         type="text"
@@ -39,32 +45,19 @@ function ColumnInput({
           className="text-gray-400 w-6 h-6 flex justify-center "
           onClick={() => {
             setNewColumns((prevState) => {
-              let newState: IColumnEntities = {};
+              //update to the columnAmt ref for proper id generation
+              columnAmt.current = column.delete
+                ? columnAmt.current + 1
+                : columnAmt.current - 1;
 
-              //decrement the columnAmt ref for proper id generation
-              columnAmt.current =
-                columnAmt.current === null ? null : columnAmt.current - 1;
-
-              // avoid using the "delete" keyword to avoid browser deoptimization
-              if (prevState) {
-                //filter keys and remove this col, return new state
-                const prevStateKeys = Object.keys(prevState);
-                const newKeys = prevStateKeys.filter(
-                  (key) => key !== column.id
-                );
-
-                newKeys.forEach((key) => {
-                  newState[key] = prevState[key];
-                });
-              }
-
-              // delete column in the in the DB
-              deleteColumn(column.id);
-              return newState;
+              return {
+                ...prevState,
+                [column.id]: { ...column, delete: !column.delete },
+              };
             });
           }}
         >
-          <X />
+          {column.delete ? <ArrowBack /> : <X />}
         </button>
       </div>
     </div>
@@ -79,13 +72,39 @@ export default function BoardModifier({
 }: {
   titles: string[];
   selectedBoard: IBoardData | null;
-  handleAddColumn: () => void;
-  handleSaveBoard: () => void;
+  handleAddColumn: (
+    columnsAmt: MutableRefObject<number>,
+    setNewColumns: Dispatch<SetStateAction<IColumnEntities | undefined>>
+  ) => void;
+  handleSaveBoard: (
+    newColumns: IColumnEntities | undefined,
+    boardName: string
+  ) => void;
 }) {
   const [modalTitle, nameTitle, columnTitle, saveText] = titles;
   const [newColumns, setNewColumns] = useState<IColumnEntities>();
-  const columnsAmt = useRef<null | number>(null);
+  const columnsAmt = useRef<number>(0);
   const [boardName, setBoardName] = useState<string>(selectedBoard?.name || "");
+  const { data: columns, isSuccess } = useGetColumnsQuery(selectedBoard?.id);
+
+  const formatNewCol = (name: string, id: string) => ({
+    name,
+    id,
+    board: {} as any,
+    delete: false,
+  });
+
+  useEffect(() => {
+    if (selectedBoard?.id === "newBoard") {
+      setNewColumns({
+        "newCol-1": formatNewCol("Todo", "newCol-1"),
+        "newCol-2": formatNewCol("Doing", "newCol-2"),
+      });
+    } else if (columns && !Number.isNaN(columnsAmt.current)) {
+      columnsAmt.current = columns.ids.length;
+      setNewColumns(columns.entities);
+    }
+  }, [columns]);
 
   const mappedColumnInputs = (
     <>
@@ -126,13 +145,13 @@ export default function BoardModifier({
       <h3 className="text-xs font-medium text-gray-500">{columnTitle}</h3>
       {mappedColumnInputs}
       <button
-        onClick={handleAddColumn}
+        onClick={() => handleAddColumn(columnsAmt, setNewColumns)}
         className="w-full py-2 border bg-primary-gray-300 text-primary-indigo-active rounded-full text-xs mb-2"
       >
         + Add New Column
       </button>
       <button
-        onClick={handleSaveBoard}
+        onClick={() => handleSaveBoard(newColumns, boardName)}
         className="w-full py-2 bg-primary-indigo-active text-white rounded-full text-xs my-2"
       >
         {saveText}

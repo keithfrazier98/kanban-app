@@ -6,6 +6,6 @@ export const apiSlice = createApi({
   tagTypes: ["Task", "Column", "Subtask", "Board"],
   endpoints: (builder) => ({
     // declare endpoints in API slice to conform TS requirement
-    // injectEndpoints in seperate feature slices (see feature slices)
+    // injectEndpoints in seperate feature slices (see feature endpoint files)
   }),
 });

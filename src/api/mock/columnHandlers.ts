@@ -37,7 +37,7 @@ export const columnHandlers = [
   //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
     const {
-      columns: { additions, updates, boardId },
+      columns: { additions, updates, deletions, boardId },
     } = await req.json<{ columns: IColumnPostBody }>();
 
     const board = db.board.findFirst({
@@ -52,12 +52,13 @@ export const columnHandlers = [
         `No board was found with provided id: ${boardId}`
       );
 
-    if (!updates && !additions) {
+    if (!updates && !additions && !deletions) {
       return res(
         ctx.status(405),
         ctx.delay(RESPONSE_DELAY),
         ctx.json({
-          error: "No additions or updates found in the request body.",
+          error:
+            "No additions, updates, or deletions found in the request body.",
         })
       );
     }
@@ -75,6 +76,10 @@ export const columnHandlers = [
 
       additions.forEach((col) => {
         response.push(db.column.create({ ...col, board }));
+      });
+
+      deletions.forEach((col) => {
+        response.push(db.column.delete({ where: { id: { equals: col.id } } }));
       });
 
       return res(
