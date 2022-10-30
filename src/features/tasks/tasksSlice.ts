@@ -3,7 +3,7 @@ import { ITaskState } from "../../@types/types";
 import { RootState } from "../../app/store";
 
 // Setup slice to hold the openTask state
-const initialState: ITaskState = { openTask: null };
+const initialState: ITaskState = { openTask: null, openAddTaskModal: false };
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
@@ -13,10 +13,15 @@ const tasksSlice = createSlice({
       const { taskId } = payload;
       state.openTask = taskId;
     },
+
+    addTaskModalOpened(state, { payload }: { payload: { open: boolean } }) {
+      const { open } = payload;
+      state.openAddTaskModal = open;
+    },
   },
 });
 
-export const { taskSelected } = tasksSlice.actions;
+export const { taskSelected, addTaskModalOpened } = tasksSlice.actions;
 
 export const getOpenTask = (state: RootState) => state.tasks.openTask;
 

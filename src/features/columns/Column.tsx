@@ -42,8 +42,13 @@ export default function Column({ column }: { column: IColumn }) {
       <div className="overflow-y-scroll no-scrollbar max-h-full pb-12 w-72">
         <div className="grid grid-cols-1 grid-flow-row gap-5">
           {tasksForColumn.map((task: ITask, i: number) => (
-            <Task key={`task-${i}`} task={task} />
+            <Task key={`task-${task.id}`} task={task} />
           ))}
+          {tasksForColumn.length === 0 ? (
+            <Task task={{} as ITask} placeholder={true} />
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

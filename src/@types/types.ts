@@ -65,6 +65,7 @@ export interface IColumnQuery {
 
 export interface ITaskState {
   openTask: string | null;
+  openAddTaskModal: boolean;
 }
 
 export interface ITaskQuery {
