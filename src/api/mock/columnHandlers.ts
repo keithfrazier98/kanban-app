@@ -1,14 +1,6 @@
-import {
-  rest,
-  ResponseComposition,
-  DefaultBodyType,
-  RestContext,
-} from "msw";
+import { rest, ResponseComposition, DefaultBodyType, RestContext } from "msw";
 import { db } from ".";
-import {
-  IColumn,
-  IColumnPostBody,
-} from "../../@types/types";
+import { IColumn, IColumnPostBody } from "../../@types/types";
 import {
   dbActionErrorWrapper,
   idToString,
@@ -24,11 +16,25 @@ export async function updateColumns(
   ctx: RestContext
 ) {
   try {
-    const { additions = [], updates = [], deletions = [], boardId } = req;
+    const {
+      additions = [],
+      updates = [],
+      deletions = [],
+      boardId,
+      newName,
+    } = req;
+
+    if (newName) {
+      db.board.update({
+        where: { id: { equals: boardId } },
+        data: { name: newName },
+      });
+    }
 
     const board = db.board.findFirst({
       where: { id: { equals: boardId } },
     });
+
 
     if (!updates && !additions && !deletions) {
       return res(
@@ -100,8 +106,8 @@ export const columnHandlers = [
 
   //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
-    const { column } = await req.json<{ column: IColumnPostBody }>();
-    return updateColumns(column, res, ctx);
+    const { columns } = await req.json<{ columns: IColumnPostBody }>();
+    return updateColumns(columns, res, ctx);
   }),
 
   // handles DELETE /columns (deletes col by id)

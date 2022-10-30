@@ -34,10 +34,10 @@ export default function EditBoard() {
           postBody.additions.push(rest);
           break;
         case "update":
-          postBody.deletions.push(col);
+          postBody.updates.push(col);
           break;
         case "delete":
-          postBody.updates.push(col);
+          postBody.deletions.push(col);
           break;
         case undefined:
           break;
