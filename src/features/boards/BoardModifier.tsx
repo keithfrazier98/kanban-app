@@ -1,27 +1,34 @@
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { IBoardData, IColumn, IColumnEntities } from "../../@types/types";
-import { useGetColumnsQuery } from "../columns/columnsEndpoints";
+import {
+  IBoardData,
+  IBoardPostBody,
+  IColumn,
+  IColumnEntities,
+} from "../../@types/types";
+import {
+  useGetColumnsQuery,
+  useUpdateColumnsMutation,
+} from "../columns/columnsEndpoints";
 import { uniqueId } from "lodash";
 import ColumnInput from "../columns/ColumnInput";
+import { useCreateBoardMutation } from "./boardsEndpoints";
 
 export default function BoardModifier({
   titles,
   selectedBoard,
-  handleSaveBoard,
+  type,
 }: {
   titles: string[];
   selectedBoard: IBoardData | null;
-
-  handleSaveBoard: (
-    newColumns: IColumnEntities,
-    boardName: string | null
-  ) => void;
+  type: "add" | "edit";
 }) {
   const [modalTitle, nameTitle, columnTitle, saveText] = titles;
   const [newColumns, setNewColumns] = useState<IColumnEntities>({});
   const columnsAmt = useRef<number>(0);
   const [boardName, setBoardName] = useState<string>(selectedBoard?.name || "");
   const { data: columns, isSuccess } = useGetColumnsQuery(selectedBoard?.id);
+  const [updateColumns] = useUpdateColumnsMutation();
+  const [createBoard] = useCreateBoardMutation();
 
   const formatNewCol = (name: string, id: string): IColumn => {
     if (!newColumns)
@@ -31,12 +38,49 @@ export default function BoardModifier({
       id,
       board: {} as any,
       index: Object.keys(newColumns).length,
+      operation: "create",
     };
   };
 
-  function handleAddColumn(
-    setNewColumns: Dispatch<SetStateAction<IColumnEntities>>
-  ) {
+  function handleSaveBoard() {
+    if (!selectedBoard || !newColumns) return;
+    const postBody: IBoardPostBody = {
+      additions: [],
+      deletions: [],
+      updates: [],
+      boardId: selectedBoard.id,
+      newName: null,
+    };
+
+    if (selectedBoard.id === "newBoard" || selectedBoard.name !== boardName)
+      postBody.newName = boardName;
+
+    Object.values(newColumns).forEach((col) => {
+      const { operation, ...dbFields } = col;
+      switch (operation) {
+        case "create":
+          const { id, ...rest } = dbFields;
+          postBody.additions.push(rest);
+          break;
+        case "update":
+          postBody.updates.push(dbFields);
+          break;
+        case "delete":
+          postBody.deletions.push(dbFields);
+          break;
+        case undefined:
+          break;
+        default:
+          throw new Error(
+            `Column has an invalid operation type: ${col.operation}`
+          );
+      }
+    });
+
+    type === "edit" ? updateColumns(postBody) : createBoard(postBody);
+  }
+
+  function handleAddColumn() {
     if (selectedBoard)
       setNewColumns((prevState) => {
         const randomId = uniqueId("z");
@@ -103,18 +147,13 @@ export default function BoardModifier({
       <h3 className="text-xs font-medium text-gray-500">{columnTitle}</h3>
       {mappedColumnInputs}
       <button
-        onClick={() => handleAddColumn(setNewColumns)}
+        onClick={handleAddColumn}
         className="w-full py-2 border bg-primary-gray-300 text-primary-indigo-active rounded-full text-xs mb-2"
       >
         + Add New Column
       </button>
       <button
-        onClick={() =>
-          handleSaveBoard(
-            newColumns,
-            selectedBoard?.name === boardName ? null : boardName
-          )
-        }
+        onClick={handleSaveBoard}
         className="w-full py-2 bg-primary-indigo-active text-white rounded-full text-xs my-2"
       >
         {saveText}

@@ -1,6 +1,6 @@
 import { rest, ResponseComposition, DefaultBodyType, RestContext } from "msw";
 import { db } from ".";
-import { IColumn, IColumnPostBody } from "../../@types/types";
+import { IColumn, IBoardPostBody } from "../../@types/types";
 import {
   dbActionErrorWrapper,
   idToString,
@@ -11,7 +11,7 @@ import {
 const RESPONSE_DELAY = 0;
 
 export async function updateColumns(
-  req: IColumnPostBody,
+  req: IBoardPostBody,
   res: ResponseComposition<DefaultBodyType>,
   ctx: RestContext
 ) {
@@ -106,7 +106,7 @@ export const columnHandlers = [
 
   //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
-    const { columns } = await req.json<{ columns: IColumnPostBody }>();
+    const { columns } = await req.json<{ columns: IBoardPostBody }>();
     return updateColumns(columns, res, ctx);
   }),
 

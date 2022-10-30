@@ -82,7 +82,7 @@ export interface ISubtaskQuery {
   status: requestStatus;
 }
 
-export interface IColumnPostBody {
+export interface IBoardPostBody {
   additions: IColumnConstructor[];
   deletions: IColumn[];
   updates: IColumn[];

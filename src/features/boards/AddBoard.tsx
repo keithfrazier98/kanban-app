@@ -15,7 +15,7 @@ export default function AddBoard() {
       <BoardModifier
         titles={["Add Board", "Name", "Columns", "Add New Board"]}
         selectedBoard={{ name: "New Board", id: "newBoard" }}
-        handleSaveBoard={() => {}}
+        type="add"
       />
     </ModalWBackdrop>
   );
