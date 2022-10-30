@@ -1,25 +1,31 @@
 export type datatypes = "boards" | "columns" | "tasks" | "subtasks";
-export interface IBoardSubTask {
+export interface ISubtask {
   id: string;
   title: string;
   isCompleted: boolean;
-  taskId: string;
+  task: ITask;
 }
 
-export interface IBoardTask {
+export interface ITask {
   id: string;
   title: string;
   description: string;
-  column: IBoardColumn;
+  column: IColumn;
+  board: IBoardData;
   status: string;
   totalSubtasks: number;
   completedSubtasks: number;
 }
 
-export interface IBoardColumn {
+export interface IColumnConstructor {
+  name: string;
+  id?: string;
+}
+export interface IColumn {
   id: string;
   name: string;
-  boardId: string;
+  board: IBoardData;
+  delete: boolean
 }
 
 export interface IBoardData {
@@ -30,42 +36,51 @@ export interface IBoardData {
 export type requestStatus = "idle" | "succeeded" | "loading" | "failed";
 
 export interface IBoardState {
+  selectedBoard: IBoardData | null;
+  addBoardModalOpen: boolean;
+  editBoardModalOpen: boolean;
+}
+
+export interface IBoardQuery {
   ids: number[];
   entities: { [id: string]: IBoardData };
   error?: string;
   status: requestStatus;
-  selectedBoard: IBoardData | null;
 }
 
-export interface IColumnState {
+export interface IColumnEntities {
+  [id: string]: IColumn;
+}
+
+//All column data will be held in the apiSlice, no need for IColumnState
+export interface IColumnQuery {
   ids: string[];
-  entities: { [id: string]: IBoardColumn };
+  entities: IColumnEntities;
   error?: string;
   status: requestStatus;
 }
 
-export interface ITasksState {
-  ids: number[];
-  entities: { [id: string]: IBoardTask };
+export interface ITaskState {
   openTask: string | null;
+}
+
+export interface ITaskQuery {
+  ids: string[];
+  entities: { [id: string]: ITask };
   error?: string;
   status: requestStatus;
 }
-
-export interface ISubtasksState {
+//All subtask data will be held in the apiSlice, no need for ISubtaskState
+export interface ISubtaskQuery {
   ids: number[];
-  entities: { [id: string]: IBoardSubTask };
+  entities: { [id: string]: ISubtask };
   error?: string;
   status: requestStatus;
 }
 
-// export interface IContext {
-//   allBoards?: IBoardData[];
-//   setAllBoards: Dispatch<SetStateAction<IBoardData[] | undefined>>;
-//   currentBoard?: IBoardData;
-//   setCurrentBoard: Dispatch<SetStateAction<IBoardData | undefined>>;
-//   toggleTheme: (theme?: "dark" | "light") => void;
-//   theme: "dark" | "light";
-//   openTask: IBoardTask | null;
-//   setOpenTask: Dispatch<SetStateAction<IBoardTask | null>>;
-// }
+export interface IColumnPostBody {
+  additions: IColumnConstructor[];
+  deletions: IColumn[];
+  updates: IColumn[];
+  boardId: string;
+}

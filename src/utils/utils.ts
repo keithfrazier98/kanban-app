@@ -1,6 +1,6 @@
-import { IBoardSubTask } from "../@types/types";
+import { ISubtask } from "../@types/types";
 
-export function countCompleted(subtasks: IBoardSubTask[]) {
+export function countCompleted(subtasks: ISubtask[]) {
   let count = 0;
   subtasks.forEach((subtask) => {
     if (subtask.isCompleted) count++;

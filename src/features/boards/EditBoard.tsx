@@ -1,53 +1,99 @@
-import { useState } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { X } from "tabler-icons-react";
-import { useAppSelector } from "../../app/hooks";
+import {
+  IColumn,
+  IColumnConstructor,
+  IColumnEntities,
+  IColumnPostBody,
+} from "../../@types/types";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
-import { selectAllColumns } from "../columns/columnsSlice";
-import { getSelectedBoard } from "./boardsSlice";
-
-function ColumnInput({ name }: { name: string }) {
-  const [input, setInput] = useState<string>(name);
-
-  return (
-    <div className="flex items-center">
-      <label className="sr-only">Column {name} input</label>
-      <input
-        type="text"
-        value={input}
-        className="flex-1 border rounded-sm"
-        onChange={(e) => {
-          setInput(e.target.value);
-        }}
-      />
-      <button className="w-6 h-6 text-gray-400" onClick={()=>{}}>
-        <X />
-      </button>
-    </div>
-  );
-}
+import { useUpdateColumnsMutation } from "../columns/columnsEndpoints";
+import BoardModifier from "./BoardModifier";
+import { editBoardModalOpened, getSelectedBoard } from "./boardsSlice";
 
 export default function EditBoard() {
   const selectedBoard = useAppSelector(getSelectedBoard);
-  const [boardName, setBoardName] = useState<string>(selectedBoard?.name || "");
-  const columns = useAppSelector(selectAllColumns);
+  const dispatch = useAppDispatch();
+
+  const newColPrefix = "newCol";
+  function handleAddColumn(
+    columnsAmt: MutableRefObject<number>,
+    setNewColumns: Dispatch<SetStateAction<IColumnEntities | undefined>>
+  ) {
+    //increment columnsAmt for proper id generation
+    columnsAmt.current = columnsAmt.current + 1;
+
+    if (selectedBoard)
+      setNewColumns((prevState) => {
+        // use a naming convention for the backend to generate new ids
+        // (if its this convention => create new id)
+        const newId = `${newColPrefix}-${columnsAmt.current}`;
+        return {
+          ...prevState,
+          [newId]: {
+            name: "",
+            board: selectedBoard,
+            id: newId,
+            delete: false
+          },
+        };
+      });
+  }
+
+  const [updateColumns] = useUpdateColumnsMutation();
+
+  function handleSaveBoard(
+    newColumns: IColumnEntities | undefined,
+    boardName: string
+  ) {
+    if (!selectedBoard || !newColumns) return;
+    const postBody: IColumnPostBody = {
+      additions: [],
+      deletions: [],
+      updates: [],
+      boardId: selectedBoard.id,
+    };
+
+    Object.values(newColumns).forEach((col) => {
+      const id = col.id.split("-");
+      if (id.includes(newColPrefix)) {
+        const { id, ...rest } = col;
+        postBody.additions.push(rest);
+      } else if (col.delete) {
+        postBody.deletions.push(col);
+      } else {
+        postBody.updates.push(col);
+      }
+    });
+
+    console.log(postBody);
+
+    updateColumns(postBody);
+
+    if (selectedBoard?.name !== boardName) {
+    }
+  }
 
   return (
-    <ModalWBackdrop>
-      <h2 className="mb-6">Edit Board</h2>
-      <label className="mb-2">Board Name</label>
-      <input
-        className="w-full mb-6 border rounded-sm"
-        value={boardName}
-        type="text"
-        onChange={(e) => {
-          setBoardName(e.target.value);
-        }}
+    <ModalWBackdrop
+      onOutsideClick={() => {
+        dispatch(editBoardModalOpened({ open: false }));
+      }}
+    >
+      <BoardModifier
+        titles={["Edit Board", "Board Name", "Board Columns", "Save Changes"]}
+        selectedBoard={selectedBoard}
+        handleAddColumn={handleAddColumn}
+        handleSaveBoard={handleSaveBoard}
       />
-      <>
-        {columns?.map(({ name }, index) => (
-          <ColumnInput name={name} key={`column-input-${index}`} />
-        ))}
-      </>
     </ModalWBackdrop>
   );
 }

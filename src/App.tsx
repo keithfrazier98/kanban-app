@@ -2,12 +2,16 @@ import { useAppSelector } from "./app/hooks";
 import DesktopHeader from "./components/DesktopHeader";
 import MobileHeader from "./components/MobileHeader";
 import SideBar from "./components/SideBar";
+import AddBoard from "./features/boards/AddBoard";
 import Board from "./features/boards/Board";
+import EditBoard from "./features/boards/EditBoard";
 import { getOpenTask } from "./features/tasks/tasksSlice";
 import ViewTask from "./features/tasks/ViewTask";
 
 function App() {
   const openTask = useAppSelector(getOpenTask);
+  const { addBoardModalOpen: addBoard, editBoardModalOpen: editBoard } =
+    useAppSelector((state) => state.boards);
   return (
     <div className="w-full h-full overflow-hidden">
       <SideBar />
@@ -19,6 +23,8 @@ function App() {
         </main>
       </div>
       {openTask ? <ViewTask /> : <></>}
+      {editBoard ? <EditBoard /> : <></>}
+      {addBoard ? <AddBoard /> : <></>}
     </div>
   );
 }
