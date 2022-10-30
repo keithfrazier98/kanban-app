@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction, useId } from "react";
 import { IColumnEntities, IColumnPostBody } from "../../@types/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
@@ -44,7 +43,7 @@ export default function EditBoard() {
           break;
         default:
           throw new Error(
-            `"Column has an invalid operation type: ${col.operation}"`
+            `Column has an invalid operation type: ${col.operation}`
           );
       }
     });
