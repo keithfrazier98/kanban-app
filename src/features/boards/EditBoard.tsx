@@ -5,31 +5,13 @@ import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { useUpdateColumnsMutation } from "../columns/columnsEndpoints";
 import BoardModifier from "./BoardModifier";
 import { editBoardModalOpened, getSelectedBoard } from "./boardsSlice";
-import { uniqueId } from "lodash";
 
 
 export default function EditBoard() {
   const selectedBoard = useAppSelector(getSelectedBoard);
   const dispatch = useAppDispatch();
 
-  function handleAddColumn(
-    setNewColumns: Dispatch<SetStateAction<IColumnEntities>>
-  ) {
-    if (selectedBoard)
-      setNewColumns((prevState) => {
-        const randomId = uniqueId("z");
-        return {
-          ...prevState,
-          [randomId]: {
-            name: "",
-            board: selectedBoard,
-            id: randomId,
-            operation: "create",
-            index: Object.keys(prevState || {}).length,
-          },
-        };
-      });
-  }
+  
 
   const [updateColumns] = useUpdateColumnsMutation();
 
@@ -79,7 +61,6 @@ export default function EditBoard() {
       <BoardModifier
         titles={["Edit Board", "Board Name", "Board Columns", "Save Changes"]}
         selectedBoard={selectedBoard}
-        handleAddColumn={handleAddColumn}
         handleSaveBoard={handleSaveBoard}
       />
     </ModalWBackdrop>

@@ -6,11 +6,10 @@ import AddBoard from "./features/boards/AddBoard";
 import Board from "./features/boards/Board";
 import EditBoard from "./features/boards/EditBoard";
 import AddTask from "./features/tasks/AddTask";
-import { getOpenTask } from "./features/tasks/tasksSlice";
 import ViewTask from "./features/tasks/ViewTask";
 
 function App() {
-  
+
   const {
     tasks: { openTask, openAddTaskModal: addTask },
     boards: { addBoardModalOpen: addBoard, editBoardModalOpen: editBoard },
