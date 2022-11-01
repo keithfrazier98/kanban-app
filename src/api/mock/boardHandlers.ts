@@ -31,6 +31,27 @@ export const boardHandlers = [
 
     const newBoard = db.board.create({ name });
 
-    updateColumns({ ...rest, boardId: newBoard.id }, res, ctx);
+    return updateColumns({ ...rest, boardId: newBoard.id }, res, ctx);
+  }),
+
+  rest.delete("/kbapi/boards/:boardId", async (req, res, ctx) => {
+    const { boardId } = req.params;
+    try {
+      if (!boardId) {
+        send405WithBody(res, ctx, {}, "No ID found in url request parameters.");
+      } else if (typeof boardId === "string") {
+        db.board.delete({ where: { id: { equals: boardId } } });
+        return res(ctx.status(204));
+      } else {
+        throw new Error("Invalid board ID in url request parameters. ");
+      }
+    } catch (error) {
+      send405WithBody(
+        res,
+        ctx,
+        error,
+        "An error occured when trying to delete the board entity. "
+      );
+    }
   }),
 ];

@@ -5,6 +5,8 @@ import MobileHeader from "./components/MobileHeader";
 import SideBar from "./components/SideBar";
 import AddBoard from "./features/boards/AddBoard";
 import Board from "./features/boards/Board";
+import { deleteBoardModalOpened } from "./features/boards/boardsSlice";
+import DeleteBoard from "./features/boards/DeleteBoard";
 import EditBoard from "./features/boards/EditBoard";
 import AddTask from "./features/tasks/AddTask";
 import ViewTask from "./features/tasks/ViewTask";
@@ -40,6 +42,7 @@ function App() {
       {editBoard ? <EditBoard /> : <></>}
       {addBoard ? <AddBoard /> : <></>}
       {addTask ? <AddTask /> : <></>}
+      {deleteBoard ? <DeleteBoard /> : <></>}
     </div>
   );
 }
