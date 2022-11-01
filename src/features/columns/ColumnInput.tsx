@@ -98,7 +98,7 @@ export default function ColumnInput({
       <input
         type="text"
         value={column.name}
-        className="flex-1 text-sm border rounded px-3 py-2"
+        className="flex-1 text-sm border rounded px-3 py-2 dark:text-gray-300 dark:border-primary-gray-600 dark:bg-primary-gray-700"
         onChange={handleType}
       />
       <div className="pl-2">

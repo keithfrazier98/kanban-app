@@ -12,6 +12,7 @@ import {
 import { uniqueId } from "lodash";
 import ColumnInput from "../columns/ColumnInput";
 import { useCreateBoardMutation } from "./boardsEndpoints";
+import { classNames } from "../../utils/utils";
 
 export default function BoardModifier({
   titles,
@@ -132,19 +133,23 @@ export default function BoardModifier({
 
   return (
     <div className="px-2">
-      <h2 className="mb-3 font-semibold">{modalTitle}</h2>
-      <label className="mb-2 text-xs font-medium text-gray-500">
+      <h2 className="mb-3 font-semibold dark:text-gray-300">{modalTitle}</h2>
+      <label className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-300">
         {nameTitle}
       </label>
       <input
-        className="w-full text-sm  mb-6 py-2 px-3 border rounded"
+        className={classNames(
+          "w-full text-sm dark:bg-primary-gray-700",
+          "dark:border-primary-gray-600 dark:text-gray-300",
+          "mb-6 py-2 px-3 border rounded"
+        )}
         value={boardName}
         type="text"
         onChange={(e) => {
           setBoardName(e.target.value);
         }}
       />
-      <h3 className="text-xs font-medium text-gray-500">{columnTitle}</h3>
+      <h3 className="text-xs font-medium text-gray-500 dark:text-gray-300">{columnTitle}</h3>
       {mappedColumnInputs}
       <button
         onClick={handleAddColumn}
