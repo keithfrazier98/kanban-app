@@ -43,6 +43,13 @@ export const extendedBoardAPi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Board"],
     }),
+    deleteBoard: builder.mutation({
+      query: (boardId: string) => ({
+        url: `/boards/${boardId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Board"],
+    }),
     updateBoard: builder.mutation({
       query: (board: IBoardData) => ({
         url: "/boards",
@@ -57,7 +64,11 @@ export const extendedBoardAPi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetBoardsQuery, useCreateBoardMutation } = extendedBoardAPi;
+export const {
+  useGetBoardsQuery,
+  useCreateBoardMutation,
+  useDeleteBoardMutation,
+} = extendedBoardAPi;
 
 // get the response for the getBoards query
 export const selectBoardsResult =

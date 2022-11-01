@@ -7,6 +7,7 @@ const initialState: IBoardState = {
   selectedBoard: null,
   addBoardModalOpen: false,
   editBoardModalOpen: false,
+  deleteBoardModalOpen: false,
 };
 const boardsSlice = createSlice({
   name: "boards",
@@ -24,13 +25,25 @@ const boardsSlice = createSlice({
       const { open } = action.payload;
       state.addBoardModalOpen = open;
     },
+    deleteBoardModalOpened(state, action: { payload: { open: boolean } }) {
+      const { open } = action.payload;
+      state.deleteBoardModalOpen = open;
+    },
   },
 });
 
 export default boardsSlice.reducer;
 
-export const { boardSelected, editBoardModalOpened, addBoardModalOpened } =
-  boardsSlice.actions;
+export const {
+  boardSelected,
+  editBoardModalOpened,
+  addBoardModalOpened,
+  deleteBoardModalOpened,
+} = boardsSlice.actions;
 
 export const getSelectedBoard = ({ boards: { selectedBoard } }: RootState) =>
   selectedBoard;
+
+export const boardOptionsOpen = ({
+  boards: { deleteBoardModalOpen },
+}: RootState) => deleteBoardModalOpen;

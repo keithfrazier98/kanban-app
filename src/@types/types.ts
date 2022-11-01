@@ -42,6 +42,7 @@ export interface IBoardState {
   selectedBoard: IBoardData | null;
   addBoardModalOpen: boolean;
   editBoardModalOpen: boolean;
+  deleteBoardModalOpen: boolean;
 }
 
 export interface IBoardQuery {

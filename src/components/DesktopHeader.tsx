@@ -1,5 +1,6 @@
 import { DotsVertical } from "tabler-icons-react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import BoardOptions from "../features/boards/BoardOptions";
 import {
   editBoardModalOpened,
   getSelectedBoard,
@@ -8,8 +9,6 @@ import HeaderWrapper from "./HeaderWrapper";
 
 export default function DesktopHeader() {
   const selectedBoard = useAppSelector(getSelectedBoard);
-  const dispatch = useAppDispatch();
-
   return (
     <HeaderWrapper className="hidden lg:block">
       <div className="flex justify-between items-center flex-1 h-full px-5">
@@ -20,11 +19,7 @@ export default function DesktopHeader() {
           <button className="py-2 px-3 mr-2 bg-primary-indigo-active font-medium text-white rounded-full text-sm">
             + Add New Task
           </button>
-          <button
-            onClick={() => dispatch(editBoardModalOpened({ open: true }))}
-          >
-            <DotsVertical className="text-gray-400" />
-          </button>
+          <BoardOptions />
         </div>
       </div>
     </HeaderWrapper>

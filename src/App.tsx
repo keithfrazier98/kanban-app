@@ -13,7 +13,11 @@ import { classNames } from "./utils/utils";
 function App() {
   const {
     tasks: { openTask, openAddTaskModal: addTask },
-    boards: { addBoardModalOpen: addBoard, editBoardModalOpen: editBoard },
+    boards: {
+      addBoardModalOpen: addBoard,
+      editBoardModalOpen: editBoard,
+      deleteBoardModalOpen: deleteBoard,
+    },
   } = useAppSelector((state) => state);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
