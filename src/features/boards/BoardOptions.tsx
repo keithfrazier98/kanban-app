@@ -20,9 +20,9 @@ export default function BoardOptions() {
           <DotsVertical className="text-gray-400" />
         </button>
         {openOptions ? (
-          <div className="px-4 py-6 absolute top-full flex -right-full -translate-x-4 rounded-md shadow-lg min-w-[12rem] items-start flex-col w-max text-xs bg-white">
+          <div className="py-2 absolute top-full flex -right-full translate-y-3 -translate-x-4 rounded-md shadow-md min-w-[12rem] items-start flex-col w-max text-xs bg-white">
             <button
-              className="text-primary-gray-400 mb-4"
+              className="optionsBtnNormal"
               onClick={() => {
                 setOpenOptions(false);
                 dispatch(editBoardModalOpened({ open: true }));
@@ -31,7 +31,7 @@ export default function BoardOptions() {
               Edit Board
             </button>{" "}
             <button
-              className="text-primary-red-active"
+              className="optionsBtnRed"
               onClick={() => {
                 setOpenOptions(false);
                 dispatch(deleteBoardModalOpened({ open: true }));

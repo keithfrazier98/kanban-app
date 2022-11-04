@@ -13,6 +13,7 @@ import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
 import { ISubtask, ITaskQuery } from "../../@types/types";
 import { createSelector } from "@reduxjs/toolkit";
+import TaskOptions from "./TaskOptions";
 
 export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
@@ -44,7 +45,7 @@ export default function ViewTask() {
     if (!columns?.entities) return [];
     const entities = Object.values(columns?.entities);
     const names = entities.map((col) => col?.name || "");
-    return names
+    return names;
   }, [columns]);
 
   if (!!task) {
@@ -59,9 +60,7 @@ export default function ViewTask() {
       >
         <div className="flex justify-between items-center w-full">
           <h3 className="font-bold text-lg md:text-base leading-6">{title}</h3>
-          <div>
-            <DotsVertical className="text-gray-400 ml-3" size={28} />
-          </div>
+          <TaskOptions />
         </div>
         <p className="text-sm mt-7 text-gray-500 leading-7">{description}</p>
         <p className="text-xs font-bold mt-6 mb-4 text-gray-500">
