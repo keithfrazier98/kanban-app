@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Eye, EyeCheck, EyeglassOff, EyeOff } from "tabler-icons-react";
 import { useAppSelector } from "../app/hooks";
 import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
-import BoardListItem from "../features/boards/BoardListItem";
+import MenuListItem from "../features/boards/MenuListItem";
 import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { selectAllBoards } from "../features/boards/boardsEndpoints";
 import NewBoardBtn from "../features/boards/NewBoardBtn";
@@ -42,7 +42,7 @@ export default function SideBar({
               </h2>
               <ul>
                 {boards.map((boardItem, i) => (
-                  <BoardListItem
+                  <MenuListItem
                     active={board?.id === boardItem.id}
                     item={boardItem}
                     key={"board-" + i}

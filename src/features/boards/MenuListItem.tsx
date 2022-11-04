@@ -3,7 +3,7 @@ import { IBoardData } from "../../@types/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { boardSelected, getSelectedBoard } from "./boardsSlice";
 
-export default function BoardListItem({
+export default function MenuListItem({
   item,
   active,
 }: {

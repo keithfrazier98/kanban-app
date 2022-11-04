@@ -7,7 +7,7 @@ import { getSelectedBoard } from "./boardsSlice";
 import { selectAllBoards } from "./boardsEndpoints";
 
 import ToggleTheme from "../../components/ToggleTheme";
-import BoardListItem from "./BoardListItem";
+import MenuListItem from "./MenuListItem";
 import NewBoardBtn from "./NewBoardBtn";
 
 export default function BoardMenu() {
@@ -45,7 +45,7 @@ export default function BoardMenu() {
               {boards.map((item, i) => (
                 <Menu.Item key={`board-${i}`}>
                   {({ active }) => (
-                    <BoardListItem active={active} item={item} />
+                    <MenuListItem active={active} item={item} />
                   )}
                 </Menu.Item>
               ))}
