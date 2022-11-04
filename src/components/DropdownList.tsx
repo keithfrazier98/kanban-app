@@ -20,11 +20,11 @@ export default function DropdownList({
     <Listbox value={selected} onChange={(e) => onChange(e)}>
       {({ open }) => (
         <>
-          <Listbox.Label className="block text-sm font-medium text-gray-700 mt-6">
+          <Listbox.Label className="modalSubtitle mt-6">
             {label}
           </Listbox.Label>
           <div className="relative mt-1">
-            <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
+            <Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
               <span className="block truncate">{selected}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronDown

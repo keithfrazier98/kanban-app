@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   IBoardData,
   IBoardPostBody,
   IColumn,
-  IColumnEntities,
+  IColumnEntities    
 } from "../../@types/types";
 import {
   useGetColumnsQuery,
@@ -149,7 +149,9 @@ export default function BoardModifier({
           setBoardName(e.target.value);
         }}
       />
-      <h3 className="text-xs font-medium text-gray-500 dark:text-gray-300">{columnTitle}</h3>
+      <h3 className="text-xs font-medium text-gray-500 dark:text-gray-300">
+        {columnTitle}
+      </h3>
       {mappedColumnInputs}
       <button
         onClick={handleAddColumn}
