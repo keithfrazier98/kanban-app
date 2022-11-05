@@ -22,6 +22,14 @@ export interface IColumnConstructor {
   id?: string;
 }
 
+export interface ITaskConstructor {
+  title: string;
+  id?: string;
+  subtasks: string[];
+  description: string;
+  status: string
+}
+
 export type opTypes = "delete" | "update" | "create" | undefined;
 export interface IColumn {
   id: string;
