@@ -1,40 +1,26 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { useGetTasksQuery, useUpdateTaskMutation } from "./tasksEnpoints";
+import { useUpdateTaskMutation } from "./tasksEnpoints";
 import { getOpenTask, taskSelected } from "./tasksSlice";
-
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
-import { DotsVertical } from "tabler-icons-react";
 import { useMemo } from "react";
-
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
-import { ISubtask, ITaskQuery } from "../../@types/types";
-import { createSelector } from "@reduxjs/toolkit";
+import { ISubtask } from "../../@types/types";
 import TaskOptions from "./TaskOptions";
+import useSelectedTask from "../../hooks/useSelectedTask";
+
+
 
 export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
   const selectedBoard = useAppSelector(getSelectedBoard);
 
-  const selectTaskById = useMemo(() => {
-    return createSelector(
-      (res: any) => res.data,
-      (res: any, taskId: string) => taskId,
-      (data: ITaskQuery, taskId: string) => data.entities[taskId]
-    );
-  }, []);
+  const task = useSelectedTask();
 
   const [updateTask] = useUpdateTaskMutation();
-
-  const { task } = useGetTasksQuery(selectedBoard?.id, {
-    selectFromResult: (result: any) => ({
-      ...result,
-      task: selectTaskById(result, openTask ?? ""),
-    }),
-  });
 
   const dispatch = useAppDispatch();
 

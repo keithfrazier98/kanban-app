@@ -1,9 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { ITaskState } from "../../@types/types";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
+import { useMemo } from "react";
+import { ITaskQuery, ITaskState } from "../../@types/types";
 import { RootState } from "../../app/store";
+import { openModalFunction } from "../../utils/utils";
 
 // Setup slice to hold the openTask state
-const initialState: ITaskState = { openTask: null, openAddTaskModal: false };
+const initialState: ITaskState = {
+  openTask: null,
+  openAddTaskModal: false,
+  openEditTaskModal: false,
+};
+
 const tasksSlice = createSlice({
   name: "tasks",
   initialState,
@@ -14,14 +21,12 @@ const tasksSlice = createSlice({
       state.openTask = taskId;
     },
 
-    addTaskModalOpened(state, { payload }: { payload: { open: boolean } }) {
-      const { open } = payload;
-      state.openAddTaskModal = open;
-    },
+    addTaskModalOpened: openModalFunction("openAddTaskModal"),
+    editTaskModalOpened: openModalFunction("openEditTaskModal"),
   },
 });
 
-export const { taskSelected, addTaskModalOpened } = tasksSlice.actions;
+export const { taskSelected, addTaskModalOpened, editTaskModalOpened } = tasksSlice.actions;
 
 export const getOpenTask = (state: RootState) => state.tasks.openTask;
 

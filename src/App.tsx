@@ -9,12 +9,13 @@ import { deleteBoardModalOpened } from "./features/boards/boardsSlice";
 import DeleteBoard from "./features/boards/DeleteBoard";
 import EditBoard from "./features/boards/EditBoard";
 import AddTask from "./features/tasks/AddTask";
+import EditTask from "./features/tasks/EditTask";
 import ViewTask from "./features/tasks/ViewTask";
 import { classNames } from "./utils/utils";
 
 function App() {
   const {
-    tasks: { openTask, openAddTaskModal: addTask },
+    tasks: { openTask, openAddTaskModal: addTask, openEditTaskModal: editTask },
     boards: {
       addBoardModalOpen: addBoard,
       editBoardModalOpen: editBoard,
@@ -38,11 +39,16 @@ function App() {
           <Board />
         </main>
       </div>
-      {openTask ? <ViewTask /> : <></>}
+
+      {/* Board Modals */}
       {editBoard ? <EditBoard /> : <></>}
       {addBoard ? <AddBoard /> : <></>}
-      {addTask ? <AddTask /> : <></>}
       {deleteBoard ? <DeleteBoard /> : <></>}
+
+      {/* Task Modals */}
+      {openTask && !editTask ? <ViewTask /> : <></>}
+      {editTask && openTask ? <EditTask /> : <></>}
+      {addTask ? <AddTask /> : <></>}
     </div>
   );
 }
