@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { X } from "tabler-icons-react";
 import { ITaskConstructor } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
@@ -22,9 +22,6 @@ export default function TaskModifier({
 
   const selectedBoard = useAppSelector(getSelectedBoard);
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
-
-  const findColByName = (name: string) =>
-    Object.values(columns?.entities || {}).find((col) => col?.name === name);
 
   const columnNames = useMemo(() => {
     if (columns?.entities) {
