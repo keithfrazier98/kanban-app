@@ -21,17 +21,9 @@ export default function ConfirmDelete({
   onDelete: () => void;
   onCancel: () => void;
 }) {
-  const selectedBoard = useAppSelector(getSelectedBoard);
-  const { data: boards } = useGetBoardsQuery(undefined);
-  const dispatch = useAppDispatch();
-  const [deleteBoard] = useDeleteBoardMutation();
-
-  const closeModal = () => {
-    dispatch(deleteBoardModalOpened({ open: false }));
-  };
 
   return (
-    <ModalWBackdrop onOutsideClick={closeModal}>
+    <ModalWBackdrop onOutsideClick={onCancel}>
       <span className="ml-2 text-primary-red-active text-sm font-semibold">
         {title}
       </span>
