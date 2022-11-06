@@ -9,6 +9,7 @@ const initialState: ITaskState = {
   openTask: null,
   openAddTaskModal: false,
   openEditTaskModal: false,
+  openDeleteTaskModal: false,
 };
 
 const tasksSlice = createSlice({
@@ -23,10 +24,16 @@ const tasksSlice = createSlice({
 
     addTaskModalOpened: openModalFunction("openAddTaskModal"),
     editTaskModalOpened: openModalFunction("openEditTaskModal"),
+    deleteTaskModalOpened: openModalFunction("openDeleteTaskModal"),
   },
 });
 
-export const { taskSelected, addTaskModalOpened, editTaskModalOpened } = tasksSlice.actions;
+export const {
+  taskSelected,
+  addTaskModalOpened,
+  editTaskModalOpened,
+  deleteTaskModalOpened,
+} = tasksSlice.actions;
 
 export const getOpenTask = (state: RootState) => state.tasks.openTask;
 

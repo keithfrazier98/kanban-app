@@ -2,7 +2,7 @@ import { createEntityAdapter } from "@reduxjs/toolkit";
 import { ITask, ITaskConstructor, ITaskQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
-// Use an adapther for the task data to be used in the extendedTasksApi
+// Use an adapter for the task data to be used in the extendedTasksApi
 export const tasksAdapter = createEntityAdapter<ITask>({
   selectId: (task) => task.id,
 });
@@ -57,7 +57,11 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
       },
     }),
     deleteTask: builder.mutation({
-      query: (taskId: string) => `/tasks/${taskId}`,
+      query: (taskId: string) => ({
+        url: `/tasks/${taskId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Task"],
     }),
   }),
 });
@@ -66,4 +70,5 @@ export const {
   useGetTasksQuery,
   useUpdateTaskMutation,
   useCreateTaskMutation,
+  useDeleteTaskMutation
 } = extendedTasksApi;

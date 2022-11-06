@@ -73,6 +73,7 @@ export interface ITaskState {
   openTask: string | null;
   openAddTaskModal: boolean;
   openEditTaskModal: boolean;
+  openDeleteTaskModal: boolean;
 }
 
 export interface ITaskQuery {
