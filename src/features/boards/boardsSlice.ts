@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IBoardData, IBoardState } from "../../@types/types";
 import { RootState } from "../../app/store";
+import { openModalFunction } from "../../utils/utils";
 
 // Setup boards slice to hold the current board state
 const initialState: IBoardState = {
@@ -17,18 +18,9 @@ const boardsSlice = createSlice({
       const { board } = action.payload;
       state.selectedBoard = board;
     },
-    editBoardModalOpened(state, action: { payload: { open: boolean } }) {
-      const { open } = action.payload;
-      state.editBoardModalOpen = open;
-    },
-    addBoardModalOpened(state, action: { payload: { open: boolean } }) {
-      const { open } = action.payload;
-      state.addBoardModalOpen = open;
-    },
-    deleteBoardModalOpened(state, action: { payload: { open: boolean } }) {
-      const { open } = action.payload;
-      state.deleteBoardModalOpen = open;
-    },
+    editBoardModalOpened: openModalFunction("editBoardModalOpen"),
+    addBoardModalOpened: openModalFunction("addBoardModalOpen"),
+    deleteBoardModalOpened: openModalFunction("deleteBoardModalOpen"),
   },
 });
 
