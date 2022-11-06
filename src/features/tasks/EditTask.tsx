@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { ITaskConstructor } from "../../@types/types";
+import { ITask, ITaskConstructor } from "../../@types/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import useSelectedTask from "../../hooks/useSelectedTask";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
 import TaskModifier from "./TaskModifier";
+import { useUpdateTaskMutation } from "./tasksEnpoints";
 import { editTaskModalOpened, getOpenTask, taskSelected } from "./tasksSlice";
 
 export default function EditTask() {
@@ -19,6 +20,8 @@ export default function EditTask() {
     ),
   });
 
+  const [updateTask] = useUpdateTaskMutation();
+
   return (
     <ModalWBackdrop
       onOutsideClick={() => {
@@ -30,7 +33,11 @@ export default function EditTask() {
         elementTitles={["Edit Task", "Save Task"]}
         task={newTask}
         setTask={setNewTask}
-        onSubmit={() => {}}
+        onSubmit={() => {
+          console.log(newTask);
+          
+          updateTask(newTask as ITask);
+        }}
       />
     </ModalWBackdrop>
   );

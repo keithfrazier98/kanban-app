@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { db } from ".";
-import { ISubtask, ITask, ITaskConstructor } from "../../@types/types";
+import { ITask, ITaskConstructor } from "../../@types/types";
 import { dbActionErrorWrapper, paramMissing, send405WithBody } from "./utils";
 
 const RESPONSE_DELAY = 0;
@@ -75,14 +75,14 @@ export const taskHandlers = [
 
   //handles PATCH /task requests (update single task)
   rest.patch(TASKS_ENPOINT, async (req, res, ctx) => {
-    const { id, column: oldColumn, board, ...rest }: ITask = await req.json();
+    const { id, column: oldColumn, board, ...restOfTask }: ITask = await req.json();
     return dbActionErrorWrapper(id, res, ctx, () => {
       const task = db.task.findFirst({ where: { id: { equals: id } } });
 
       let newColumn = task?.column;
-      if (rest.status !== oldColumn.name) {
+      if (restOfTask.status !== oldColumn.name) {
         const entity = db.column.findFirst({
-          where: { name: { equals: rest.status } },
+          where: { name: { equals: restOfTask.status } },
         });
 
         if (entity) newColumn = entity;
@@ -90,7 +90,7 @@ export const taskHandlers = [
 
       db.task.update({
         where: { id: { equals: id } },
-        data: { ...rest, column: newColumn },
+        data: { ...restOfTask, column: newColumn },
       });
     });
   }),

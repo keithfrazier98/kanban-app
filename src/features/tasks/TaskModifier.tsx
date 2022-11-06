@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { X } from "tabler-icons-react";
-import { IColumn, ITaskConstructor } from "../../@types/types";
+import { ITaskConstructor } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
 import DropdownList from "../../components/DropdownList";
 import { getSelectedBoard } from "../boards/boardsSlice";
@@ -18,7 +18,7 @@ export default function TaskModifier({
   onSubmit: () => void;
 }) {
   const { subtasks, title, description, status } = task;
-  const [modalTitle, saveTitle] = elementTitles
+  const [modalTitle, saveTitle] = elementTitles;
 
   const selectedBoard = useAppSelector(getSelectedBoard);
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
@@ -59,7 +59,7 @@ export default function TaskModifier({
         className="flex flex-col mx-2"
         onSubmit={(e) => {
           e.preventDefault();
-          onSubmit()
+          onSubmit();
         }}
       >
         <label htmlFor="title" className="modalSubtitle">
@@ -144,7 +144,6 @@ export default function TaskModifier({
             setTask((pre) => ({
               ...pre,
               status,
-              column: findColByName(status) || ({} as IColumn),
             }));
           }}
           items={columnNames}
