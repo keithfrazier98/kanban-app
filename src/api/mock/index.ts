@@ -12,14 +12,14 @@ export const db = factory({
   board: {
     id: primaryKey(nanoid),
     name: String,
-    columns: manyOf("column"),
+    // columns: manyOf("column"),
   },
   column: {
     id: primaryKey(nanoid),
     board: oneOf("board"),
     name: String,
     index: Number,
-    tasks: manyOf("task"),
+    // tasks: manyOf("task"),
   },
   task: {
     id: primaryKey(nanoid),
@@ -30,7 +30,7 @@ export const db = factory({
     status: String,
     totalSubtasks: Number,
     completedSubtasks: Number,
-    subtasks: manyOf("subtask"),
+    // subtasks: manyOf("subtask"),
   },
   subtask: {
     id: primaryKey(nanoid),

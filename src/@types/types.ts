@@ -22,13 +22,10 @@ export interface IColumnConstructor {
   id?: string;
 }
 
-export interface ITaskConstructor {
-  title: string;
+export type ITaskConstructor = Omit<ITask, "id"> & {
   id?: string;
   subtasks: string[];
-  description: string;
-  status: string
-}
+};
 
 export type opTypes = "delete" | "update" | "create" | undefined;
 export interface IColumn {

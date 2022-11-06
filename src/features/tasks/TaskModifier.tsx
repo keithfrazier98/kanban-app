@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { X } from "tabler-icons-react";
-import { ITaskConstructor } from "../../@types/types";
-import {  useAppSelector } from "../../app/hooks";
+import { IColumn, ITaskConstructor } from "../../@types/types";
+import { useAppSelector } from "../../app/hooks";
 import DropdownList from "../../components/DropdownList";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
@@ -9,16 +9,22 @@ import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 export default function TaskModifier({
   task,
   setTask,
-  modalTitle,
+  elementTitles,
+  onSubmit,
 }: {
   task: ITaskConstructor;
   setTask: Dispatch<SetStateAction<ITaskConstructor>>;
-  modalTitle: string;
+  elementTitles: string[];
+  onSubmit: () => void;
 }) {
-  const { subtasks, title, description } = task;
+  const { subtasks, title, description, status } = task;
+  const [modalTitle, saveTitle] = elementTitles
 
   const selectedBoard = useAppSelector(getSelectedBoard);
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
+
+  const findColByName = (name: string) =>
+    Object.values(columns?.entities || {}).find((col) => col?.name === name);
 
   const columnNames = useMemo(() => {
     if (columns?.entities) {
@@ -27,10 +33,6 @@ export default function TaskModifier({
       return [];
     }
   }, [columns]);
-
-  const [status, setStatus] = useState(
-    columns?.entities[columns.ids[0]].name || ""
-  );
 
   const subPlaceholders = ["e.g. Make Coffee", "e.g. Drink cofee & smile"];
   const descPlaceholder =
@@ -57,6 +59,7 @@ export default function TaskModifier({
         className="flex flex-col mx-2"
         onSubmit={(e) => {
           e.preventDefault();
+          onSubmit()
         }}
       >
         <label htmlFor="title" className="modalSubtitle">
@@ -105,8 +108,12 @@ export default function TaskModifier({
                   onClick={() => {
                     const newSubtasks = subtasks.slice();
                     newSubtasks.splice(index, 1);
-                    eventHandlerFor("subtasks")({
-                      target: { value: newSubtasks },
+                    setTask((pre) => {
+                      return {
+                        ...pre,
+                        subtasks: newSubtasks,
+                        totalSubtasks: pre.totalSubtasks - 1,
+                      };
                     });
                   }}
                 >
@@ -119,8 +126,12 @@ export default function TaskModifier({
         <button
           className="fullBtnSecondary"
           onClick={() => {
-            eventHandlerFor("subtasks")({
-              target: { value: [...subtasks, ""] },
+            setTask((pre) => {
+              return {
+                ...pre,
+                subtasks: [...subtasks, ""],
+                totalSubtasks: pre.totalSubtasks + 1,
+              };
             });
           }}
         >
@@ -130,14 +141,18 @@ export default function TaskModifier({
         <DropdownList
           label="Status"
           onChange={(status) => {
-            setStatus(status);
+            setTask((pre) => ({
+              ...pre,
+              status,
+              column: findColByName(status) || ({} as IColumn),
+            }));
           }}
           items={columnNames}
           selected={status}
         />
 
         <button type="submit" className="fullBtnPrimary">
-          Create Task
+          {saveTitle}
         </button>
       </form>
     </>

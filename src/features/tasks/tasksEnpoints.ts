@@ -3,7 +3,12 @@ import {
   createEntityAdapter,
   EntityState,
 } from "@reduxjs/toolkit";
-import { ITask, ITaskQuery, ITaskState } from "../../@types/types";
+import {
+  ITask,
+  ITaskConstructor,
+  ITaskQuery,
+  ITaskState,
+} from "../../@types/types";
 // import { client } from "../../api/mock/client";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
@@ -28,6 +33,15 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
         return tasksAdapter.setAll(intitialTasksQueryState, response);
       },
       providesTags: ["Task"],
+    }),
+    createTask: builder.mutation({
+      query: (task: ITaskConstructor) => ({
+        url: "/tasks",
+        method: "POST",
+        body: task,
+      }),
+      invalidatesTags: ["Task"],
+      //TODO: Optimistic updates
     }),
     updateTask: builder.mutation({
       query: (task: ITask) => ({
@@ -56,6 +70,4 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetTasksQuery, useUpdateTaskMutation } = extendedTasksApi;
-
-
+export const { useGetTasksQuery, useUpdateTaskMutation, useCreateTaskMutation } = extendedTasksApi;

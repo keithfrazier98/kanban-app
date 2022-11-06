@@ -19,8 +19,6 @@ export default function EditTask() {
     ),
   });
 
-  
-
   return (
     <ModalWBackdrop
       onOutsideClick={() => {
@@ -29,9 +27,10 @@ export default function EditTask() {
       }}
     >
       <TaskModifier
-        modalTitle="Edit Task"
+        elementTitles={["Edit Task", "Save Task"]}
         task={newTask}
         setTask={setNewTask}
+        onSubmit={() => {}}
       />
     </ModalWBackdrop>
   );
