@@ -75,7 +75,12 @@ export const taskHandlers = [
 
   //handles PATCH /task requests (update single task)
   rest.patch(TASKS_ENPOINT, async (req, res, ctx) => {
-    const { id, column: oldColumn, board, ...restOfTask }: ITask = await req.json();
+    const {
+      id,
+      column: oldColumn,
+      board,
+      ...restOfTask
+    }: ITask = await req.json();
     return dbActionErrorWrapper(id, res, ctx, () => {
       const task = db.task.findFirst({ where: { id: { equals: id } } });
 
@@ -93,5 +98,25 @@ export const taskHandlers = [
         data: { ...restOfTask, column: newColumn },
       });
     });
+  }),
+
+  //handles DELETE /task reqeusts (single deletion)
+  rest.delete(TASKS_ENPOINT + "/:taskId", (req, res, ctx) => {
+    const { taskId } = req.params;
+    try {
+      if (typeof taskId === "string") {
+        db.task.delete({ where: { id: { equals: taskId } } });
+        return res(ctx.status(204));
+      } else {
+        throw new Error("taskId provided is not a string");
+      }
+    } catch (error) {
+      return send405WithBody(
+        res,
+        ctx,
+        error,
+        "An error occcured while trying to delete a task."
+      );
+    }
   }),
 ];
