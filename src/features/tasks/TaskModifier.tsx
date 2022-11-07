@@ -3,6 +3,7 @@ import { X } from "tabler-icons-react";
 import { ITaskConstructor } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
 import DropdownList from "../../components/DropdownList";
+import useColumnNames from "../../hooks/useColumnNames";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 
@@ -20,16 +21,7 @@ export default function TaskModifier({
   const { subtasks, title, description, status } = task;
   const [modalTitle, saveTitle] = elementTitles;
 
-  const selectedBoard = useAppSelector(getSelectedBoard);
-  const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
-
-  const columnNames = useMemo(() => {
-    if (columns?.entities) {
-      return Object.values(columns?.entities).map((col) => col?.name || "");
-    } else {
-      return [];
-    }
-  }, [columns]);
+  const { columnNames, columns } = useColumnNames();
 
   const subPlaceholders = ["e.g. Make Coffee", "e.g. Drink cofee & smile"];
   const descPlaceholder =
@@ -83,7 +75,7 @@ export default function TaskModifier({
           onChange={eventHandlerFor("description")}
         />
 
-        <fieldset className="flex flex-col mt-6">
+        <fieldset className="flex flex-col mt-6  max-h-36 overflow-y-scroll">
           <legend className="modalSubtitle">Subtasks</legend>
           {subtasks.map((subtask, index) => {
             const i = index > 0 ? 1 : 0;
@@ -144,7 +136,7 @@ export default function TaskModifier({
             }));
           }}
           items={columnNames}
-          selected={status}
+          selected={columns?.entities[status].name || ""}
         />
 
         <button type="submit" className="fullBtnPrimary">

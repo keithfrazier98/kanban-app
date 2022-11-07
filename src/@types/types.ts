@@ -23,7 +23,7 @@ export interface IColumnConstructor {
 }
 
 export type ITaskConstructor = Omit<ITask, "id"> & {
-  id?: string;
+  id: string;
   subtasks: string[];
 };
 

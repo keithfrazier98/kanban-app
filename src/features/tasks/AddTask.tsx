@@ -27,6 +27,7 @@ export default function AddTask() {
     totalSubtasks: 2,
     description: "",
     title: "",
+    id: "",
   });
 
   const [createTask] = useCreateTaskMutation();

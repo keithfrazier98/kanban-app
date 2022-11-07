@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { IColumn, ITask, ITaskQuery } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
 import { getSelectedBoard } from "../boards/boardsSlice";
@@ -7,8 +7,6 @@ import { useGetTasksQuery } from "../tasks/tasksEnpoints";
 import Task from "../tasks/Task";
 
 export default function Column({ column }: { column: IColumn }) {
-  // const tasks = useAppSelector(selectAllTasks);
-
   const selectedBoard = useAppSelector(getSelectedBoard);
 
   const selectTasksForColumn = useMemo(() => {
@@ -19,10 +17,10 @@ export default function Column({ column }: { column: IColumn }) {
       (res: any, columnId: string) => columnId,
       (data: ITaskQuery | undefined, columnId: string) =>
         Object.values(data?.entities || {}).filter(
-          (task) => task.column.id === columnId
+          (task) => task.status === columnId
         ) ?? emptyArray
     );
-  }, []);
+  }, [selectedBoard?.id]);
 
   const { tasksForColumn } = useGetTasksQuery(selectedBoard?.id, {
     skip: !selectedBoard,
@@ -33,7 +31,7 @@ export default function Column({ column }: { column: IColumn }) {
   });
 
   return (
-    <div className="my-6 max-h-full">
+    <div className="my-6 max-h-full" id={`column-${column.id}`}>
       <div className="flex items-center mb-6 text-base text-gray-400 font-bold">
         <div className="rounded-full w-3 h-3 bg-primary-indigo-active"></div>
         <h2 className="mx-2 tracking-widest">{column.name.toUpperCase()}</h2>

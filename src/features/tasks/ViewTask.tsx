@@ -11,12 +11,10 @@ import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
 import { ISubtask } from "../../@types/types";
 import TaskOptions from "./TaskOptions";
 import useSelectedTask from "../../hooks/useSelectedTask";
-
-
+import useColumnNames from "../../hooks/useColumnNames";
 
 export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
-  const selectedBoard = useAppSelector(getSelectedBoard);
 
   const task = useSelectedTask();
 
@@ -25,15 +23,8 @@ export default function ViewTask() {
   const dispatch = useAppDispatch();
 
   const { data: subtasks } = useGetSubtasksQuery(openTask);
-  const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
 
-  const columnNames = useMemo(() => {
-    if (!columns?.entities) return [];
-    const entities = Object.values(columns?.entities);
-    const names = entities.map((col) => col?.name || "");
-    return names;
-  }, [columns]);
-
+  const { columnNames, columns } = useColumnNames();
   if (!!task) {
     const { description, status, title, completedSubtasks, totalSubtasks } =
       task;
@@ -66,7 +57,7 @@ export default function ViewTask() {
         </ul>
         <DropdownList
           items={columnNames}
-          selected={status}
+          selected={columns?.entities[status].name || ""}
           label={"Current Status"}
           onChange={(status: string) => {
             updateTask({ ...task, status });

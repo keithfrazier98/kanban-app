@@ -15,7 +15,7 @@ export default function EditTask() {
   const { data: subtasks } = useGetSubtasksQuery(task.id);
   const [newTask, setNewTask] = useState<ITaskConstructor>({
     ...task,
-    subtasks: Object.values(subtasks?.entities || []).map(
+    subtasks: Object.values(subtasks?.entities || [""]).map(
       (task) => task?.title
     ),
   });
@@ -33,11 +33,7 @@ export default function EditTask() {
         elementTitles={["Edit Task", "Save Task"]}
         task={newTask}
         setTask={setNewTask}
-        onSubmit={() => {
-          console.log(newTask);
-          
-          updateTask(newTask as ITask);
-        }}
+        onSubmit={() => updateTask(newTask)}
       />
     </ModalWBackdrop>
   );

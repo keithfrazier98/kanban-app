@@ -46,10 +46,10 @@ boards.forEach(({ columns, name }) => {
   const board = db.board.create({ name });
   columns.forEach(({ name, tasks }, index) => {
     const column = db.column.create({ name, board, index });
-    tasks.forEach(({ description, status, subtasks, title }) => {
+    tasks.forEach(({ description, subtasks, title }) => {
       const task = db.task.create({
         description,
-        status,
+        status: column.id,
         title,
         column,
         board,

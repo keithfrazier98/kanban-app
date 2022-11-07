@@ -30,9 +30,14 @@ export default function Board() {
       <h1 className="sr-only">kanban board</h1>
       {columns ? (
         <div className="grid grid-rows-1 grid-flow-col w-max h-full px-2">
-          {Object.values(columns.entities).map((column, i) =>
-            column ? <Column key={`column-${i}`} column={column} /> : <></>
-          )}{" "}
+          {columns.ids.map((id: string) => {
+            const column = columns.entities[id];
+            return column ? (
+              <Column key={`column-${column.id}`} column={column} />
+            ) : (
+              <></>
+            );
+          })}
           <AddNewColumnBtn />
         </div>
       ) : (
