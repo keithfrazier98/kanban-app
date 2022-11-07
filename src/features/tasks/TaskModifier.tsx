@@ -136,7 +136,11 @@ export default function TaskModifier({
             }));
           }}
           items={columnNames}
-          selected={columns?.entities[status].name || ""}
+          selected={
+            columns?.entities[status]?.name ||
+            columns?.entities[columns?.ids[0]].name ||
+            ""
+          }
         />
 
         <button type="submit" className="fullBtnPrimary">

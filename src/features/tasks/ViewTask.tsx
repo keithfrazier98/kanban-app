@@ -36,11 +36,13 @@ export default function ViewTask() {
         }}
       >
         <div className="flex justify-between items-center w-full">
-          <h3 className="font-bold text-lg md:text-base leading-6">{title}</h3>
+          <h3 className="font-bold text-lg md:text-base leading-6 dark:text-white">
+            {title}
+          </h3>
           <TaskOptions />
         </div>
-        <p className="text-sm mt-7 text-gray-500 leading-7">{description}</p>
-        <p className="text-xs font-bold mt-6 mb-4 text-gray-500">
+        <p className="text-sm mt-7 text-gray-500 leading-6">{description}</p>
+        <p className="text-xs font-bold mt-6 mb-4 text-gray-500 dark:text-white">
           Subtasks {`(${completedSubtasks} of ${totalSubtasks})`}
         </p>
         <ul className="grid grid-flow-row gap-2">
