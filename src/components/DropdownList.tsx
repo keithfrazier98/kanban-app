@@ -75,7 +75,7 @@ export default function DropdownList({
                           active
                             ? "text-black bg-opacity-25 bg-primary-indigo-inactive"
                             : "text-primary-gray-400",
-                          "relative cursor-default  text-xs select-none py-2 pl-3 pr-9"
+                          "relative cursor-default dark:hover:text-white text-xs select-none py-2 pl-3 pr-9"
                         )
                       }
                       value={id}

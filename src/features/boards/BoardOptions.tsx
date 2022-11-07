@@ -2,7 +2,6 @@ import { useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import { DotsVertical } from "tabler-icons-react";
 import { useAppDispatch } from "../../app/hooks";
-import { useDeleteBoardMutation } from "./boardsEndpoints";
 import { deleteBoardModalOpened, editBoardModalOpened } from "./boardsSlice";
 
 export default function BoardOptions() {

@@ -29,13 +29,14 @@ body,
 }
 
 .modalSubtitle {
-  @apply text-xs font-medium text-primary-gray-400;
+  @apply text-xs font-medium text-primary-gray-400 dark:text-white;
 }
 
 .modalInput {
   @apply bg-transparent text-xs placeholder:text-gray-400 font-light;
   @apply hover:border-primary-indigo-active focus:border-primary-indigo-active;
-  @apply border rounded mt-1 p-2;
+  @apply border rounded mt-1 p-2 dark:text-white dark:border-primary-gray-500;
+  @apply dark:focus:ring-1 dark:focus:ring-indigo-500;
 }
 
 .fullBtnSecondary {
@@ -54,9 +55,29 @@ body,
 }
 
 .optionsBtnNormal {
-  @apply text-primary-gray-400 
+  @apply text-primary-gray-400;
 }
 
 .optionsBtnRed {
-  @apply text-primary-red-active
+  @apply text-primary-red-active;
 }
+
+/* width */
+.subtasksTrack::-webkit-scrollbar {
+  @apply w-1;
+}
+
+/* Track */
+.subtasksTrack::-webkit-scrollbar-track {
+  @apply rounded-full;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-primary-indigo-active;
+}
+
+/* Handle on hover
+::-webkit-scrollbar-thumb:hover {
+  background: #b30000;
+} */

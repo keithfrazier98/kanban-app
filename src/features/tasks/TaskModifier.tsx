@@ -40,12 +40,12 @@ export default function TaskModifier({
 
   return (
     <>
-      <h2 className="ml-2 font-semibold tracking-tight mb-3 dark:text-primary-gray-400">
+      <h2 className="ml-2 font-semibold tracking-tight mb-3 dark:text-white">
         {modalTitle}
       </h2>
 
       <form
-        className="flex flex-col mx-2"
+        className="flex flex-col mx-2 mt-4"
         onSubmit={(e) => {
           e.preventDefault();
           onSubmit();
@@ -75,42 +75,47 @@ export default function TaskModifier({
           onChange={eventHandlerFor("description")}
         />
 
-        <fieldset className="flex flex-col mt-6  max-h-36 overflow-y-scroll">
+        <fieldset className="flex flex-col mt-6 max-h-36">
           <legend className="modalSubtitle">Subtasks</legend>
-          {subtasks.map((subtask, index) => {
-            const i = index > 0 ? 1 : 0;
-            return (
-              <div className="flex items-center">
-                <input
-                  placeholder={subPlaceholders[i]}
-                  value={subtask}
-                  className="modalInput my-1 flex-grow"
-                  onChange={(e) => {
-                    const onChange = eventHandlerFor("subtasks");
-                    const newSubtasks = subtasks.slice();
-                    newSubtasks.splice(index, 1, e.target.value);
-                    onChange({ target: { value: newSubtasks } });
-                  }}
-                />
-                <button
-                  className="w-6 h-6 text-gray-500 ml-2"
-                  onClick={() => {
-                    const newSubtasks = subtasks.slice();
-                    newSubtasks.splice(index, 1);
-                    setTask((pre) => {
-                      return {
-                        ...pre,
-                        subtasks: newSubtasks,
-                        totalSubtasks: pre.totalSubtasks - 1,
-                      };
-                    });
-                  }}
+          <ul className="overflow-y-scroll subtasksTrack">
+            {subtasks.map((subtask, index) => {
+              const i = index > 0 ? 1 : 0;
+              return (
+                <li
+                  key={`subtask-input-${index}`}
+                  className="flex items-center"
                 >
-                  <X />
-                </button>
-              </div>
-            );
-          })}
+                  <input
+                    placeholder={subPlaceholders[i]}
+                    value={subtask}
+                    className="modalInput my-1 flex-grow"
+                    onChange={(e) => {
+                      const onChange = eventHandlerFor("subtasks");
+                      const newSubtasks = subtasks.slice();
+                      newSubtasks.splice(index, 1, e.target.value);
+                      onChange({ target: { value: newSubtasks } });
+                    }}
+                  />
+                  <button
+                    className="w-6 h-6 text-gray-500 ml-2"
+                    onClick={() => {
+                      const newSubtasks = subtasks.slice();
+                      newSubtasks.splice(index, 1);
+                      setTask((pre) => {
+                        return {
+                          ...pre,
+                          subtasks: newSubtasks,
+                          totalSubtasks: pre.totalSubtasks - 1,
+                        };
+                      });
+                    }}
+                  >
+                    <X />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         </fieldset>
         <button
           className="fullBtnSecondary"
