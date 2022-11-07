@@ -1,52 +1,30 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { useGetTasksQuery, useUpdateTaskMutation } from "./tasksEnpoints";
+import { useUpdateTaskMutation } from "./tasksEnpoints";
 import { getOpenTask, taskSelected } from "./tasksSlice";
-
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
-import { DotsVertical } from "tabler-icons-react";
 import { useMemo } from "react";
-
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
-import { ISubtask, ITaskQuery } from "../../@types/types";
-import { createSelector } from "@reduxjs/toolkit";
+import { ISubtask } from "../../@types/types";
+import TaskOptions from "./TaskOptions";
+import useSelectedTask from "../../hooks/useSelectedTask";
+import useColumnNames from "../../hooks/useColumnNames";
 
 export default function ViewTask() {
   const openTask = useAppSelector(getOpenTask);
-  const selectedBoard = useAppSelector(getSelectedBoard);
 
-  const selectTaskById = useMemo(() => {
-    return createSelector(
-      (res: any) => res.data,
-      (res: any, taskId: string) => taskId,
-      (data: ITaskQuery, taskId: string) => data.entities[taskId]
-    );
-  }, []);
+  const task = useSelectedTask();
 
   const [updateTask] = useUpdateTaskMutation();
-
-  const { task } = useGetTasksQuery(selectedBoard?.id, {
-    selectFromResult: (result: any) => ({
-      ...result,
-      task: selectTaskById(result, openTask ?? ""),
-    }),
-  });
 
   const dispatch = useAppDispatch();
 
   const { data: subtasks } = useGetSubtasksQuery(openTask);
-  const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
 
-  const columnNames = useMemo(() => {
-    if (!columns?.entities) return [];
-    const entities = Object.values(columns?.entities);
-    const names = entities.map((col) => col?.name || "");
-    return names
-  }, [columns]);
-
+  const { columnNames, columns } = useColumnNames();
   if (!!task) {
     const { description, status, title, completedSubtasks, totalSubtasks } =
       task;
@@ -58,13 +36,13 @@ export default function ViewTask() {
         }}
       >
         <div className="flex justify-between items-center w-full">
-          <h3 className="font-bold text-lg md:text-base leading-6">{title}</h3>
-          <div>
-            <DotsVertical className="text-gray-400 ml-3" size={28} />
-          </div>
+          <h3 className="font-bold text-lg md:text-base leading-6 dark:text-white">
+            {title}
+          </h3>
+          <TaskOptions />
         </div>
-        <p className="text-sm mt-7 text-gray-500 leading-7">{description}</p>
-        <p className="text-xs font-bold mt-6 mb-4 text-gray-500">
+        <p className="text-sm mt-7 text-gray-500 leading-6">{description}</p>
+        <p className="text-xs font-bold mt-6 mb-4 text-gray-500 dark:text-white">
           Subtasks {`(${completedSubtasks} of ${totalSubtasks})`}
         </p>
         <ul className="grid grid-flow-row gap-2">
@@ -81,7 +59,7 @@ export default function ViewTask() {
         </ul>
         <DropdownList
           items={columnNames}
-          selected={status}
+          selected={columns?.entities[status].name || ""}
           label={"Current Status"}
           onChange={(status: string) => {
             updateTask({ ...task, status });

@@ -12,13 +12,14 @@ export const db = factory({
   board: {
     id: primaryKey(nanoid),
     name: String,
-    columns: manyOf("column"),
+    // columns: manyOf("column"),
   },
   column: {
     id: primaryKey(nanoid),
     board: oneOf("board"),
     name: String,
-    tasks: manyOf("task"),
+    index: Number,
+    // tasks: manyOf("task"),
   },
   task: {
     id: primaryKey(nanoid),
@@ -29,7 +30,7 @@ export const db = factory({
     status: String,
     totalSubtasks: Number,
     completedSubtasks: Number,
-    subtasks: manyOf("subtask"),
+    // subtasks: manyOf("subtask"),
   },
   subtask: {
     id: primaryKey(nanoid),
@@ -43,12 +44,12 @@ const { boards } = mockData;
 
 boards.forEach(({ columns, name }) => {
   const board = db.board.create({ name });
-  columns.forEach(({ name, tasks }) => {
-    const column = db.column.create({ name, board });
-    tasks.forEach(({ description, status, subtasks, title }) => {
+  columns.forEach(({ name, tasks }, index) => {
+    const column = db.column.create({ name, board, index });
+    tasks.forEach(({ description, subtasks, title }) => {
       const task = db.task.create({
         description,
-        status,
+        status: column.id,
         title,
         column,
         board,

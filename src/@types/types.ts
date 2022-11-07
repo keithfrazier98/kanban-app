@@ -21,11 +21,19 @@ export interface IColumnConstructor {
   name: string;
   id?: string;
 }
+
+export type ITaskConstructor = Omit<ITask, "id"> & {
+  id: string;
+  subtasks: string[];
+};
+
+export type opTypes = "delete" | "update" | "create" | undefined;
 export interface IColumn {
   id: string;
   name: string;
   board: IBoardData;
-  delete: boolean
+  index: number;
+  operation?: opTypes;
 }
 
 export interface IBoardData {
@@ -39,6 +47,7 @@ export interface IBoardState {
   selectedBoard: IBoardData | null;
   addBoardModalOpen: boolean;
   editBoardModalOpen: boolean;
+  deleteBoardModalOpen: boolean;
 }
 
 export interface IBoardQuery {
@@ -62,6 +71,9 @@ export interface IColumnQuery {
 
 export interface ITaskState {
   openTask: string | null;
+  openAddTaskModal: boolean;
+  openEditTaskModal: boolean;
+  openDeleteTaskModal: boolean;
 }
 
 export interface ITaskQuery {
@@ -78,9 +90,10 @@ export interface ISubtaskQuery {
   status: requestStatus;
 }
 
-export interface IColumnPostBody {
+export interface IBoardPostBody {
   additions: IColumnConstructor[];
   deletions: IColumn[];
   updates: IColumn[];
   boardId: string;
+  newName: null | string;
 }

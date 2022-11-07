@@ -3,7 +3,12 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { IBoardData, IBoardQuery, IBoardState } from "../../@types/types";
+import {
+  IBoardData,
+  IBoardQuery,
+  IBoardState,
+  IBoardPostBody,
+} from "../../@types/types";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
 
@@ -30,6 +35,21 @@ export const extendedBoardAPi = apiSlice.injectEndpoints({
       },
       providesTags: ["Board"],
     }),
+    createBoard: builder.mutation({
+      query: (body: IBoardPostBody) => ({
+        url: "/boards",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Board"],
+    }),
+    deleteBoard: builder.mutation({
+      query: (boardId: string) => ({
+        url: `/boards/${boardId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Board"],
+    }),
     updateBoard: builder.mutation({
       query: (board: IBoardData) => ({
         url: "/boards",
@@ -37,14 +57,18 @@ export const extendedBoardAPi = apiSlice.injectEndpoints({
         method: "PUT",
       }),
       invalidatesTags: ["Board"],
-      onCacheEntryAdded(board, {dispatch}){
+      onCacheEntryAdded(board, { dispatch }) {
         //optimistic update for board
-      }
+      },
     }),
   }),
 });
 
-export const { useGetBoardsQuery } = extendedBoardAPi;
+export const {
+  useGetBoardsQuery,
+  useCreateBoardMutation,
+  useDeleteBoardMutation,
+} = extendedBoardAPi;
 
 // get the response for the getBoards query
 export const selectBoardsResult =

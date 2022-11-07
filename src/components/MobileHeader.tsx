@@ -1,16 +1,30 @@
 import { DotsVertical, Plus } from "tabler-icons-react";
-import BoardMenu from "../features/boards/BoardMenu";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import MobileBoardMenu from "../features/boards/MobileBoardMenu";
+import BoardOptions from "../features/boards/BoardOptions";
+import { getSelectedBoard } from "../features/boards/boardsSlice";
+import { addTaskModalOpened } from "../features/tasks/tasksSlice";
+import { classNames } from "../utils/utils";
 import HeaderWrapper from "./HeaderWrapper";
 
 export default function MobileHeader() {
+  const selectedBoard = useAppSelector(getSelectedBoard);
+  const dispatch = useAppDispatch();
   return (
     <HeaderWrapper className="block lg:hidden">
       <div className="flex flex-1 justify-between pl-4 items-center">
-        <BoardMenu />
+        <MobileBoardMenu />
         <div className="flex items-center">
           <button
             type="button"
-            className="rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className={classNames(
+              "rounded-full p-1 text-gray-400 hover:text-gray-500",
+              "focus:outline-none focus:ring-2 focus:ring-indigo-500",
+              "focus:ring-offset-2"
+            )}
+            onClick={() => {
+              dispatch(addTaskModalOpened({ open: true }));
+            }}
           >
             <span className="sr-only">View notifications</span>
             <div className="flex items-center">
@@ -19,7 +33,7 @@ export default function MobileHeader() {
               </div>
             </div>
           </button>
-          <DotsVertical className="text-gray-400 mr-2" />
+          <BoardOptions />
         </div>
       </div>
     </HeaderWrapper>

@@ -1,14 +1,8 @@
-import {
-  createSlice,
-  createEntityAdapter,
-  EntityState,
-} from "@reduxjs/toolkit";
-import { ITask, ITaskQuery, ITaskState } from "../../@types/types";
-// import { client } from "../../api/mock/client";
-import { RootState } from "../../app/store";
+import { createEntityAdapter } from "@reduxjs/toolkit";
+import { ITask, ITaskConstructor, ITaskQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
-// Use an adapther for the task data to be used in the extendedTasksApi
+// Use an adapter for the task data to be used in the extendedTasksApi
 export const tasksAdapter = createEntityAdapter<ITask>({
   selectId: (task) => task.id,
 });
@@ -28,6 +22,15 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
         return tasksAdapter.setAll(intitialTasksQueryState, response);
       },
       providesTags: ["Task"],
+    }),
+    createTask: builder.mutation({
+      query: (task: ITaskConstructor) => ({
+        url: "/tasks",
+        method: "POST",
+        body: task,
+      }),
+      invalidatesTags: ["Task"],
+      //TODO: Optimistic updates
     }),
     updateTask: builder.mutation({
       query: (task: ITask) => ({
@@ -53,9 +56,19 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
         }
       },
     }),
+    deleteTask: builder.mutation({
+      query: (taskId: string) => ({
+        url: `/tasks/${taskId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Task"],
+    }),
   }),
 });
 
-export const { useGetTasksQuery, useUpdateTaskMutation } = extendedTasksApi;
-
-
+export const {
+  useGetTasksQuery,
+  useUpdateTaskMutation,
+  useCreateTaskMutation,
+  useDeleteTaskMutation
+} = extendedTasksApi;

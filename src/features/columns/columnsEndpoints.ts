@@ -1,5 +1,5 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import { IColumn, IColumnPostBody, IColumnQuery } from "../../@types/types";
+import { IColumn, IBoardPostBody, IColumnQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
 const columnsAdapter = createEntityAdapter<IColumn>({
@@ -23,7 +23,7 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
       providesTags: ["Column"],
     }),
     updateColumns: builder.mutation({
-      query: (columns: IColumnPostBody) => ({
+      query: (columns: IBoardPostBody) => ({
         url: `/columns`,
         method: "POST",
         body: { columns },

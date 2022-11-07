@@ -27,3 +27,57 @@ body,
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+.modalSubtitle {
+  @apply text-xs font-medium text-primary-gray-400 dark:text-white;
+}
+
+.modalInput {
+  @apply bg-transparent text-xs placeholder:text-gray-400 font-light;
+  @apply hover:border-primary-indigo-active focus:border-primary-indigo-active;
+  @apply border rounded mt-1 p-2 dark:text-white dark:border-primary-gray-500;
+  @apply dark:focus:ring-1 dark:focus:ring-indigo-500;
+}
+
+.fullBtnSecondary {
+  @apply bg-primary-gray-300 text-primary-indigo-active font-semibold;
+  @apply text-xs rounded-full hover:backdrop-brightness-50 p-2 mt-2;
+}
+
+.fullBtnPrimary {
+  @apply bg-primary-indigo-active text-white text-xs rounded-full;
+  @apply hover:backdrop-opacity-70 w-full p-2 mt-5 font-semibold;
+}
+
+.optionsBtnNormal,
+.optionsBtnRed {
+  @apply py-2 w-full px-4 capitalize text-xs text-left hover:bg-black hover:bg-opacity-5;
+}
+
+.optionsBtnNormal {
+  @apply text-primary-gray-400;
+}
+
+.optionsBtnRed {
+  @apply text-primary-red-active;
+}
+
+/* width */
+.subtasksTrack::-webkit-scrollbar {
+  @apply w-1;
+}
+
+/* Track */
+.subtasksTrack::-webkit-scrollbar-track {
+  @apply rounded-full;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-primary-indigo-active;
+}
+
+/* Handle on hover
+::-webkit-scrollbar-thumb:hover {
+  background: #b30000;
+} */

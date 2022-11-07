@@ -1,30 +1,61 @@
+import { useState } from "react";
 import { useAppSelector } from "./app/hooks";
 import DesktopHeader from "./components/DesktopHeader";
 import MobileHeader from "./components/MobileHeader";
 import SideBar from "./components/SideBar";
 import AddBoard from "./features/boards/AddBoard";
 import Board from "./features/boards/Board";
+import { deleteBoardModalOpened } from "./features/boards/boardsSlice";
+import DeleteBoard from "./features/boards/DeleteBoard";
 import EditBoard from "./features/boards/EditBoard";
-import { getOpenTask } from "./features/tasks/tasksSlice";
+import AddTask from "./features/tasks/AddTask";
+import DeleteTask from "./features/tasks/DeleteTask";
+import EditTask from "./features/tasks/EditTask";
 import ViewTask from "./features/tasks/ViewTask";
+import { classNames } from "./utils/utils";
 
 function App() {
-  const openTask = useAppSelector(getOpenTask);
-  const { addBoardModalOpen: addBoard, editBoardModalOpen: editBoard } =
-    useAppSelector((state) => state.boards);
+  const {
+    tasks: {
+      openTask,
+      openAddTaskModal: addTask,
+      openEditTaskModal: editTask,
+      openDeleteTaskModal: deleteTask,
+    },
+    boards: {
+      addBoardModalOpen: addBoard,
+      editBoardModalOpen: editBoard,
+      deleteBoardModalOpen: deleteBoard,
+    },
+  } = useAppSelector((state) => state);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
   return (
     <div className="w-full h-full overflow-hidden">
-      <SideBar />
-      <div className="flex h-full flex-col md:pl-64 w-full overflow-hidden">
+      <SideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div
+        className={classNames(
+          sidebarOpen ? "md:pl-64" : "",
+          `flex h-full flex-col w-full overflow-hidden`
+        )}
+      >
         <MobileHeader />
         <DesktopHeader />
         <main className="overflow-x-scroll overflow-y-hidden no-scrollbar h-full">
           <Board />
         </main>
       </div>
-      {openTask ? <ViewTask /> : <></>}
+
+      {/* Board Modals */}
       {editBoard ? <EditBoard /> : <></>}
       {addBoard ? <AddBoard /> : <></>}
+      {deleteBoard ? <DeleteBoard /> : <></>}
+
+      {/* Task Modals */}
+      {openTask && !editTask && !deleteTask ? <ViewTask /> : <></>}
+      {deleteTask && openTask ? <DeleteTask /> : <></>}
+      {editTask && openTask ? <EditTask /> : <></>}
+      {addTask ? <AddTask /> : <></>}
     </div>
   );
 }
