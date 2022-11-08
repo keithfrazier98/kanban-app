@@ -30,6 +30,7 @@ export const db = factory({
     status: String,
     totalSubtasks: Number,
     completedSubtasks: Number,
+    index: Number,
     // subtasks: manyOf("subtask"),
   },
   subtask: {
@@ -44,9 +45,9 @@ const { boards } = mockData;
 
 boards.forEach(({ columns, name }) => {
   const board = db.board.create({ name });
-  columns.forEach(({ name, tasks }, index) => {
-    const column = db.column.create({ name, board, index });
-    tasks.forEach(({ description, subtasks, title }) => {
+  columns.forEach(({ name, tasks }, colIndex) => {
+    const column = db.column.create({ name, board, index: colIndex });
+    tasks.forEach(({ description, subtasks, title }, taskIndex) => {
       const task = db.task.create({
         description,
         status: column.id,
@@ -55,6 +56,7 @@ boards.forEach(({ columns, name }) => {
         board,
         totalSubtasks: subtasks.length,
         completedSubtasks: 0,
+        index: taskIndex,
       });
 
       let completedCount = 0;

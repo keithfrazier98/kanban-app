@@ -5,13 +5,14 @@ import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 import TaskModifier from "./TaskModifier";
-import { useCreateTaskMutation } from "./tasksEnpoints";
+import { useCreateTaskMutation, useGetTasksQuery } from "./tasksEnpoints";
 import { addTaskModalOpened } from "./tasksSlice";
 
 export default function AddTask() {
   const dispatch = useAppDispatch();
   const selectedBoard = useAppSelector(getSelectedBoard);
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
+  const { data: tasks } = useGetTasksQuery(selectedBoard?.id);
   const initialCol = useMemo(
     () => columns?.entities[columns.ids[0]],
     [columns]
@@ -28,6 +29,7 @@ export default function AddTask() {
     description: "",
     title: "",
     id: "",
+    index: tasks?.ids.length || 0,
   });
 
   const [createTask] = useCreateTaskMutation();

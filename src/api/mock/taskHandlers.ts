@@ -1,6 +1,7 @@
 import { rest } from "msw";
+import { stringify } from "querystring";
 import { db } from ".";
-import { ITask, ITaskConstructor } from "../../@types/types";
+import { ITask, ITaskConstructor, ITaskEntities } from "../../@types/types";
 import { dbActionErrorWrapper, paramMissing, send405WithBody } from "./utils";
 
 const RESPONSE_DELAY = 0;
@@ -69,6 +70,26 @@ export const taskHandlers = [
         ctx,
         error,
         "An error occured when trying to create a new task."
+      );
+    }
+  }),
+
+  rest.put(TASKS_ENPOINT, async (req, res, ctx) => {
+    const tasks = await req.json<ITaskEntities>();
+    if (!tasks)
+      return send405WithBody(res, ctx, {}, "No body found in request.");
+
+    try {
+      const newEntities = Object.entries(tasks).map(([id, task]) =>
+        db.task.update({ where: { id: { equals: id } }, data: task })
+      );
+      return res(ctx.status(200), ctx.json(JSON.stringify(newEntities)));
+    } catch (error) {
+      return send405WithBody(
+        res,
+        ctx,
+        error,
+        "An error occured while updating the tasks. "
       );
     }
   }),
