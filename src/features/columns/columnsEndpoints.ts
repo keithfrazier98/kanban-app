@@ -29,10 +29,35 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
         body: { columns },
       }),
       invalidatesTags: ["Column"],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        const updateResult = dispatch(
+          extendedColumnsApi.util.updateQueryData(
+            "getColumns",
+            arg.boardId,
+            (draft) => {
+              // draft is an immer copy of the state and can be mutated directly
+              // update the state with the columns adapter to update the normalized data
+              columnsAdapter.updateMany(draft, {
+                payload: arg.updates.map((col) => ({
+                  id: col.id,
+                  changes: col,
+                })),
+                type: "",
+              });
+            }
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          updateResult.undo();
+        }
+      },
     }),
     // delete a single column given an in the path params
     deleteColumn: builder.mutation({
-      query: (columnId:string) => ({
+      query: (columnId: string) => ({
         url: `/columns/${columnId}`,
         method: "DELETE",
       }),

@@ -23,7 +23,13 @@ export default function Task({
   return (
     <div
       key={`task-${task?.id}`}
-      className={classNames("w-full px-2 text-left mb-5")}
+      className={classNames(
+        placeholder ? "hover:cursor-pointer" : "",
+        "w-full px-2 text-left mb-5"
+      )}
+      onClick={() => {
+        if (placeholder) dispatch(addTaskModalOpened({ open: true }));
+      }}
     >
       {/** Use the task div as the ref (instead of button) so the preview doesn't show padding. */}
       <div className="flex px-4 py-6 flex-col dark:bg-primary-gray-600 bg-white rounded-md shadow-lg">
@@ -40,9 +46,7 @@ export default function Task({
               <p className="font-bold text-sm dark:text-white">{task?.title}</p>
               <button
                 onClick={() => {
-                  placeholder
-                    ? dispatch(addTaskModalOpened({ open: true }))
-                    : dispatch(taskSelected({ taskId: task?.id || "" }));
+                  dispatch(taskSelected({ taskId: task?.id || "" }));
                 }}
                 className={classNames(
                   "hover:text-primary-indigo-inactive text-primary-gray-300"

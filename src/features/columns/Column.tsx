@@ -13,8 +13,6 @@ export default function Column({ column }: { column: IColumn }) {
     skip: !selectedBoard,
   });
 
-  const [taskList, setTaskList] = useState(column.tasks);
-
   return (
     <div className="my-6 h-full" id={`column-${column.id}`}>
       <div className="flex items-center mb-6 text-base text-gray-400 font-bold">
@@ -24,7 +22,7 @@ export default function Column({ column }: { column: IColumn }) {
       </div>
       <div className="overflow-y-scroll no-scrollbar h-full pb-12 w-72">
         <Droppable key={column.id} droppableId={column.id}>
-          {(provided, snapshot) => (
+          {(provided) => (
             <div
               className="flex flex-col h-full"
               ref={provided.innerRef}
