@@ -8,6 +8,8 @@ import {
 } from "./boardsSlice";
 
 export default function DeleteBoard() {
+  const { deleteBoardModalOpen } = useAppSelector((state) => state.boards);
+
   const selectedBoard = useAppSelector(getSelectedBoard);
   const { data: boards } = useGetBoardsQuery(undefined);
   const dispatch = useAppDispatch();
@@ -32,6 +34,7 @@ export default function DeleteBoard() {
 
   return (
     <ConfirmDelete
+      render={deleteBoardModalOpen}
       title={"Delete this board?"}
       onCancel={closeModal}
       onDelete={onDelete}

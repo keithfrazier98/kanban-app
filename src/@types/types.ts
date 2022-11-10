@@ -15,6 +15,7 @@ export interface ITask {
   status: string;
   totalSubtasks: number;
   completedSubtasks: number;
+  index: number;
 }
 
 export interface IColumnConstructor {
@@ -34,6 +35,7 @@ export interface IColumn {
   board: IBoardData;
   index: number;
   operation?: opTypes;
+  tasks: string[];
 }
 
 export interface IBoardData {
@@ -76,9 +78,12 @@ export interface ITaskState {
   openDeleteTaskModal: boolean;
 }
 
+export interface ITaskEntities {
+  [id: string]: ITask;
+}
 export interface ITaskQuery {
   ids: string[];
-  entities: { [id: string]: ITask };
+  entities: ITaskEntities;
   error?: string;
   status: requestStatus;
 }

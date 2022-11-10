@@ -14,7 +14,7 @@ export default function useSelectedTask() {
     return createSelector(
       (res: any) => res.data,
       (res: any, taskId: string) => taskId,
-      (data: ITaskQuery, taskId: string) => data.entities[taskId]
+      (data: ITaskQuery, taskId: string) => data?.entities[taskId]
     );
   }, []);
 

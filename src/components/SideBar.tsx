@@ -7,6 +7,8 @@ import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { selectAllBoards } from "../features/boards/boardsEndpoints";
 import NewBoardBtn from "../features/boards/NewBoardBtn";
 import ToggleTheme from "./ToggleTheme";
+import { Transition } from "@headlessui/react";
+import { classNames } from "../utils/utils";
 /**
  * Static Sidebar for desktop
  * @returns
@@ -22,15 +24,25 @@ export default function SideBar({
   const board = useAppSelector(getSelectedBoard);
   return (
     <>
-      <div
-        className={`  ${
-          sidebarOpen
-            ? "hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col"
-            : "hidden w-0"
-        }`}
+      <Transition
+        as={"section"}
+        show={sidebarOpen}
+        enter="transition ease-in-out duration-300 transform"
+        enterFrom="-translate-x-full"
+        enterTo="translate-x-0"
+        leave="transition ease-in-out duration-300 transform"
+        leaveFrom="translate-x-0"
+        leaveTo="-translate-x-full"
+        className={`md:fixed md:w-64 md:flex md:flex-col h-full`}
       >
         {/* Sidebar component, swap this element with another sidebar if you like */}
-        <div className="flex flex-grow flex-col overflow-y-auto dark:bg-primary-gray-600 dark:border-primary-gray-500 bg-primary-gray-100 border-r border-primary-gray-300 pt-5">
+        <div
+          className={classNames(
+            "flex flex-grow flex-col h-full overflow-y-auto dark:bg-primary-gray-600",
+            "dark:border-primary-gray-500 bg-primary-gray-100 border-r",
+            "border-primary-gray-300 pt-5"
+          )}
+        >
           <div className="flex flex-shrink-0 items-center px-4 mb-8 dark:text-white">
             <MobileLogo />
             <h1 className="font-bold text-2xl ml-2">kanban</h1>
@@ -65,12 +77,12 @@ export default function SideBar({
             </div>
           </div>
         </div>
-      </div>
+      </Transition>{" "}
       <button
         onClick={() => {
           setSidebarOpen(!sidebarOpen);
         }}
-        className={`absolute bottom-8 left-0 rounded-r-full bg-primary-indigo-active p-4 text-white ${
+        className={`absolute bottom-8 left-0 rounded-r-full bg-primary-indigo-active p-4 text-white z-20 ${
           sidebarOpen ? "hidden" : "block"
         }`}
       >

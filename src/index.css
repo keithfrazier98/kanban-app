@@ -77,6 +77,10 @@ body,
   @apply rounded-full bg-primary-indigo-active;
 }
 
+/* .draggable {
+  left: auto !important;
+  top: auto !important;
+} */
 /* Handle on hover
 ::-webkit-scrollbar-thumb:hover {
   background: #b30000;

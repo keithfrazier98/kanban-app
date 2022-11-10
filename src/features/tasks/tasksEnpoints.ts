@@ -1,10 +1,16 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import { ITask, ITaskConstructor, ITaskQuery } from "../../@types/types";
+import {
+  ITask,
+  ITaskConstructor,
+  ITaskEntities,
+  ITaskQuery,
+} from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
 // Use an adapter for the task data to be used in the extendedTasksApi
 export const tasksAdapter = createEntityAdapter<ITask>({
   selectId: (task) => task.id,
+  sortComparer: (a, b) => b.index - a.index,
 });
 
 const intitialTasksQueryState = tasksAdapter.getInitialState<ITaskQuery>({
@@ -13,6 +19,8 @@ const intitialTasksQueryState = tasksAdapter.getInitialState<ITaskQuery>({
   status: "idle",
 });
 
+//TODO: Optimistic updates
+//TODO: Invalidate with IDs
 // Extend the apiSlice with the task queries and mutations
 export const extendedTasksApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -30,7 +38,14 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
         body: task,
       }),
       invalidatesTags: ["Task"],
-      //TODO: Optimistic updates
+    }),
+    updateTasks: builder.mutation({
+      query: (tasks: ITask[]) => ({
+        url: "/tasks",
+        method: "PUT",
+        body: tasks,
+      }),
+      invalidatesTags: ["Task"],
     }),
     updateTask: builder.mutation({
       query: (task: ITask) => ({
@@ -69,6 +84,7 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
 export const {
   useGetTasksQuery,
   useUpdateTaskMutation,
+  useUpdateTasksMutation,
   useCreateTaskMutation,
-  useDeleteTaskMutation
+  useDeleteTaskMutation,
 } = extendedTasksApi;

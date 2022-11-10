@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useUpdateTaskMutation } from "./tasksEnpoints";
-import { getOpenTask, taskSelected } from "./tasksSlice";
+import { getOpenTask, selectTaskSlice, taskSelected } from "./tasksSlice";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import { useMemo } from "react";
 import Subtask from "../subtasks/Subtask";
@@ -14,6 +14,9 @@ import useSelectedTask from "../../hooks/useSelectedTask";
 import useColumnNames from "../../hooks/useColumnNames";
 
 export default function ViewTask() {
+  const { openEditTaskModal: editTask, openDeleteTaskModal: deleteTask } =
+    useAppSelector(selectTaskSlice);
+
   const openTask = useAppSelector(getOpenTask);
 
   const task = useSelectedTask();
@@ -31,6 +34,7 @@ export default function ViewTask() {
 
     return (
       <ModalWBackdrop
+        render={!!(openTask && !editTask && !deleteTask)}
         onOutsideClick={() => {
           dispatch(taskSelected({ taskId: null }));
         }}
