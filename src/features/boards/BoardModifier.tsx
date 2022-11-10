@@ -3,7 +3,7 @@ import {
   IBoardData,
   IBoardPostBody,
   IColumn,
-  IColumnEntities    
+  IColumnEntities,
 } from "../../@types/types";
 import {
   useGetColumnsQuery,
@@ -40,6 +40,7 @@ export default function BoardModifier({
       board: {} as any,
       index: Object.keys(newColumns).length,
       operation: "create",
+      tasks: [],
     };
   };
 
@@ -93,6 +94,7 @@ export default function BoardModifier({
             id: randomId,
             operation: "create",
             index: Object.keys(prevState || {}).length,
+            tasks: []
           },
         };
       });

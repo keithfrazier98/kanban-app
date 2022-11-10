@@ -6,9 +6,6 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import { worker } from "./api/mock";
-import { TouchBackend } from "react-dnd-touch-backend";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
@@ -21,13 +18,7 @@ async function main() {
   root.render(
     <React.StrictMode>
       <ReduxProvider store={store}>
-        {/** Needs touch backend implementation with react-dnd-preview */}
-        <DndProvider
-          backend={HTML5Backend}
-          options={{ enableMouseEvents: true, delay: 10 }}
-        >
-          <App />
-        </DndProvider>
+        <App />
       </ReduxProvider>
     </React.StrictMode>
   );

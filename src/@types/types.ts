@@ -35,6 +35,7 @@ export interface IColumn {
   board: IBoardData;
   index: number;
   operation?: opTypes;
+  tasks: string[];
 }
 
 export interface IBoardData {

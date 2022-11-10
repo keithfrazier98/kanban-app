@@ -19,7 +19,7 @@ export const db = factory({
     board: oneOf("board"),
     name: String,
     index: Number,
-    // tasks: manyOf("task"),
+    tasks: Array,
   },
   task: {
     id: primaryKey(nanoid),
@@ -47,6 +47,7 @@ boards.forEach(({ columns, name }) => {
   const board = db.board.create({ name });
   columns.forEach(({ name, tasks }, colIndex) => {
     const column = db.column.create({ name, board, index: colIndex });
+    const columnTasks: string[] = [];
     tasks.forEach(({ description, subtasks, title }, taskIndex) => {
       const task = db.task.create({
         description,
@@ -58,6 +59,8 @@ boards.forEach(({ columns, name }) => {
         completedSubtasks: 0,
         index: taskIndex,
       });
+
+      columnTasks.push(task.id);
 
       let completedCount = 0;
 
@@ -72,6 +75,11 @@ boards.forEach(({ columns, name }) => {
         where: { id: { equals: task.id } },
         data: { completedSubtasks: completedCount },
       });
+    });
+
+    db.column.update({
+      where: { id: { equals: column.id } },
+      data: { ...column, tasks: columnTasks },
     });
   });
 });

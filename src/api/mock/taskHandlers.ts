@@ -75,13 +75,26 @@ export const taskHandlers = [
   }),
 
   rest.put(TASKS_ENPOINT, async (req, res, ctx) => {
-    const tasks = await req.json<ITaskEntities>();
-    if (!tasks)
-      return send405WithBody(res, ctx, {}, "No body found in request.");
-
+    const tasks = await req.json<ITask[]>();
     try {
-      const newEntities = Object.entries(tasks).map(([id, task]) =>
-        db.task.update({ where: { id: { equals: id } }, data: task })
+      if (!tasks) throw new Error("No body found in request.");
+      
+      const column = db.column.findFirst({
+        where: { id: { equals: tasks[0].column.id } },
+      });
+
+      const board = db.board.findFirst({
+        where: { id: { equals: tasks[0].board.id } },
+      });
+
+      if (!column || !board)
+        throw new Error("Column or Board could not be determined.");
+
+      const newEntities = tasks.map(({ id, ...task }) =>
+        db.task.update({
+          where: { id: { equals: id } },
+          data: { ...task, board, column },
+        })
       );
       return res(ctx.status(200), ctx.json(JSON.stringify(newEntities)));
     } catch (error) {

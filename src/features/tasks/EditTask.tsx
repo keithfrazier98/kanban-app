@@ -6,7 +6,7 @@ import useSelectedTask from "../../hooks/useSelectedTask";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
 import TaskModifier from "./TaskModifier";
 import { useUpdateTaskMutation } from "./tasksEnpoints";
-import { editTaskModalOpened, getOpenTask, taskSelected } from "./tasksSlice";
+import { editTaskModalOpened, taskSelected } from "./tasksSlice";
 
 export default function EditTask() {
   const dispatch = useAppDispatch();
