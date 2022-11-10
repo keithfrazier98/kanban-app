@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { IColumn } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetTasksQuery } from "../tasks/tasksEnpoints";
 import Task from "../tasks/Task";
 import { Droppable, Draggable } from "react-beautiful-dnd";
+import PortalAwareItem from "../../components/PortalAwareItem";
 
 export default function Column({ column }: { column: IColumn }) {
   const selectedBoard = useAppSelector(getSelectedBoard);
@@ -34,14 +34,14 @@ export default function Column({ column }: { column: IColumn }) {
                   draggableId={taskId}
                   index={i}
                 >
+                  {/** A portal is needed to render the drag preview correctly, see thread below. */}
+                  {/**https://stackoverflow.com/questions/54982182/react-beautiful-dnd-drag-out-of-position-problem */}
                   {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <Task task={tasks?.entities[taskId]} />
-                    </div>
+                    <PortalAwareItem
+                      provided={provided}
+                      snapshot={snapshot}
+                      task={tasks?.entities[taskId]}
+                    />
                   )}
                 </Draggable>
               ))}
