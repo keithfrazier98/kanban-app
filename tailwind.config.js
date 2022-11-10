@@ -4,6 +4,11 @@ module.exports = {
   darkMode: "class",
   theme: {
     extend: {
+      transitionProperty: {
+        height: "height",
+        width: "width",
+        spacing: "margin, padding",
+      },
       fontFamily: {
         jakarta: ["'Plus Jakarta Sans'", "sans-serif"],
       },

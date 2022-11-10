@@ -6,13 +6,17 @@ import useSelectedTask from "../../hooks/useSelectedTask";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
 import TaskModifier from "./TaskModifier";
 import { useUpdateTaskMutation } from "./tasksEnpoints";
-import { editTaskModalOpened, taskSelected } from "./tasksSlice";
+import {
+  editTaskModalOpened,
+  selectTaskSlice,
+  taskSelected,
+} from "./tasksSlice";
 
 export default function EditTask() {
   const dispatch = useAppDispatch();
 
   const task = useSelectedTask();
-  const { data: subtasks } = useGetSubtasksQuery(task.id);
+  const { data: subtasks } = useGetSubtasksQuery(task?.id);
   const [newTask, setNewTask] = useState<ITaskConstructor>({
     ...task,
     subtasks: Object.values(subtasks?.entities || [""]).map(
@@ -22,8 +26,10 @@ export default function EditTask() {
 
   const [updateTask] = useUpdateTaskMutation();
 
+  const { openEditTaskModal, openTask } = useAppSelector(selectTaskSlice);
   return (
     <ModalWBackdrop
+      render={!!(openEditTaskModal && openTask)}
       onOutsideClick={() => {
         dispatch(taskSelected({ taskId: null }));
         dispatch(editTaskModalOpened({ open: false }));

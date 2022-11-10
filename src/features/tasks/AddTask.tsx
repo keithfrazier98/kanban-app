@@ -6,7 +6,7 @@ import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 import TaskModifier from "./TaskModifier";
 import { useCreateTaskMutation, useGetTasksQuery } from "./tasksEnpoints";
-import { addTaskModalOpened } from "./tasksSlice";
+import { addTaskModalOpened, selectTaskSlice } from "./tasksSlice";
 
 export default function AddTask() {
   const dispatch = useAppDispatch();
@@ -34,8 +34,11 @@ export default function AddTask() {
 
   const [createTask] = useCreateTaskMutation();
 
+  const { openAddTaskModal } = useAppSelector(selectTaskSlice);
+
   return (
     <ModalWBackdrop
+      render={openAddTaskModal}
       onOutsideClick={() => {
         dispatch(addTaskModalOpened({ open: false }));
       }}

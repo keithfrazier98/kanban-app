@@ -36,5 +36,6 @@ export const {
 } = tasksSlice.actions;
 
 export const getOpenTask = (state: RootState) => state.tasks.openTask;
+export const selectTaskSlice = (state: RootState) => state.tasks;
 
 export default tasksSlice.reducer;
