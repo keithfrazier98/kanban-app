@@ -81,7 +81,7 @@ function App() {
         <DesktopHeader />
         <main
           className={classNames(
-            "flex overflow-x-scroll overflow-y-hidden no-scrollbar h-full",
+            "flex overflow-x-scroll overflow-y-hidden boardTrack h-full",
             "transform transition-all"
           )}
         >

@@ -14,13 +14,13 @@ export default function Column({ column }: { column: IColumn }) {
   });
 
   return (
-    <div className="my-6 h-full" id={`column-${column.id}`}>
+    <div className="my-6 h-full group pb-6" id={`column-${column.id}`}>
       <div className="flex items-center mb-6 text-base text-gray-400 font-bold">
         <div className="rounded-full w-3 h-3 bg-primary-indigo-active"></div>
         <h2 className="mx-2 tracking-widest">{column.name.toUpperCase()}</h2>
         <p> {`( ${column.tasks.length} )`}</p>
       </div>
-      <div className="overflow-y-scroll no-scrollbar h-full pb-12 w-72">
+      <div className="overflow-y-scroll max-h-full tasksTrack pb-12 w-72 pr-1">
         <Droppable key={column.id} droppableId={column.id}>
           {(provided) => (
             <div

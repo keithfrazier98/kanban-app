@@ -63,25 +63,55 @@ body,
 }
 
 /* width */
-.subtasksTrack::-webkit-scrollbar {
+/* .subtasksTrack::-webkit-scrollbar,
+.tasksTrack::-webkit-scrollbar-track {
   @apply w-1;
-}
+} */
+
+/* .tasksTrack::-webkit-scrollbar-track {
+  @apply bg-transparent;
+} */
 
 /* Track */
-.subtasksTrack::-webkit-scrollbar-track {
+/* .subtasksTrack::-webkit-scrollbar-track,
+.tasksTrack::-webkit-scrollbar-track {
   @apply rounded-full;
-}
+} */
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+/* ::-webkit-scrollbar-thumb {
   @apply rounded-full bg-primary-indigo-active;
+} */
+
+/* ::-webkit-scrollbar-track {
+  @apply bg-primary-gray-200;
+} */
+
+.tasksTrack,
+.subtasksTrack {
+  @apply scrollbar-track-primary-gray-300 scrollbar-track-rounded-full;
+}
+
+.tasksTrack {
+  @apply scrollbar-thin group-hover:scrollbar-thumb-[#a9a4ff80];
+  @apply scrollbar-track-transparent scrollbar-thumb-rounded-full;
+}
+
+.boardTrack {
+  @apply hover:scrollbar-thumb-[#a9a4ff80] scrollbar;
+  @apply scrollbar-thumb-rounded-full ;
+  @apply scrollbar-thumb-[#00000032];
+}
+
+.subtasksTrack {
+  @apply scrollbar-thumb-primary-indigo-active;
 }
 
 /* .draggable {
   left: auto !important;
   top: auto !important;
 } */
-/* Handle on hover
-::-webkit-scrollbar-thumb:hover {
+/* Handle on hover */
+/* ::-webkit-scrollbar-thumb:hover {
   background: #b30000;
 } */
