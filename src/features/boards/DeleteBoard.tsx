@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import ConfirmDelete from "../../components/ConfirmDelete";
+import useSelectedBoard from "../../hooks/useSelectedBoard";
 import useTransitionState from "../../hooks/useTransitionState";
 import { useDeleteBoardMutation, useGetBoardsQuery } from "./boardsEndpoints";
 import {
@@ -9,9 +10,7 @@ import {
 } from "./boardsSlice";
 
 export default function DeleteBoard() {
-  const { deleteBoardModalOpen } = useAppSelector((state) => state.boards);
-
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const selectedBoard = useSelectedBoard();
   const { data: boards } = useGetBoardsQuery(undefined);
   const dispatch = useAppDispatch();
   const [deleteBoard] = useDeleteBoardMutation();
@@ -25,9 +24,7 @@ export default function DeleteBoard() {
     dispatch(
       boardSelected({
         board:
-          Object.values(boards?.entities || {}).find(
-            (board) => board?.id !== selectedBoard.id
-          ) || null,
+          String(boards?.ids.find((id) => id !== selectedBoard.id)) || null,
       })
     );
     deleteBoard(selectedBoard.id);

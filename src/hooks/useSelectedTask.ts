@@ -5,9 +5,10 @@ import { useAppSelector } from "../app/hooks";
 import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { useGetTasksQuery } from "../features/tasks/tasksEnpoints";
 import { getOpenTask } from "../features/tasks/tasksSlice";
+import useSelectedBoard from "./useSelectedBoard";
 
 export default function useSelectedTask() {
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const selectedBoard = useSelectedBoard();
   const openTask = useAppSelector(getOpenTask);
 
   const selectTaskById = useMemo(() => {

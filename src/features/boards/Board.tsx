@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import useSelectedBoard from "../../hooks/useSelectedBoard";
 import AddNewColumnBtn from "../columns/AddNewColumnBtn";
 import Column from "../columns/Column";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
@@ -8,7 +9,7 @@ import { boardSelected, getSelectedBoard } from "./boardsSlice";
 
 export default function Board() {
   const { data: boards } = useGetBoardsQuery(undefined);
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const selectedBoard = useSelectedBoard();
 
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id, {
     skip: !selectedBoard,
@@ -18,10 +19,7 @@ export default function Board() {
 
   useEffect(() => {
     if (!selectedBoard && boards) {
-      const firstBoard = boards.entities[boards.ids[0]];
-      if (firstBoard) {
-        dispatch(boardSelected({ board: firstBoard }));
-      }
+      dispatch(boardSelected({ board: String(boards.ids[0]) || null }));
     }
   }, [boards, columns, selectedBoard]);
 

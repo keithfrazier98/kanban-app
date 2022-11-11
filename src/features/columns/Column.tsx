@@ -5,9 +5,10 @@ import { useGetTasksQuery } from "../tasks/tasksEnpoints";
 import Task from "../tasks/Task";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import PortalAwareItem from "../../components/PortalAwareItem";
+import useSelectedBoard from "../../hooks/useSelectedBoard";
 
 export default function Column({ column }: { column: IColumn }) {
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const selectedBoard = useSelectedBoard();
 
   const { data: tasks } = useGetTasksQuery(selectedBoard?.id, {
     skip: !selectedBoard,

@@ -46,7 +46,7 @@ export interface IBoardData {
 export type requestStatus = "idle" | "succeeded" | "loading" | "failed";
 
 export interface IBoardState {
-  selectedBoard: IBoardData | null;
+  selectedBoard: string | null;
   addBoardModalOpen: boolean;
   editBoardModalOpen: boolean;
   deleteBoardModalOpen: boolean;

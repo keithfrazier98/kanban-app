@@ -1,7 +1,8 @@
 import { LayoutBoardSplit } from "tabler-icons-react";
 import { IBoardData } from "../../@types/types";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { boardSelected, getSelectedBoard } from "./boardsSlice";
+import { useAppDispatch } from "../../app/hooks";
+import useSelectedBoard from "../../hooks/useSelectedBoard";
+import { boardSelected } from "./boardsSlice";
 
 export default function BoardMenuItem({
   item,
@@ -11,12 +12,12 @@ export default function BoardMenuItem({
   active: boolean;
 }) {
   const dispatch = useAppDispatch();
-  const board = useAppSelector(getSelectedBoard);
+  const board = useSelectedBoard();
   return (
     <div className="pr-5">
       <button
         onClick={() => {
-          dispatch(boardSelected({ board: item }));
+          dispatch(boardSelected({ board: item.id }));
         }}
         className={`w-full flex items-center pl-4 py-3 rounded-r-full ${
           active || board?.id === item.id

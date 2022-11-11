@@ -2,9 +2,10 @@ import { useMemo } from "react";
 import { useAppSelector } from "../app/hooks";
 import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { useGetColumnsQuery } from "../features/columns/columnsEndpoints";
+import useSelectedBoard from "./useSelectedBoard";
 
 export default function useColumnNames() {
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const selectedBoard = useSelectedBoard();
 
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
 

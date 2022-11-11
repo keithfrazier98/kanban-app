@@ -9,6 +9,7 @@ import NewBoardBtn from "../features/boards/NewBoardBtn";
 import ToggleTheme from "./ToggleTheme";
 import { Transition } from "@headlessui/react";
 import { classNames } from "../utils/utils";
+import useSelectedBoard from "../hooks/useSelectedBoard";
 /**
  * Static Sidebar for desktop
  * @returns
@@ -21,7 +22,7 @@ export default function SideBar({
   setSidebarOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const boards = useAppSelector(selectAllBoards);
-  const board = useAppSelector(getSelectedBoard);
+  const board = useSelectedBoard();
   return (
     <>
       <Transition

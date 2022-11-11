@@ -1,6 +1,7 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
 import { IColumn, IBoardPostBody, IColumnQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
+import { boardsAdapter, extendedBoardsApi } from "../boards/boardsEndpoints";
 
 const columnsAdapter = createEntityAdapter<IColumn>({
   selectId: (column) => column.id,
@@ -22,15 +23,22 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
       },
       providesTags: ["Column"],
     }),
+    // update multiple columns and board name
     updateColumns: builder.mutation({
       query: (columns: IBoardPostBody) => ({
         url: `/columns`,
         method: "POST",
         body: { columns },
       }),
-      invalidatesTags: ["Column"],
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-        const updateResult = dispatch(
+      invalidatesTags: (result, error, arg) => {
+        if (arg.newName) {
+          return ["Column", { type: "Board", id: arg.boardId }];
+        } else {
+          return ["Column"];
+        }
+      },
+      async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
+        const updateColumns = dispatch(
           extendedColumnsApi.util.updateQueryData(
             "getColumns",
             arg.boardId,
@@ -48,10 +56,33 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
           )
         );
 
+        let updateBoard;
+        if (arg.newName) {          
+          updateBoard = dispatch(
+            extendedBoardsApi.util.updateQueryData(
+              "getBoards",
+              arg,
+              (draft) => {
+                if (arg.newName)
+                  boardsAdapter.updateOne(draft, {
+                    id: arg.boardId,
+                    changes: {
+                      ...draft.entities[arg.boardId],
+                      name: arg.newName,
+                    },
+                  });
+              }
+            )
+          );
+        }
+
         try {
           await queryFulfilled;
         } catch (error) {
-          updateResult.undo();
+          updateColumns.undo();
+          if (updateBoard) {
+            updateBoard.undo();
+          }
         }
       },
     }),
