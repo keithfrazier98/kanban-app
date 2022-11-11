@@ -27,8 +27,16 @@ export default function TaskModifier({
   const descPlaceholder =
     "e.g. It's always good to take a break. This 15 minute break will recharge the batteries a little. ";
 
-  function eventHandlerFor(key: string) {
-    return (e: any) => {
+  {
+    /**https://stackoverflow.com/questions/74331905/how-can-i-properly-type-the-event-parameter-in-an-onchange-handler-that-i-want-t */
+  }
+  /**
+   * Generic event handler that can be used for any element.
+   * @param key
+   * @returns
+   */
+  function eventHandlerFor<K extends keyof ITaskConstructor>(key: K) {
+    return (e: { target: { value: ITaskConstructor[K] } }) => {
       setTask((pre) => {
         return {
           ...pre,

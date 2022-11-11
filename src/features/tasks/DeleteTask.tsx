@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import ConfirmDelete from "../../components/ConfirmDelete";
 import useSelectedTask from "../../hooks/useSelectedTask";
+import useTransitionState from "../../hooks/useTransitionState";
 import { useDeleteTaskMutation } from "./tasksEnpoints";
 import {
   deleteTaskModalOpened,
@@ -20,14 +21,14 @@ export default function DeleteTask() {
   };
 
   const { openDeleteTaskModal, openTask } = useAppSelector(selectTaskSlice);
-
+  const [render, unRender] = useTransitionState(onCancel);
   return (
     <ConfirmDelete
       render={!!(openDeleteTaskModal && openTask)}
       title="Delete this task?"
-      onCancel={onCancel}
+      onCancel={unRender}
       onDelete={() => {
-        onCancel();
+        unRender();
         deleteTask(task.id);
       }}
       paragraph={

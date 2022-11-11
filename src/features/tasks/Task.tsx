@@ -2,8 +2,7 @@ import { ITask } from "../../@types/types";
 import { useAppDispatch } from "../../app/hooks";
 import { classNames } from "../../utils/utils";
 import { addTaskModalOpened, taskSelected } from "./tasksSlice";
-import { Droppable, Draggable } from "react-beautiful-dnd";
-import { Dots, DotsCircleHorizontal, Pencil } from "tabler-icons-react";
+import { Dots } from "tabler-icons-react";
 
 export interface ITaskDnDItem {
   id: string;
@@ -49,7 +48,7 @@ export default function Task({
                   dispatch(taskSelected({ taskId: task?.id || "" }));
                 }}
                 className={classNames(
-                  "hover:text-primary-indigo-inactive text-primary-gray-300"
+                  "hover:text-primary-indigo-active text-primary-gray-400"
                 )}
               >
                 <Dots />

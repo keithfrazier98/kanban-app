@@ -17,9 +17,14 @@ import DeleteTask from "./features/tasks/DeleteTask";
 import ViewTask from "./features/tasks/ViewTask";
 import EditTask from "./features/tasks/EditTask";
 import AddTask from "./features/tasks/AddTask";
+import { useAppSelector } from "./app/hooks";
+import { getSelectedBoard } from "./features/boards/boardsSlice";
+import ModalDispatch from "./components/ModalDispatch";
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const selectedBoard = useAppSelector(getSelectedBoard);
 
   const [updateColumns] = useUpdateColumnsMutation();
   const { columns } = useColumnNames();
@@ -86,7 +91,7 @@ function App() {
           )}
         >
           <DragDropContext
-            onDragEnd={(result, provided) => {
+            onDragEnd={(result) => {
               const body = onDragEnd(result);
               if (body) updateColumns(body);
             }}
@@ -96,16 +101,7 @@ function App() {
         </main>
       </div>
 
-      {/* Board Modals */}
-      <EditBoard />
-      <AddBoard />
-      <DeleteBoard />
-
-      {/* Task Modals */}
-      <ViewTask />
-      <DeleteTask />
-      <EditTask />
-      <AddTask />
+      <ModalDispatch />
     </div>
   );
 }

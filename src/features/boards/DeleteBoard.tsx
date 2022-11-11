@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import ConfirmDelete from "../../components/ConfirmDelete";
+import useTransitionState from "../../hooks/useTransitionState";
 import { useDeleteBoardMutation, useGetBoardsQuery } from "./boardsEndpoints";
 import {
   boardSelected,
@@ -30,13 +31,16 @@ export default function DeleteBoard() {
       })
     );
     deleteBoard(selectedBoard.id);
+    unRender();
   };
+
+  const [render, unRender] = useTransitionState(closeModal);
 
   return (
     <ConfirmDelete
-      render={deleteBoardModalOpen}
+      render={render}
       title={"Delete this board?"}
-      onCancel={closeModal}
+      onCancel={unRender}
       onDelete={onDelete}
       paragraph={
         <>

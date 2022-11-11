@@ -3,6 +3,7 @@ import { ITask, ITaskConstructor } from "../../@types/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import useSelectedTask from "../../hooks/useSelectedTask";
+import useTransitionState from "../../hooks/useTransitionState";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
 import TaskModifier from "./TaskModifier";
 import { useUpdateTaskMutation } from "./tasksEnpoints";
@@ -26,15 +27,12 @@ export default function EditTask() {
 
   const [updateTask] = useUpdateTaskMutation();
 
-  const { openEditTaskModal, openTask } = useAppSelector(selectTaskSlice);
+  const [render, unRender] = useTransitionState(() => {
+    dispatch(taskSelected({ taskId: null }));
+    dispatch(editTaskModalOpened({ open: false }));
+  });
   return (
-    <ModalWBackdrop
-      render={!!(openEditTaskModal && openTask)}
-      onOutsideClick={() => {
-        dispatch(taskSelected({ taskId: null }));
-        dispatch(editTaskModalOpened({ open: false }));
-      }}
-    >
+    <ModalWBackdrop render={render} onOutsideClick={unRender}>
       <TaskModifier
         elementTitles={["Edit Task", "Save Task"]}
         task={newTask}

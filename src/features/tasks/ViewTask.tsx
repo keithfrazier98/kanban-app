@@ -12,6 +12,7 @@ import { ISubtask } from "../../@types/types";
 import TaskOptions from "./TaskOptions";
 import useSelectedTask from "../../hooks/useSelectedTask";
 import useColumnNames from "../../hooks/useColumnNames";
+import useTransitionState from "../../hooks/useTransitionState";
 
 export default function ViewTask() {
   const { openEditTaskModal: editTask, openDeleteTaskModal: deleteTask } =
@@ -25,6 +26,10 @@ export default function ViewTask() {
 
   const dispatch = useAppDispatch();
 
+  const [render, unRender] = useTransitionState(() => {
+    dispatch(taskSelected({ taskId: null }));
+  });
+
   const { data: subtasks } = useGetSubtasksQuery(openTask);
 
   const { columnNames, columns } = useColumnNames();
@@ -33,12 +38,7 @@ export default function ViewTask() {
       task;
 
     return (
-      <ModalWBackdrop
-        render={!!(openTask && !editTask && !deleteTask)}
-        onOutsideClick={() => {
-          dispatch(taskSelected({ taskId: null }));
-        }}
-      >
+      <ModalWBackdrop render={render} onOutsideClick={unRender}>
         <div className="flex justify-between items-center w-full">
           <h3 className="font-bold text-lg md:text-base leading-6 dark:text-white">
             {title}
