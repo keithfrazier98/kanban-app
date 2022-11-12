@@ -38,11 +38,9 @@ export default function Column({ column }: { column: IColumn }) {
                   {/** A portal is needed to render the drag preview correctly, see thread below. */}
                   {/**https://stackoverflow.com/questions/54982182/react-beautiful-dnd-drag-out-of-position-problem */}
                   {(provided, snapshot) => (
-                    <PortalAwareItem
-                      provided={provided}
-                      snapshot={snapshot}
-                      task={tasks?.entities[taskId]}
-                    />
+                    <PortalAwareItem provided={provided} snapshot={snapshot}>
+                      <Task task={tasks?.entities[taskId]} />
+                    </PortalAwareItem>
                   )}
                 </Draggable>
               ))}

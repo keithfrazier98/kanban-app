@@ -12,7 +12,7 @@ export const db = factory({
   board: {
     id: primaryKey(nanoid),
     name: String,
-    // columns: manyOf("column"),
+    columns: Array,
   },
   column: {
     id: primaryKey(nanoid),
@@ -28,7 +28,7 @@ export const db = factory({
     title: String,
     description: String,
     status: String,
-    totalSubtasks: Number,
+    subtasks: Array,
     completedSubtasks: Number,
     index: Number,
     // subtasks: manyOf("subtask"),
@@ -45,9 +45,13 @@ const { boards } = mockData;
 
 boards.forEach(({ columns, name }) => {
   const board = db.board.create({ name });
+  const boardColumns: string[] = [];
+
   columns.forEach(({ name, tasks }, colIndex) => {
     const column = db.column.create({ name, board, index: colIndex });
+    boardColumns.push(column.id);
     const columnTasks: string[] = [];
+
     tasks.forEach(({ description, subtasks, title }, taskIndex) => {
       const task = db.task.create({
         description,
@@ -55,7 +59,6 @@ boards.forEach(({ columns, name }) => {
         title,
         column,
         board,
-        totalSubtasks: subtasks.length,
         completedSubtasks: 0,
         index: taskIndex,
       });
@@ -64,16 +67,19 @@ boards.forEach(({ columns, name }) => {
 
       let completedCount = 0;
 
+      const taskSubtasks: string[] = [];
       subtasks.forEach(({ isCompleted, title }) => {
-        db.subtask.create({ isCompleted, title, task });
+        const subtask = db.subtask.create({ isCompleted, title, task });
         if (isCompleted) {
           completedCount++;
         }
+
+        taskSubtasks.push(subtask.id);
       });
 
       db.task.update({
         where: { id: { equals: task.id } },
-        data: { completedSubtasks: completedCount },
+        data: { completedSubtasks: completedCount, subtasks: taskSubtasks },
       });
     });
 
@@ -81,6 +87,11 @@ boards.forEach(({ columns, name }) => {
       where: { id: { equals: column.id } },
       data: { ...column, tasks: columnTasks },
     });
+  });
+
+  db.board.update({
+    where: { id: { equals: board.id } },
+    data: { ...board, columns: boardColumns },
   });
 });
 

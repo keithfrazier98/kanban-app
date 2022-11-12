@@ -60,7 +60,6 @@ export const extendedBoardsApi = apiSlice.injectEndpoints({
             boardsAdapter.removeOne(draft, arg);
           })
         );
-
       
         try {
           await queryFulfilled;

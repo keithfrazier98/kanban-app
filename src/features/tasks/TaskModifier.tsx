@@ -113,7 +113,7 @@ export default function TaskModifier({
                         return {
                           ...pre,
                           subtasks: newSubtasks,
-                          totalSubtasks: pre.totalSubtasks - 1,
+                          totalSubtasks: pre.subtasks.length - 1,
                         };
                       });
                     }}
@@ -132,7 +132,7 @@ export default function TaskModifier({
               return {
                 ...pre,
                 subtasks: [...subtasks, ""],
-                totalSubtasks: pre.totalSubtasks + 1,
+                totalSubtasks: pre.subtasks.length + 1,
               };
             });
           }}

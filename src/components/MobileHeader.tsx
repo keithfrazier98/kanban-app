@@ -11,7 +11,7 @@ export default function MobileHeader() {
   const selectedBoard = useAppSelector(getSelectedBoard);
   const dispatch = useAppDispatch();
   return (
-    <HeaderWrapper className="block lg:hidden">
+    <HeaderWrapper className="block sm:hidden">
       <div className="flex flex-1 justify-between pl-4 items-center">
         <MobileBoardMenu />
         <div className="flex items-center">

@@ -27,7 +27,6 @@ export default function AddTask() {
     board: selectedBoard || ({} as IBoardData),
     column: initialCol || ({} as IColumn),
     completedSubtasks: 0,
-    totalSubtasks: 2,
     description: "",
     title: "",
     id: "",

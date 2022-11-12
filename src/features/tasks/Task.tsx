@@ -23,7 +23,7 @@ export default function Task({
     <div
       key={`task-${task?.id}`}
       className={classNames(
-        placeholder ? "hover:cursor-pointer" : "",
+        placeholder ? "" : "hover:cursor-grab",
         "w-full px-2 text-left mb-5"
       )}
       onClick={() => {
@@ -55,7 +55,7 @@ export default function Task({
               </button>
             </div>
             <p className="text-gray-500 text-xs mt-1  ">
-              {task?.completedSubtasks} of {task?.totalSubtasks} subtasks
+              {task?.completedSubtasks} of {task?.subtasks.length} subtasks
             </p>
           </>
         )}
