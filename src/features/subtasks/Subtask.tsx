@@ -14,21 +14,20 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
   return (
     <li
       key={`subtask-${subtask.id}`}
-      onClick={toggleTask}
       className={classNames(
         subtask.isCompleted
           ? ""
           : "dark:bg-opacity-50 dark:bg-primary-indigo-active",
         "px-2 py-3 rounded hover:bg-opacity-50 hover:cursor-grab",
-        " hover:bg-primary-indigo-inactive  bg-primary-gray-200",
+        "hover:bg-primary-indigo-inactive bg-primary-gray-200",
         "dark:bg-primary-gray-700 dark:hover:text-white",
-        "hover:cursor-pointer flex justify-between items-center"
+        "hover:cursor-grab flex justify-between items-center"
       )}
     >
       <div className="flex items-center">
         <label>
           <span className="sr-only">task completed</span>
-          <div className="relative flex items-center">
+          <div className="relative flex items-center hover:cursor-pointer">
             <input
               type="checkbox"
               checked={subtask.isCompleted}
@@ -37,14 +36,14 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
                   ? "bg-primary-indigo-active"
                   : "bg-white dark:bg-primary-gray-600",
                 "appearance-none w-4 h-4 border rounded-sm ",
-                "dark:border-gray-600"
+                "dark:border-gray-600 hover:cursor-pointer"
               )}
               onChange={toggleTask}
             />
             {subtask.isCompleted ? (
               <div
                 className={classNames(
-                  "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                  "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hover:cursor-pointer"
                 )}
               >
                 <Check color="white" size={18} />

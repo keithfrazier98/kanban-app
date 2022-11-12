@@ -1,14 +1,10 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import { useUpdateTaskMutation } from "./tasksEnpoints";
-import { getOpenTask, selectTaskSlice, taskSelected } from "./tasksSlice";
+import { taskSelected } from "./tasksSlice";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
-import { useMemo } from "react";
 import Subtask from "../subtasks/Subtask";
 import DropdownList from "../../components/DropdownList";
-import { useGetColumnsQuery } from "../columns/columnsEndpoints";
-import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetSubtasksQuery } from "../subtasks/subtasksEndpoints";
-import { ISubtask } from "../../@types/types";
 import TaskOptions from "./TaskOptions";
 import useSelectedTask from "../../hooks/useSelectedTask";
 import useColumnNames from "../../hooks/useColumnNames";
@@ -28,8 +24,8 @@ export default function ViewTask() {
   });
 
   const { data: subtasks } = useGetSubtasksQuery(task.id);
-
   const { columnNames, columns } = useColumnNames();
+
   if (!!task) {
     const {
       description,
