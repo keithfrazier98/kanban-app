@@ -17,13 +17,7 @@ export default function EditTask() {
   const dispatch = useAppDispatch();
 
   const task = useSelectedTask();
-  const { data: subtasks } = useGetSubtasksQuery(task?.id);
-  const [newTask, setNewTask] = useState<ITaskConstructor>({
-    ...task,
-    subtasks: Object.values(subtasks?.entities || [""]).map(
-      (task) => task?.title
-    ),
-  });
+  const [newTask, setNewTask] = useState<ITaskConstructor>(task);
 
   const [updateTask] = useUpdateTaskMutation();
 

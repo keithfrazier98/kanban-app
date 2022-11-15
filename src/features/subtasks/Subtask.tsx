@@ -8,12 +8,12 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
   const [updateSubtask] = useUpdateSubtaskMutation();
 
   const toggleTask = () => {
-    updateSubtask({ ...subtask, isCompleted: !subtask.isCompleted });
+    updateSubtask({ ...subtask, isCompleted: !subtask?.isCompleted });
   };
 
   return (
     <li
-      key={`subtask-${subtask.id}`}
+      key={`subtask-${subtask?.id}`}
       className={classNames(
         subtask.isCompleted
           ? ""
@@ -30,7 +30,7 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
           <div className="relative flex items-center hover:cursor-pointer">
             <input
               type="checkbox"
-              checked={subtask.isCompleted}
+              checked={subtask?.isCompleted}
               className={classNames(
                 subtask.isCompleted
                   ? "bg-primary-indigo-active"
@@ -40,7 +40,7 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
               )}
               onChange={toggleTask}
             />
-            {subtask.isCompleted ? (
+            {subtask?.isCompleted ? (
               <div
                 className={classNames(
                   "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hover:cursor-pointer"
@@ -55,12 +55,12 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
         </label>
         <p
           className={`font-medium text-sm ml-4 ${
-            subtask.isCompleted
+            subtask?.isCompleted
               ? "line-through text-gray-500"
               : "dark:text-white"
           }`}
         >
-          {subtask.title}
+          {subtask?.title}
         </p>
       </div>
       <div className="text-primary-gray-400 rotate-90">

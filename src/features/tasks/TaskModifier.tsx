@@ -4,6 +4,7 @@ import { ITaskConstructor } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
 import DropdownList from "../../components/DropdownList";
 import useColumnNames from "../../hooks/useColumnNames";
+import useCurrentSubtasks from "../../hooks/useCurrentSubtasks";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 
@@ -22,6 +23,7 @@ export default function TaskModifier({
   const [modalTitle, saveTitle] = elementTitles;
 
   const { columnNames, columns } = useColumnNames();
+  const subtaskData = useCurrentSubtasks();
 
   const subPlaceholders = ["e.g. Make Coffee", "e.g. Drink cofee & smile"];
   const descPlaceholder =
@@ -95,7 +97,7 @@ export default function TaskModifier({
                 >
                   <input
                     placeholder={subPlaceholders[i]}
-                    value={subtask}
+                    value={subtaskData?.entities[subtask]?.title || ""}
                     className="modalInput my-1 flex-grow"
                     onChange={(e) => {
                       const onChange = eventHandlerFor("subtasks");
@@ -113,7 +115,6 @@ export default function TaskModifier({
                         return {
                           ...pre,
                           subtasks: newSubtasks,
-                          totalSubtasks: pre.subtasks.length - 1,
                         };
                       });
                     }}
@@ -132,7 +133,6 @@ export default function TaskModifier({
               return {
                 ...pre,
                 subtasks: [...subtasks, ""],
-                totalSubtasks: pre.subtasks.length + 1,
               };
             });
           }}

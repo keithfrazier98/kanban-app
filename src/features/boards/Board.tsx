@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { IBoardPostBody, IColumn } from "../../@types/types";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import useAllTasks from "../../hooks/useAllTasks";
 import useColumnNames from "../../hooks/useColumnNames";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
 import AddNewColumnBtn from "../columns/AddNewColumnBtn";
 import Column from "../columns/Column";
-import { useGetColumnsQuery, useUpdateColumnsMutation } from "../columns/columnsEndpoints";
+import { useUpdateColumnsMutation } from "../columns/columnsEndpoints";
 import { useGetBoardsQuery } from "./boardsEndpoints";
-import { boardSelected, getSelectedBoard } from "./boardsSlice";
+import { boardSelected } from "./boardsSlice";
 
 export default function Board() {
   const { data: boards } = useGetBoardsQuery(undefined);
@@ -19,7 +19,6 @@ export default function Board() {
 
   const [updateColumns] = useUpdateColumnsMutation();
   const { columns } = useColumnNames();
-
 
   useEffect(() => {
     if (!selectedBoard && boards) {
