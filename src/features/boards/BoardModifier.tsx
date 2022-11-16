@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   IBoardData,
-  IBoardPostBody,
+  IColumnPostBody,
   IColumn,
   IColumnEntities,
 } from "../../@types/types";
@@ -46,7 +46,7 @@ export default function BoardModifier({
 
   function handleSaveBoard() {
     if (!selectedBoard || !newColumns) return;
-    const postBody: IBoardPostBody = {
+    const postBody: IColumnPostBody = {
       additions: [],
       deletions: [],
       updates: [],
@@ -94,7 +94,7 @@ export default function BoardModifier({
             id: randomId,
             operation: "create",
             index: Object.keys(prevState || {}).length,
-            tasks: []
+            tasks: [],
           },
         };
       });

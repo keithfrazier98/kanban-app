@@ -29,7 +29,7 @@ export default function TaskOptions() {
             className={classNames(
               "absolute top-full w-40 rounded-md py-2 -translate-x-1/3",
               "translate-y-2 shadow-md bg-white flex flex-col text-left",
-              "dark:bg-primary-gray-700"
+              "dark:bg-primary-gray-700 z-20"
             )}
           >
             <button

@@ -3,17 +3,12 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import {
-  IBoardData,
-  IBoardQuery,
-  IBoardState,
-  IBoardPostBody,
-} from "../../@types/types";
+import { IBoardData, IBoardQuery, IColumnPostBody } from "../../@types/types";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
 
 // use an entity adapter for the extendedBoardApi (normalizes query response)
-const boardsAdapter = createEntityAdapter<IBoardData>({
+export const boardsAdapter = createEntityAdapter<IBoardData>({
   selectId: (board) => board.id,
   // sortComparer: (a, b) => a.id - b.id,
 });
@@ -26,30 +21,54 @@ const boardQueryInitialState = boardsAdapter.getInitialState<IBoardQuery>({
 });
 
 // extend the apiSlice with the board queries
-export const extendedBoardAPi = apiSlice.injectEndpoints({
+export const extendedBoardsApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    // gets all boards
     getBoards: builder.query({
       query: () => "/boards",
       transformResponse: (responseData: IBoardData[]) => {
         return boardsAdapter.setAll(boardQueryInitialState, responseData);
       },
-      providesTags: ["Board"],
+      providesTags: (result) => {
+        return result
+          ? [...result.ids.map((id) => ({ type: "Board" as const, id }))]
+          : ["Board"];
+      },
     }),
+    // creates a single board
     createBoard: builder.mutation({
-      query: (body: IBoardPostBody) => ({
+      query: (body: IColumnPostBody) => ({
         url: "/boards",
         method: "POST",
         body,
       }),
       invalidatesTags: ["Board"],
     }),
+    // deletes a single board
     deleteBoard: builder.mutation({
       query: (boardId: string) => ({
         url: `/boards/${boardId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Board"],
+      invalidatesTags: (result, error, boardId) => [
+        { type: "Board", id: boardId },
+      ],
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        //optimistic update for board deletion
+        const deleteResult = dispatch(
+          extendedBoardsApi.util.updateQueryData("getBoards", arg, (draft) => {
+            boardsAdapter.removeOne(draft, arg);
+          })
+        );
+
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          deleteResult.undo();
+        }
+      },
     }),
+    // updates a single board
     updateBoard: builder.mutation({
       query: (board: IBoardData) => ({
         url: "/boards",
@@ -57,8 +76,32 @@ export const extendedBoardAPi = apiSlice.injectEndpoints({
         method: "PUT",
       }),
       invalidatesTags: ["Board"],
-      onCacheEntryAdded(board, { dispatch }) {
-        //optimistic update for board
+      async onQueryStarted(board, { dispatch, queryFulfilled }) {
+        //optimistic update for single board update
+        const updateResult = dispatch(
+          extendedBoardsApi.util.updateQueryData(
+            "getBoards",
+            undefined,
+            (draft) => {
+              boardsAdapter.updateOne(draft, { id: board.id, changes: board });
+            }
+          )
+        );
+
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          updateResult.undo();
+        }
+      },
+    }),
+    //gets a single board
+    getBoard: builder.query({
+      query: (boardId: string) => ({
+        url: `/boards/${boardId}`,
+      }),
+      providesTags: (result: IBoardData | undefined) => {
+        return result ? [{ type: "Board", id: result.id }] : ["Board"];
       },
     }),
   }),
@@ -68,11 +111,12 @@ export const {
   useGetBoardsQuery,
   useCreateBoardMutation,
   useDeleteBoardMutation,
-} = extendedBoardAPi;
+  useUpdateBoardMutation,
+} = extendedBoardsApi;
 
 // get the response for the getBoards query
 export const selectBoardsResult =
-  extendedBoardAPi.endpoints.getBoards.select(undefined);
+  extendedBoardsApi.endpoints.getBoards.select(undefined);
 
 // create a memoized selector for the boards query
 const selectAllBoardsResult = createSelector(

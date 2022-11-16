@@ -1,22 +1,18 @@
-import { DotsVertical } from "tabler-icons-react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import BoardOptions from "../features/boards/BoardOptions";
-import {
-  editBoardModalOpened,
-  getSelectedBoard,
-} from "../features/boards/boardsSlice";
+import { getSelectedBoard } from "../features/boards/boardsSlice";
 import HeaderWrapper from "./HeaderWrapper";
 import { addTaskModalOpened } from "../features/tasks/tasksSlice";
+import { selectBoardById } from "../features/boards/boardsEndpoints";
+import useSelectedBoard from "../hooks/useSelectedBoard";
 
 export default function DesktopHeader() {
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const board = useSelectedBoard();
   const dispatch = useAppDispatch();
   return (
-    <HeaderWrapper className="hidden lg:block">
+    <HeaderWrapper className="hidden sm:block">
       <div className="flex justify-between items-center flex-1 h-full px-5">
-        <h2 className="text-xl font-semibold dark:text-white">
-          {selectedBoard?.name}
-        </h2>
+        <h2 className="text-xl font-semibold dark:text-white">{board?.name}</h2>
         <div className="flex items-center">
           <button
             onClick={() => {

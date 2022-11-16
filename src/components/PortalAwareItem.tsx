@@ -15,11 +15,11 @@ document.body.appendChild(portal);
 export default function PortalAwareItem({
   provided,
   snapshot,
-  task,
+  children,
 }: {
   provided: DraggableProvided;
   snapshot: DraggableStateSnapshot;
-  task: ITask | undefined;
+  children: JSX.Element;
 }) {
   const usePortal: boolean = snapshot.isDragging;
 
@@ -29,7 +29,7 @@ export default function PortalAwareItem({
       {...provided.draggableProps}
       {...provided.dragHandleProps}
     >
-      <Task task={task} />
+      {children}
     </div>
   );
 

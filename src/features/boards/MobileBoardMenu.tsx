@@ -9,10 +9,11 @@ import { selectAllBoards } from "./boardsEndpoints";
 import ToggleTheme from "../../components/ToggleTheme";
 import BoardMenuItem from "./BoardMenuItem";
 import NewBoardBtn from "./NewBoardBtn";
+import useSelectedBoard from "../../hooks/useSelectedBoard";
 
 export default function MobileBoardMenu() {
   const boards = useAppSelector(selectAllBoards);
-  const board = useAppSelector(getSelectedBoard);
+  const board = useSelectedBoard();
 
   return (
     <>

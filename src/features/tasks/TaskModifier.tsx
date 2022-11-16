@@ -4,6 +4,7 @@ import { ITaskConstructor } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
 import DropdownList from "../../components/DropdownList";
 import useColumnNames from "../../hooks/useColumnNames";
+import useCurrentSubtasks from "../../hooks/useCurrentSubtasks";
 import { getSelectedBoard } from "../boards/boardsSlice";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 
@@ -22,13 +23,22 @@ export default function TaskModifier({
   const [modalTitle, saveTitle] = elementTitles;
 
   const { columnNames, columns } = useColumnNames();
+  const subtaskData = useCurrentSubtasks();
 
   const subPlaceholders = ["e.g. Make Coffee", "e.g. Drink cofee & smile"];
   const descPlaceholder =
     "e.g. It's always good to take a break. This 15 minute break will recharge the batteries a little. ";
 
-  function eventHandlerFor(key: string) {
-    return (e: any) => {
+  {
+    /**https://stackoverflow.com/questions/74331905/how-can-i-properly-type-the-event-parameter-in-an-onchange-handler-that-i-want-t */
+  }
+  /**
+   * Generic event handler that can be used for any element.
+   * @param key
+   * @returns
+   */
+  function eventHandlerFor<K extends keyof ITaskConstructor>(key: K) {
+    return (e: { target: { value: ITaskConstructor[K] } }) => {
       setTask((pre) => {
         return {
           ...pre,
@@ -87,7 +97,7 @@ export default function TaskModifier({
                 >
                   <input
                     placeholder={subPlaceholders[i]}
-                    value={subtask}
+                    value={subtaskData?.entities[subtask]?.title || ""}
                     className="modalInput my-1 flex-grow"
                     onChange={(e) => {
                       const onChange = eventHandlerFor("subtasks");
@@ -105,7 +115,6 @@ export default function TaskModifier({
                         return {
                           ...pre,
                           subtasks: newSubtasks,
-                          totalSubtasks: pre.totalSubtasks - 1,
                         };
                       });
                     }}
@@ -124,7 +133,6 @@ export default function TaskModifier({
               return {
                 ...pre,
                 subtasks: [...subtasks, ""],
-                totalSubtasks: pre.totalSubtasks + 1,
               };
             });
           }}

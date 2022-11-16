@@ -9,6 +9,7 @@ import NewBoardBtn from "../features/boards/NewBoardBtn";
 import ToggleTheme from "./ToggleTheme";
 import { Transition } from "@headlessui/react";
 import { classNames } from "../utils/utils";
+import useSelectedBoard from "../hooks/useSelectedBoard";
 /**
  * Static Sidebar for desktop
  * @returns
@@ -21,7 +22,7 @@ export default function SideBar({
   setSidebarOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const boards = useAppSelector(selectAllBoards);
-  const board = useAppSelector(getSelectedBoard);
+  const board = useSelectedBoard();
   return (
     <>
       <Transition
@@ -33,7 +34,7 @@ export default function SideBar({
         leave="transition ease-in-out duration-300 transform"
         leaveFrom="translate-x-0"
         leaveTo="-translate-x-full"
-        className={`md:fixed md:w-64 md:flex md:flex-col h-full`}
+        className={`hidden md:fixed md:w-64 md:flex md:flex-col h-full`}
       >
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div
@@ -83,7 +84,7 @@ export default function SideBar({
           setSidebarOpen(!sidebarOpen);
         }}
         className={`absolute bottom-8 left-0 rounded-r-full bg-primary-indigo-active p-4 text-white z-20 ${
-          sidebarOpen ? "hidden" : "block"
+          sidebarOpen ? "hidden" : "hidden sm:block"
         }`}
       >
         <Eye />

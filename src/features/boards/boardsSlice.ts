@@ -14,7 +14,7 @@ const boardsSlice = createSlice({
   name: "boards",
   initialState,
   reducers: {
-    boardSelected(state, action: { payload: { board: IBoardData | null } }) {
+    boardSelected(state, action: { payload: { board: string | null } }) {
       const { board } = action.payload;
       state.selectedBoard = board;
     },

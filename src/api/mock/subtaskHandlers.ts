@@ -58,13 +58,17 @@ export const subtaskHandlers = [
     const taskId = idToString(taskIdParam);
     return dbActionErrorWrapper(subtaskId, res, ctx, () => {
       const oldTask = db.task.findFirst({ where: { id: { equals: taskId } } });
+      db.subtask.delete({ where: { id: { equals: subtaskId } } });
 
       try {
-        if (!oldTask)
-          throw "An old task couldn't be found with supplied taskId.";
+        if (!oldTask) throw "A task couldn't be found with supplied taskId.";
         db.task.update({
           where: { id: { equals: taskId } },
-          data: { totalSubtasks: oldTask?.totalSubtasks - 1 },
+          data: {
+            subtasks: oldTask.subtasks.filter(
+              (subtask) => subtask !== subtaskId
+            ),
+          },
         });
       } catch (error) {
         return send405WithBody(
@@ -74,8 +78,6 @@ export const subtaskHandlers = [
           "Aborting subtask deletion: failed to update totalSubtasks in parent task."
         );
       }
-
-      db.subtask.delete({ where: { id: { equals: subtaskId } } });
     });
   }),
 ];

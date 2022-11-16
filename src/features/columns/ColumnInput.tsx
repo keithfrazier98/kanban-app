@@ -1,17 +1,10 @@
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { ArrowBack, X } from "tabler-icons-react";
-import {
-  IColumn,
-  IColumnEntities,
-  opTypes,
-} from "../../@types/types";
+import { IColumn, IColumnEntities, opTypes } from "../../@types/types";
 import { useAppSelector } from "../../app/hooks";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 import { getSelectedBoard } from "../boards/boardsSlice";
+import useSelectedBoard from "../../hooks/useSelectedBoard";
 
 export default function ColumnInput({
   column,
@@ -20,7 +13,7 @@ export default function ColumnInput({
   column: IColumn;
   setNewColumns: Dispatch<SetStateAction<IColumnEntities>>;
 }) {
-  const selectedBoard = useAppSelector(getSelectedBoard);
+  const selectedBoard = useSelectedBoard();
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
 
   const getOpType = (val: string): opTypes => {

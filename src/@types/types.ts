@@ -13,7 +13,7 @@ export interface ITask {
   column: IColumn;
   board: IBoardData;
   status: string;
-  totalSubtasks: number;
+  subtasks: string[];
   completedSubtasks: number;
   index: number;
 }
@@ -41,12 +41,13 @@ export interface IColumn {
 export interface IBoardData {
   id: string;
   name: string;
+  columns: string[];
 }
 
 export type requestStatus = "idle" | "succeeded" | "loading" | "failed";
 
 export interface IBoardState {
-  selectedBoard: IBoardData | null;
+  selectedBoard: string | null;
   addBoardModalOpen: boolean;
   editBoardModalOpen: boolean;
   deleteBoardModalOpen: boolean;
@@ -95,10 +96,11 @@ export interface ISubtaskQuery {
   status: requestStatus;
 }
 
-export interface IBoardPostBody {
+export interface IColumnPostBody {
   additions: IColumnConstructor[];
   deletions: IColumn[];
   updates: IColumn[];
   boardId: string;
+  columnOrder?: string[];
   newName: null | string;
 }
