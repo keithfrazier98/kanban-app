@@ -43,6 +43,8 @@ export default function ViewTask() {
           const subtaskUpdate = subtaskList.slice();
           subtaskUpdate.splice(source.index, 1);
           subtaskUpdate.splice(destination.index, 0, draggableId);
+          
+          console.log(result, subtaskUpdate)
           updateTask({ ...task, subtasks: subtaskUpdate });
         }}
       >
@@ -60,14 +62,14 @@ export default function ViewTask() {
           <Droppable droppableId="subtasks">
             {(provided) => (
               <ul
-                className="grid grid-flow-row gap-2"
+                className="flex flex-col"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
                 {subtasks ? (
                   subtaskList.map((taskId, index) => (
                     <Draggable
-                      draggableId={`subtask-${taskId}`}
+                      draggableId={`${taskId}`}
                       index={index}
                       key={`subtask-${taskId}`}
                     >

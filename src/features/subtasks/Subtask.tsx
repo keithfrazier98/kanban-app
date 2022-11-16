@@ -21,7 +21,7 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
         "px-2 py-3 rounded hover:bg-opacity-50 hover:cursor-grab",
         "hover:bg-primary-indigo-inactive bg-primary-gray-200",
         "dark:bg-primary-gray-700 dark:hover:text-white",
-        "hover:cursor-grab flex justify-between items-center"
+        "hover:cursor-grab flex justify-between items-center mb-2"
       )}
     >
       <div className="flex items-center">
