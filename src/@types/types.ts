@@ -96,10 +96,11 @@ export interface ISubtaskQuery {
   status: requestStatus;
 }
 
-export interface IBoardPostBody {
+export interface IColumnPostBody {
   additions: IColumnConstructor[];
   deletions: IColumn[];
   updates: IColumn[];
   boardId: string;
+  columnOrder?: string[];
   newName: null | string;
 }

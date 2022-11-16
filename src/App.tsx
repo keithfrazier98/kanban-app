@@ -9,7 +9,6 @@ import ModalDispatch from "./components/ModalDispatch";
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-
   return (
     <div className="w-full h-full overflow-hidden flex">
       <SideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
@@ -27,14 +26,8 @@ function App() {
       >
         <MobileHeader />
         <DesktopHeader />
-        <main
-          className={classNames(
-            "flex overflow-x-scroll overflow-y-hidden boardTrack h-full",
-            "transform transition-all"
-          )}
-        >
-          <Board />
-        </main>
+
+        <Board />
       </div>
 
       <ModalDispatch />

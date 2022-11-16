@@ -1,6 +1,6 @@
 import { rest, ResponseComposition, DefaultBodyType, RestContext } from "msw";
 import { db } from ".";
-import { IColumn, IBoardPostBody } from "../../@types/types";
+import { IColumn, IColumnPostBody } from "../../@types/types";
 import {
   dbActionErrorWrapper,
   idToString,
@@ -11,7 +11,7 @@ import {
 const RESPONSE_DELAY = 0;
 
 export async function updateColumns(
-  req: IBoardPostBody,
+  req: IColumnPostBody,
   res: ResponseComposition<DefaultBodyType>,
   ctx: RestContext
 ) {
@@ -34,7 +34,6 @@ export async function updateColumns(
     const board = db.board.findFirst({
       where: { id: { equals: boardId } },
     });
-
 
     if (!updates && !additions && !deletions) {
       return res(
@@ -65,12 +64,21 @@ export async function updateColumns(
       });
     });
 
+    const columns: string[] = [...board.columns] as string[];
     additions.forEach((col) => {
-      response.push(db.column.create({ ...col, board }));
+      const newColumn = db.column.create({ ...col, board });
+      response.push(newColumn);
+      columns.push(newColumn.id);
     });
 
     deletions.forEach((col) => {
       response.push(db.column.delete({ where: { id: { equals: col.id } } }));
+      columns.splice(columns.findIndex((id) => id === col.id));
+    });
+
+    db.board.update({
+      where: { id: { equals: boardId } },
+      data: { ...board, columns },
     });
 
     return res(
@@ -106,7 +114,7 @@ export const columnHandlers = [
 
   //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
-    const { columns } = await req.json<{ columns: IBoardPostBody }>();
+    const { columns } = await req.json<{ columns: IColumnPostBody }>();
     return updateColumns(columns, res, ctx);
   }),
 

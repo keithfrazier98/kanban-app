@@ -1,5 +1,6 @@
 import { rest } from "msw";
 import { db } from ".";
+import { IBoardData } from "../../@types/types";
 import { updateColumns } from "./columnHandlers";
 import { send405WithBody } from "./utils";
 
@@ -32,6 +33,33 @@ export const boardHandlers = [
     const newBoard = db.board.create({ name });
 
     return updateColumns({ ...rest, boardId: newBoard.id }, res, ctx);
+  }),
+  rest.put("/kbapi/boards", async (req, res, ctx) => {
+    const { board }: { board: IBoardData } = await req.json();
+    try {
+      if (!board) throw new Error("No board data found in request body.");
+      const update = db.board.update({
+        where: { id: { equals: board.id } },
+        data: board,
+      });
+
+      if (update) {
+        return res(ctx.status(204));
+      } else {
+        throw new Error(
+          "No response from DB, the entity may or may not have been updated."
+        );
+      }
+
+      // return res(ctx.status(204));
+    } catch (error) {
+      return send405WithBody(
+        res,
+        ctx,
+        error,
+        "An error occurred when trying to update a board entity."
+      );
+    }
   }),
 
   rest.delete("/kbapi/boards/:boardId", async (req, res, ctx) => {

@@ -1,5 +1,5 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import { IColumn, IBoardPostBody, IColumnQuery } from "../../@types/types";
+import { IColumn, IColumnPostBody, IColumnQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 import { boardsAdapter, extendedBoardsApi } from "../boards/boardsEndpoints";
 
@@ -25,17 +25,13 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
     }),
     // update multiple columns and board name
     updateColumns: builder.mutation({
-      query: (columns: IBoardPostBody) => ({
+      query: (columns: IColumnPostBody) => ({
         url: `/columns`,
         method: "POST",
         body: { columns },
       }),
       invalidatesTags: (result, error, arg) => {
-        if (arg.newName) {
-          return ["Column", { type: "Board", id: arg.boardId }];
-        } else {
-          return ["Column"];
-        }
+        return ["Column", { type: "Board", id: arg.boardId }];
       },
       async onQueryStarted(arg, { dispatch, queryFulfilled, getState }) {
         const updateColumns = dispatch(
@@ -57,7 +53,7 @@ export const extendedColumnsApi = apiSlice.injectEndpoints({
         );
 
         let updateBoard;
-        if (arg.newName) {          
+        if (arg.newName) {
           updateBoard = dispatch(
             extendedBoardsApi.util.updateQueryData(
               "getBoards",

@@ -3,7 +3,7 @@ import {
   createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
-import { IBoardData, IBoardQuery, IBoardPostBody } from "../../@types/types";
+import { IBoardData, IBoardQuery, IColumnPostBody } from "../../@types/types";
 import { RootState } from "../../app/store";
 import { apiSlice } from "../api/apiSlice";
 
@@ -37,7 +37,7 @@ export const extendedBoardsApi = apiSlice.injectEndpoints({
     }),
     // creates a single board
     createBoard: builder.mutation({
-      query: (body: IBoardPostBody) => ({
+      query: (body: IColumnPostBody) => ({
         url: "/boards",
         method: "POST",
         body,
@@ -60,7 +60,7 @@ export const extendedBoardsApi = apiSlice.injectEndpoints({
             boardsAdapter.removeOne(draft, arg);
           })
         );
-      
+
         try {
           await queryFulfilled;
         } catch (error) {
@@ -75,15 +75,13 @@ export const extendedBoardsApi = apiSlice.injectEndpoints({
         body: { board },
         method: "PUT",
       }),
-      // its unecessary to invalidate tags since here, since the optimistic update
-      // is what will be reflected on the server. If the query fails, the update will
-      // be undone and the previous cached data will be what is on the server
+      invalidatesTags: ["Board"],
       async onQueryStarted(board, { dispatch, queryFulfilled }) {
         //optimistic update for single board update
         const updateResult = dispatch(
           extendedBoardsApi.util.updateQueryData(
             "getBoards",
-            board,
+            undefined,
             (draft) => {
               boardsAdapter.updateOne(draft, { id: board.id, changes: board });
             }
@@ -113,6 +111,7 @@ export const {
   useGetBoardsQuery,
   useCreateBoardMutation,
   useDeleteBoardMutation,
+  useUpdateBoardMutation,
 } = extendedBoardsApi;
 
 // get the response for the getBoards query
