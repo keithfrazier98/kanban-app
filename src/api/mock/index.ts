@@ -8,87 +8,136 @@ import { taskHandlers } from "./taskHandlers";
 import { subtaskHandlers } from "./subtaskHandlers";
 
 const { boards } = mockData;
+type keyArray = IDBValidKey[];
 
+// helper function for creating an index on the unique id field of a store
+const indexHelper = (store: IDBObjectStore) =>
+  store.createIndex("by_id", "id", { unique: true });
+
+/**
+ * Connects to index DB
+ */
 async function connectToDB() {
   const request = indexedDB.open("kanban");
-  console.log(request);
+  let db: IDBDatabase | null = null;
 
   request.onupgradeneeded = function (this, ev) {
-    console.log("OnSuccess Event: ", ev);
-    //@ts-ignore
-    const db: IDBDatabase = ev?.target?.result;
+    try {
+      console.log("OnSuccess Event: ", ev);
+      //@ts-ignore
+      db = ev?.target?.result;
 
-    const indexHelper = (store: IDBObjectStore) =>
-      store.createIndex("by_id", "id", { unique: true });
+      if (!db) throw new Error("Failed to connect to IndexedDB.");
+      // create a store & index for each entity in the kanban application
+      const boardStore = db.createObjectStore("boards", { keyPath: "id" });
+      // const boardIndex = indexHelper(boardStore);
 
-    const boardStore = db.createObjectStore("boards", { keyPath: "id" });
-    const boardIndex = indexHelper(boardStore);
+      const columnStore = db.createObjectStore("columns", { keyPath: "id" });
+      // const columnIndex = indexHelper(columnStore);
 
-    const columnStore = db.createObjectStore("columns", { keyPath: "id" });
-    const columnIndex = indexHelper(columnStore);
+      const taskStore = db.createObjectStore("tasks", { keyPath: "id" });
+      // const taskIndex = indexHelper(taskStore);
 
-    const taskStore = db.createObjectStore("tasks", { keyPath: "id" });
-    const taskIndex = indexHelper(taskStore);
+      const subtaskStore = db.createObjectStore("subtasks", { keyPath: "id" });
+      // const subtasksIndex = indexHelper(subtaskStore);
 
-    const subtaskStore = db.createObjectStore("subtasks", { keyPath: "id" });
-    const subtasksIndex = indexHelper(subtaskStore);
+      // add each board from the mock data
+      boards.forEach(({ columns, ...board }) => {
+        let boardId: IDBValidKey = nanoid();
+        const boardKey = boardStore.add({ id: boardId, ...board });
+        const boardColumns: keyArray = [];
 
-    boards.forEach((board) => {
-      const boardKey = boardStore.add({ id: nanoid(), ...board });
-      const boardColumns: IDBRequest<IDBValidKey>[] = []
-      board.columns.forEach((column) => {
-        const columnKey = columnStore.add({id:nanoid(), ...column})
-        boardColumns.push(columnKey);
-        const columnTasks: string[] = [];
+        // use the onsuccess method from the board key to get access to the board id created
+        boardKey.onsuccess = function (this, ev) {
+          // add each column from the board
+          columns.forEach(({ tasks, ...column }) => {
+            let columnId: IDBValidKey = nanoid();
+            boardColumns.push(columnId);
 
-      //   tasks.forEach(({ description, subtasks, title }, taskIndex) => {
-      //     const task = db.task.create({
-      //       description,
-      //       status: column.id,
-      //       title,
-      //       column,
-      //       board,
-      //       completedSubtasks: 0,
-      //       index: taskIndex,
-      //     });
+            const columnProto = {
+              id: columnId,
+              board: boardId,
+              ...column,
+            };
+            const columnKey = columnStore.add(columnProto);
 
-      //     columnTasks.push(task.id);
+            columnKey.onsuccess = function (this, ev) {
+              const columnTasks: keyArray = [];
 
-      //     let completedCount = 0;
+              // add each task from the column
+              tasks.forEach(({ subtasks, status, ...task }) => {
+                let taskId: IDBValidKey = nanoid();
+                columnTasks.push(taskId);
 
-      //     const taskSubtasks: string[] = [];
-      //     subtasks.forEach(({ isCompleted, title }) => {
-      //       const subtask = db.subtask.create({ isCompleted, title, task });
-      //       if (isCompleted) {
-      //         completedCount++;
-      //       }
+                const taskProto = {
+                  id: taskId,
+                  status: columnId,
+                  column: columnId,
+                  board: boardId,
+                  completedSubtasks: 0,
+                  ...task,
+                };
+                const taskKey = taskStore.add(taskProto);
 
-      //       taskSubtasks.push(subtask.id);
-      //     });
+                taskKey.onsuccess = function (this, ev) {
+                  let completedCount = 0;
+                  const taskSubtasks: keyArray = [];
 
-      //     db.task.update({
-      //       where: { id: { equals: task.id } },
-      //       data: { completedSubtasks: completedCount, subtasks: taskSubtasks },
-      //     });
-      //   });
+                  // add each subtask for the task
+                  subtasks.forEach(({ isCompleted, title }) => {
+                    let subtaskId: IDBValidKey = nanoid();
+                    taskSubtasks.push(subtaskId);
 
-      //   db.column.update({
-      //     where: { id: { equals: column.id } },
-      //     data: { ...column, tasks: columnTasks },
-      //   });
-      // });
+                    const subtaskKey = subtaskStore.add({
+                      id: subtaskId,
+                      isCompleted,
+                      title,
+                      task: taskId,
+                    });
 
-      // db.board.update({
-      //   where: { id: { equals: board.id } },
-      //   data: { ...board, columns: boardColumns },
+                    subtaskKey.onsuccess = function () {
+                      if (isCompleted) {
+                        completedCount++;
+                      }
+                    };
+                  });
+
+                  // append the subtask data to the task
+                  const key = taskStore.put({
+                    ...taskProto,
+                    completedSubtasks: completedCount,
+                    subtasks: taskSubtasks,
+                  });
+
+                  key.onerror = (ev) => {
+                    console.log("An error occurred:", ev);
+                  };
+                };
+              });
+
+              console.log("Column tasks: ", columnTasks);
+              // append the task data to the column
+              columnStore.put({
+                ...columnProto,
+                tasks: columnTasks,
+              });
+            };
+          });
+        };
+
+        // append the column data to the board
+        boardStore.put({ ...board, id: boardId, columns: boardColumns });
       });
-    });
+      // return { db, boardStore, columnStore, taskStore, subtaskStore };
+    } catch (error) {
+      console.log("An error occured when initializing the database: ", error);
+    }
   };
 
-  // request.onupgradeneeded({oldVersion: 1, newVersion:2});
+  // return { db };
 }
 
-connectToDB();
+export const stores = connectToDB();
 
 //MSWJS Data Model Setup
 export const db = factory({
