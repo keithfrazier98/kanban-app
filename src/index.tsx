@@ -5,11 +5,11 @@ import { store } from "./app/store";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
-import { worker } from "./api/mock";
+import { idb, worker } from "./api/mock";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
-
+console.log(idb);
 async function main() {
   if (process.env.NODE_ENV === "development") {
     await worker.start({ onUnhandledRequest: "bypass" });

@@ -16,7 +16,7 @@ import {
 export default function EditTask() {
   const dispatch = useAppDispatch();
 
-  const task = useSelectedTask();
+  const { task } = useSelectedTask();
   const [newTask, setNewTask] = useState<ITaskConstructor>(task);
 
   const [updateTask] = useUpdateTaskMutation();

@@ -11,11 +11,15 @@ import useColumnNames from "../../hooks/useColumnNames";
 import useTransitionState from "../../hooks/useTransitionState";
 import { Draggable, Droppable, DragDropContext } from "react-beautiful-dnd";
 import PortalAwareItem from "../../components/PortalAwareItem";
+import { useUpdateColumnsMutation } from "../columns/columnsEndpoints";
+import useMoveTask from "../../hooks/useMoveTask";
 
 export default function ViewTask() {
-  const task = useSelectedTask();
+  const { task, selectedBoard } = useSelectedTask();
 
   const [updateTask] = useUpdateTaskMutation();
+  const [updateColumns] = useUpdateColumnsMutation();
+  const { moveTask } = useMoveTask();
 
   const dispatch = useAppDispatch();
 
@@ -43,6 +47,8 @@ export default function ViewTask() {
           const subtaskUpdate = subtaskList.slice();
           subtaskUpdate.splice(source.index, 1);
           subtaskUpdate.splice(destination.index, 0, draggableId);
+
+          console.log(result, subtaskUpdate);
           updateTask({ ...task, subtasks: subtaskUpdate });
         }}
       >
@@ -60,14 +66,14 @@ export default function ViewTask() {
           <Droppable droppableId="subtasks">
             {(provided) => (
               <ul
-                className="grid grid-flow-row gap-2"
+                className="flex flex-col"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
                 {subtasks ? (
                   subtaskList.map((taskId, index) => (
                     <Draggable
-                      draggableId={`subtask-${taskId}`}
+                      draggableId={`${taskId}`}
                       index={index}
                       key={`subtask-${taskId}`}
                     >
@@ -93,7 +99,24 @@ export default function ViewTask() {
             selected={columns?.entities[status].name || ""}
             label={"Current Status"}
             onChange={(status: string) => {
-              updateTask({ ...task, status });
+              const destination = {
+                index: selectedBoard.columns.findIndex((col) => col === status),
+                droppableId: status,
+              };
+              const source = {
+                index: selectedBoard.columns.findIndex(
+                  (col) => col === task.status
+                ),
+                droppableId: task.status,
+              };
+
+              const columnsUpdate = moveTask({
+                destination,
+                source,
+                draggableId: task.id,
+              });
+
+              if (columnsUpdate) updateColumns(columnsUpdate);
             }}
           />
         </ModalWBackdrop>
