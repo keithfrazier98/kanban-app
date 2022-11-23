@@ -5,13 +5,12 @@ import useTransitionState from "../../hooks/useTransitionState";
 import { useDeleteTaskMutation } from "./tasksEnpoints";
 import {
   deleteTaskModalOpened,
-  editTaskModalOpened,
   selectTaskSlice,
   taskSelected,
 } from "./tasksSlice";
 
 export default function DeleteTask() {
-  const task = useSelectedTask();
+  const { task } = useSelectedTask();
   const [deleteTask] = useDeleteTaskMutation();
   const dispatch = useAppDispatch();
 

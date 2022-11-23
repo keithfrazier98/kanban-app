@@ -105,3 +105,6 @@ export const handlers = [
 
 // This configures a Service Worker with the given request
 export const worker = setupWorker(...handlers);
+
+
+export const idb = window.indexedDB
