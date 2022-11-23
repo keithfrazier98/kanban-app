@@ -11,13 +11,13 @@ const { boards } = mockData;
 type keyArray = IDBValidKey[];
 
 // helper function for creating an index on the unique id field of a store
-const indexHelper = (store: IDBObjectStore) =>
+const idIndexHelper = (store: IDBObjectStore) =>
   store.createIndex("by_id", "id", { unique: true });
 
 /**
  * Connects to index DB
  */
-async function connectToDB() {
+async function initializeDB() {
   const request = indexedDB.open("kanban");
   let db: IDBDatabase | null = null;
 
@@ -30,25 +30,30 @@ async function connectToDB() {
       if (!db) throw new Error("Failed to connect to IndexedDB.");
       // create a store & index for each entity in the kanban application
       const boardStore = db.createObjectStore("boards", { keyPath: "id" });
-      // const boardIndex = indexHelper(boardStore);
 
       const columnStore = db.createObjectStore("columns", { keyPath: "id" });
-      // const columnIndex = indexHelper(columnStore);
+      const columnIndexByBoard = columnStore.createIndex("by_board", "board");
 
       const taskStore = db.createObjectStore("tasks", { keyPath: "id" });
-      // const taskIndex = indexHelper(taskStore);
+      const taskIndexByBoard = taskStore.createIndex("by_board", "board");
 
       const subtaskStore = db.createObjectStore("subtasks", { keyPath: "id" });
-      // const subtasksIndex = indexHelper(subtaskStore);
+      const subtaskIndexByTask = subtaskStore.createIndex("by_task", "task");
+
+      //create an index with the id attribute of each store
+      [boardStore, columnStore, taskStore, subtaskStore].forEach((store) => {
+        idIndexHelper(store);
+      });
 
       // add each board from the mock data
       boards.forEach(({ columns, ...board }) => {
         let boardId: IDBValidKey = nanoid();
-        const boardKey = boardStore.add({ id: boardId, ...board });
-        const boardColumns: keyArray = [];
+        const boardProto = { id: boardId, ...board };
+        const boardKey = boardStore.add(boardProto);
 
         // use the onsuccess method from the board key to get access to the board id created
         boardKey.onsuccess = function (this, ev) {
+          const boardColumns: keyArray = [];
           // add each column from the board
           columns.forEach(({ tasks, ...column }) => {
             let columnId: IDBValidKey = nanoid();
@@ -115,7 +120,6 @@ async function connectToDB() {
                 };
               });
 
-              console.log("Column tasks: ", columnTasks);
               // append the task data to the column
               columnStore.put({
                 ...columnProto,
@@ -123,10 +127,10 @@ async function connectToDB() {
               });
             };
           });
+          console.log("Board Columns: ", boardColumns);
+          // append the column data to the board
+          boardStore.put({ ...boardProto, columns: boardColumns });
         };
-
-        // append the column data to the board
-        boardStore.put({ ...board, id: boardId, columns: boardColumns });
       });
       // return { db, boardStore, columnStore, taskStore, subtaskStore };
     } catch (error) {
@@ -137,7 +141,7 @@ async function connectToDB() {
   // return { db };
 }
 
-export const stores = connectToDB();
+export const stores = initializeDB();
 
 //MSWJS Data Model Setup
 export const db = factory({
