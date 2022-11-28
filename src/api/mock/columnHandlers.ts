@@ -99,7 +99,7 @@ export const columnHandlers = [
 
     const columnStore = getColumnStore();
     const columnIndex = columnStore.index("by_board");
-    console.log(columnIndex)
+    console.log(columnIndex);
     const columnsByBoard: IColumn[] = await waitForDBResponse(
       columnIndex.getAll(boardId)
     );
@@ -110,24 +110,36 @@ export const columnHandlers = [
       ctx.json(columnsByBoard)
     );
   }),
-  // //handles POST /columns (adds new column or columns)
-  // rest.post("/kbapi/columns", async (req, res, ctx) => {
-  //   const { columns } = await req.json<{ columns: IColumnPostBody }>();
-  //   return updateColumns(columns, res, ctx);
-  // }),
-  // // handles DELETE /columns (deletes col by id)
-  // rest.delete("/kbapi/columns/:id", async (req, res, ctx) => {
-  //   const { id: idParam } = req.params;
-  //   const id = idToString(idParam);
-  //   return dbActionErrorWrapper(id, res, ctx, () =>
-  //     db.column.delete({ where: { id: { equals: id } } })
-  //   );
-  // }),
-  // // handles PATCH /columns (updates single column)
-  // rest.patch("/kbapi/columns", async (req, res, ctx) => {
-  //   const { id, name }: IColumn = await req.json();
-  //   return dbActionErrorWrapper(id, res, ctx, () =>
-  //     db.column.update({ where: { id: { equals: id } }, data: { name } })
-  //   );
-  // }),
+  //handles POST /columns (adds new column or columns)
+  rest.post("/kbapi/columns", async (req, res, ctx) => {
+    const { columns } = await req.json<{ columns: IColumnPostBody }>();
+    return updateColumns(columns, res, ctx);
+  }),
+  // handles DELETE /columns (deletes col by id)
+  rest.delete("/kbapi/columns/:id", async (req, res, ctx) => {
+    const { id: idParam } = req.params;
+    const id = idToString(idParam);
+    const columnStore = getColumnStore();
+    const deletion = await waitForDBResponse(columnStore.delete(id));
+    if (!deletion) return res(ctx.status(204));
+  }),
+  // handles PATCH /columns (updates single column)
+  rest.patch("/kbapi/columns", async (req, res, ctx) => {
+    const column: IColumn = await req.json();
+    const columnStore = getColumnStore();
+
+    try {
+      const update = columnStore.put(column, column.id);
+      if (!update) throw new Error("Couldn't update the column.");
+
+      return res(ctx.status(204));
+    } catch (error) {
+      send405WithBody(
+        res,
+        ctx,
+        error,
+        "An exception was caught while trying to update a column: "
+      );
+    }
+  }),
 ];
