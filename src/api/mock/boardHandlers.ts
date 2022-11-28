@@ -16,8 +16,6 @@ export const boardHandlers = [
   //handles GET /boards requests
   rest.get("/kbapi/boards", async (_, res, ctx) => {
     const boardStore = getBoardsStore();
-    if (!boardStore) return;
-
     const boardsRequest = boardStore?.getAll();
     const boards: IBoardData[] = await waitForDBResponse(boardsRequest);
 
@@ -45,52 +43,53 @@ export const boardHandlers = [
       );
     }
   }),
-  //   rest.put("/kbapi/boards", async (req, res, ctx) => {
-  //     const { board }: { board: IBoardData } = await req.json();
-  //     try {
-  //       if (!board) throw new Error("No board data found in request body.");
-  //       const update = db.board.update({
-  //         where: { id: { equals: board.id } },
-  //         data: board,
-  //       });
+  rest.put("/kbapi/boards", async (req, res, ctx) => {
+    const { board }: { board: IBoardData } = await req.json();
+    const boardStore = getBoardsStore();
 
-  //       if (update) {
-  //         return res(ctx.status(204));
-  //       } else {
-  //         throw new Error(
-  //           "No response from DB, the entity may or may not have been updated."
-  //         );
-  //       }
+    try {
+      if (!board) throw new Error("No board data found in request body.");
+      const update = boardStore.put(board, board.id);
 
-  //       // return res(ctx.status(204));
-  //     } catch (error) {
-  //       return send405WithBody(
-  //         res,
-  //         ctx,
-  //         error,
-  //         "An error occurred when trying to update a board entity."
-  //       );
-  //     }
-  //   }),
+      if (update) {
+        return res(ctx.status(204));
+      } else {
+        throw new Error(
+          "No response from DB, the entity may or may not have been updated."
+        );
+      }
 
-  //   rest.delete("/kbapi/boards/:boardId", async (req, res, ctx) => {
-  //     const { boardId } = req.params;
-  //     try {
-  //       if (!boardId) {
-  //         send405WithBody(res, ctx, {}, "No ID found in url request parameters.");
-  //       } else if (typeof boardId === "string") {
-  //         db.board.delete({ where: { id: { equals: boardId } } });
-  //         return res(ctx.status(204));
-  //       } else {
-  //         throw new Error("Invalid board ID in url request parameters. ");
-  //       }
-  //     } catch (error) {
-  //       send405WithBody(
-  //         res,
-  //         ctx,
-  //         error,
-  //         "An error occured when trying to delete the board entity. "
-  //       );
-  //     }
-  //   }),
+      // return res(ctx.status(204));
+    } catch (error) {
+      return send405WithBody(
+        res,
+        ctx,
+        error,
+        "An error occurred when trying to update a board entity."
+      );
+    }
+  }),
+
+  rest.delete("/kbapi/boards/:boardId", async (req, res, ctx) => {
+    const { boardId } = req.params;
+    const boardStore = getBoardsStore();
+    try {
+      if (!boardId) {
+        send405WithBody(res, ctx, {}, "No ID found in url request parameters.");
+      } else if (typeof boardId === "string") {
+        // deletion response should be undefined is successful
+        const deletion = await waitForDBResponse(boardStore.delete(boardId));
+        if (!deletion) return res(ctx.status(204));
+      } else {
+        throw new Error("Invalid board ID in url request parameters. ");
+      }
+    } catch (error) {
+      send405WithBody(
+        res,
+        ctx,
+        error,
+        "An error occured when trying to delete the board entity. "
+      );
+    }
+  }),
 ];

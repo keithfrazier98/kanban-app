@@ -6,6 +6,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import { getWorker, handlerConstructor } from "./api/mock";
+import { dbConnectRequest } from "./api/indexeddb";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
