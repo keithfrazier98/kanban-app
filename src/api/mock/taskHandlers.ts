@@ -13,7 +13,7 @@ import {
 const RESPONSE_DELAY = 0;
 const TASKS_ENPOINT = "/kbapi/tasks";
 
-const getTaskStore = () => getObjectStore("tasks", "readwrite");
+export const getTaskStore = () => getObjectStore("tasks", "readwrite");
 
 // /**
 //  *  Definitions for CRUD opertations on the tasks table.
