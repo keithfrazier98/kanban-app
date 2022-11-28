@@ -15,11 +15,17 @@ export default function BoardOptions() {
       }}
     >
       <div className="relative flex items-center h-full">
-        <button onClick={() => setOpenOptions(true)}>
+        <button
+          data-testid="board_options_btn"
+          onClick={() => setOpenOptions(true)}
+        >
           <DotsVertical className="text-gray-400" />
         </button>
         {openOptions ? (
-          <div className="py-2 absolute top-full flex -right-full translate-y-3 -translate-x-4 rounded-md shadow-md min-w-[12rem] items-start flex-col w-max text-xs bg-white">
+          <div
+            data-testid="board_options_modal"
+            className="py-2 absolute top-full flex -right-full translate-y-3 -translate-x-4 rounded-md shadow-md min-w-[12rem] items-start flex-col w-max text-xs bg-white"
+          >
             <button
               className="optionsBtnNormal"
               onClick={() => {

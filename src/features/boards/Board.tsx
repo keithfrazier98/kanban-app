@@ -67,6 +67,7 @@ export default function Board() {
 
   return (
     <main
+      data-testid="board_component"
       className={classNames(
         "flex overflow-hidden h-full",
         "transform transition-all"

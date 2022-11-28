@@ -9,7 +9,7 @@ export default function DesktopHeader() {
   const dispatch = useAppDispatch();
   return (
     <HeaderWrapper className="hidden sm:block">
-      <div className="flex justify-between items-center flex-1 h-full px-5">
+      <div data-testid="desktop_header" className="flex justify-between items-center flex-1 h-full px-5">
         <h2 className="text-xl font-semibold dark:text-white">{board?.name}</h2>
         <div className="flex items-center">
           <button

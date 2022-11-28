@@ -18,6 +18,7 @@ export default function Column({ column }: { column: IColumn }) {
     <div
       className={classNames("my-6 h-full group pb-16 overflow-clip")}
       id={`column-${column.id}`}
+      data-testid="column"
     >
       <div className="flex items-center justify-between mb-6 text-base text-gray-400 font-bold">
         <div className="flex items-center">
