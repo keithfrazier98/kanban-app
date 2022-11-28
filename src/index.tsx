@@ -5,25 +5,22 @@ import { store } from "./app/store";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
-import {  worker } from "./api/mock";
+import { getWorker, handlerConstructor } from "./api/mock";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
-async function main() {
-  if (process.env.NODE_ENV === "development") {
-    await worker.start({ onUnhandledRequest: "bypass" });
-  }
 
-  root.render(
-    <React.StrictMode>
-      <ReduxProvider store={store}>
-        <App />
-      </ReduxProvider>
-    </React.StrictMode>
-  );
-}
+const handlers = handlerConstructor();
+const worker = getWorker(handlers);
+worker.start({ onUnhandledRequest: "bypass" });
 
-main();
+root.render(
+  <React.StrictMode>
+    <ReduxProvider store={store}>
+      <App />
+    </ReduxProvider>
+  </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

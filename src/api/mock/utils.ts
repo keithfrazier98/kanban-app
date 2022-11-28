@@ -34,7 +34,7 @@ export function paramMissing(
 }
 
 /**
- * Wraps the supplied adAction in a try/catch and responds with a 405
+ * Wraps the supplied dbAction in a try/catch and responds with a 405
  * if an error is caught or the id is falsy.
  * @param id
  * @param res
@@ -74,3 +74,13 @@ export function dbActionErrorWrapper(
 
 export const idToString = (id: any): string =>
   typeof id === "string" ? id : "";
+
+export async function waitForDBResponse(request: IDBRequest): Promise<any> {
+  return await new Promise((resolve, reject) => {
+    setInterval(() => {
+      if (request.readyState === "done") {
+        resolve(request.result);
+      }
+    }, 50);
+  });
+}
