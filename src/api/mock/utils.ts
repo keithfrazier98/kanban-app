@@ -81,6 +81,6 @@ export async function waitForDBResponse(request: IDBRequest): Promise<any> {
       if (request.readyState === "done") {
         resolve(request.result);
       }
-    }, 50);
+    }, 5);
   });
 }
