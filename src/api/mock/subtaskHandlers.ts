@@ -11,7 +11,7 @@ import {
 } from "./utils";
 const RESPONSE_DELAY = 0;
 
-const getSubtaskStore = () => getObjectStore("subtasks", "readwrite");
+export const getSubtaskStore = () => getObjectStore("subtasks", "readwrite");
 
 // /**
 //  *  Definitions for CRUD opertations on the subtasks table.
