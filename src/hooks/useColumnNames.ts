@@ -1,6 +1,4 @@
 import { useMemo } from "react";
-import { useAppSelector } from "../app/hooks";
-import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { useGetColumnsQuery } from "../features/columns/columnsEndpoints";
 import useSelectedBoard from "./useSelectedBoard";
 

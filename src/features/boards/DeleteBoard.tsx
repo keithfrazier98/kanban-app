@@ -1,13 +1,9 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import ConfirmDelete from "../../components/ConfirmDelete";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
 import useTransitionState from "../../hooks/useTransitionState";
 import { useDeleteBoardMutation, useGetBoardsQuery } from "./boardsEndpoints";
-import {
-  boardSelected,
-  deleteBoardModalOpened,
-  getSelectedBoard,
-} from "./boardsSlice";
+import { boardSelected, deleteBoardModalOpened } from "./boardsSlice";
 
 export default function DeleteBoard() {
   const selectedBoard = useSelectedBoard();

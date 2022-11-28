@@ -1,8 +1,6 @@
 import { nanoid } from "@reduxjs/toolkit";
 import { rest } from "msw";
-import { stringify } from "querystring";
-// import { db } from ".";
-import { ITask, ITaskConstructor, ITaskEntities } from "../../@types/types";
+import { ITask, ITaskConstructor } from "../../@types/types";
 import { getObjectStore } from "../indexeddb";
 import { getBoardsStore } from "./boardHandlers";
 import { getColumnStore } from "./columnHandlers";
@@ -110,7 +108,7 @@ export const taskHandlers = [
         async ({ id, ...task }) =>
           await waitForDBResponse(taskStore.put({ ...task, board, column }, id))
       );
-      
+
       return res(ctx.status(200), ctx.json(JSON.stringify(newEntities)));
     } catch (error) {
       return send405WithBody(

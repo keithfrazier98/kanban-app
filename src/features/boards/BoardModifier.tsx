@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   IBoardData,
   IColumnPostBody,
@@ -27,21 +27,24 @@ export default function BoardModifier({
   const [newColumns, setNewColumns] = useState<IColumnEntities>({});
   const columnsAmt = useRef<number>(0);
   const [boardName, setBoardName] = useState<string>(selectedBoard?.name || "");
-  const { data: columns, isSuccess } = useGetColumnsQuery(selectedBoard?.id);
+  const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
   const [updateColumns] = useUpdateColumnsMutation();
   const [createBoard] = useCreateBoardMutation();
 
-  const formatNewCol = (name: string, id: string): IColumn => {
-    if (!newColumns)
-      throw new Error("newColumns must be defined to create a new column");
-    return {
-      name,
-      id,
-      board: {} as any,
-      operation: "create",
-      tasks: [],
-    };
-  };
+  const formatNewCol = useCallback(
+    (name: string, id: string): IColumn => {
+      if (!newColumns)
+        throw new Error("newColumns must be defined to create a new column");
+      return {
+        name,
+        id,
+        board: {} as any,
+        operation: "create",
+        tasks: [],
+      };
+    },
+    [newColumns]
+  );
 
   function handleSaveBoard() {
     if (!selectedBoard || !newColumns) return;
@@ -108,7 +111,7 @@ export default function BoardModifier({
       columnsAmt.current = columns.ids.length;
       setNewColumns(columns.entities);
     }
-  }, [columns]);
+  }, [columns, formatNewCol, selectedBoard?.id]);
 
   const mappedColumnInputs = (
     <>

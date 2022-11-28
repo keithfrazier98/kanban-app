@@ -1,11 +1,9 @@
 import { nanoid } from "@reduxjs/toolkit";
 import { rest, ResponseComposition, DefaultBodyType, RestContext } from "msw";
-import { Columns } from "tabler-icons-react";
 import { IBoardData, IColumn, IColumnPostBody } from "../../@types/types";
 import { getObjectStore } from "../indexeddb";
 import { getBoardsStore } from "./boardHandlers";
 import {
-  dbActionErrorWrapper,
   idToString,
   paramMissing,
   send405WithBody,

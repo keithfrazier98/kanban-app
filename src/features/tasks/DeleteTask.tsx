@@ -20,7 +20,7 @@ export default function DeleteTask() {
   };
 
   const { openDeleteTaskModal, openTask } = useAppSelector(selectTaskSlice);
-  const [render, unRender] = useTransitionState(onCancel);
+  const [_, unRender] = useTransitionState(onCancel);
   return (
     <ConfirmDelete
       render={!!(openDeleteTaskModal && openTask)}

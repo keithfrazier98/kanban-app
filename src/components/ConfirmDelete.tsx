@@ -1,13 +1,3 @@
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import {
-  useDeleteBoardMutation,
-  useGetBoardsQuery,
-} from "../features/boards/boardsEndpoints";
-import {
-  boardSelected,
-  deleteBoardModalOpened,
-  getSelectedBoard,
-} from "../features/boards/boardsSlice";
 import { ModalWBackdrop } from "./ModalWBackdrop";
 
 export default function ConfirmDelete({

@@ -1,5 +1,4 @@
 import { Transition } from "@headlessui/react";
-import { useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 
 export function ModalWBackdrop({

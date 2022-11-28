@@ -1,13 +1,6 @@
-import {
-  Droppable,
-  Draggable,
-  DraggableProvided,
-  DraggableStateSnapshot,
-} from "react-beautiful-dnd";
+import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
 import { createPortal } from "react-dom";
-import { Component, ReactNode, useState } from "react";
-import { IColumn, ITask } from "../@types/types";
-import Task from "../features/tasks/Task";
+import { ReactNode } from "react";
 
 const portal: HTMLElement = document.createElement("div");
 document.body.appendChild(portal);

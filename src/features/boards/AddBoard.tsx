@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import useTransitionState from "../../hooks/useTransitionState";
 import BoardModifier from "./BoardModifier";

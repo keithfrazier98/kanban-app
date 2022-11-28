@@ -1,9 +1,7 @@
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useAppDispatch } from "../app/hooks";
 import BoardOptions from "../features/boards/BoardOptions";
-import { getSelectedBoard } from "../features/boards/boardsSlice";
 import HeaderWrapper from "./HeaderWrapper";
 import { addTaskModalOpened } from "../features/tasks/tasksSlice";
-import { selectBoardById } from "../features/boards/boardsEndpoints";
 import useSelectedBoard from "../hooks/useSelectedBoard";
 
 export default function DesktopHeader() {

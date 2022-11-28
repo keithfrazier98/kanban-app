@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IBoardData, IBoardState } from "../../@types/types";
+import { IBoardState } from "../../@types/types";
 import { RootState } from "../../app/store";
 import { openModalFunction } from "../../utils/utils";
 

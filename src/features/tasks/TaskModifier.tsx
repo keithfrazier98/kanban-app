@@ -1,12 +1,9 @@
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { X } from "tabler-icons-react";
 import { ITaskConstructor } from "../../@types/types";
-import { useAppSelector } from "../../app/hooks";
 import DropdownList from "../../components/DropdownList";
 import useColumnNames from "../../hooks/useColumnNames";
 import useCurrentSubtasks from "../../hooks/useCurrentSubtasks";
-import { getSelectedBoard } from "../boards/boardsSlice";
-import { useGetColumnsQuery } from "../columns/columnsEndpoints";
 
 export default function TaskModifier({
   task,
@@ -29,9 +26,8 @@ export default function TaskModifier({
   const descPlaceholder =
     "e.g. It's always good to take a break. This 15 minute break will recharge the batteries a little. ";
 
-  {
-    /**https://stackoverflow.com/questions/74331905/how-can-i-properly-type-the-event-parameter-in-an-onchange-handler-that-i-want-t */
-  }
+  /**https://stackoverflow.com/questions/74331905/how-can-i-properly-type-the-event-parameter-in-an-onchange-handler-that-i-want-t */
+
   /**
    * Generic event handler that can be used for any element.
    * @param key

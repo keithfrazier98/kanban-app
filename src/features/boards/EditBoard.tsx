@@ -1,10 +1,9 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../app/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
 import useTransitionState from "../../hooks/useTransitionState";
-import { selectTaskSlice } from "../tasks/tasksSlice";
 import BoardModifier from "./BoardModifier";
-import { editBoardModalOpened, getSelectedBoard } from "./boardsSlice";
+import { editBoardModalOpened } from "./boardsSlice";
 
 export default function EditBoard() {
   const selectedBoard = useSelectedBoard();

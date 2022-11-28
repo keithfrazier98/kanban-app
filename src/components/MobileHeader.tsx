@@ -1,14 +1,12 @@
-import { DotsVertical, Plus } from "tabler-icons-react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { Plus } from "tabler-icons-react";
+import { useAppDispatch } from "../app/hooks";
 import MobileBoardMenu from "../features/boards/MobileBoardMenu";
 import BoardOptions from "../features/boards/BoardOptions";
-import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { addTaskModalOpened } from "../features/tasks/tasksSlice";
 import { classNames } from "../utils/utils";
 import HeaderWrapper from "./HeaderWrapper";
 
 export default function MobileHeader() {
-  const selectedBoard = useAppSelector(getSelectedBoard);
   const dispatch = useAppDispatch();
   return (
     <HeaderWrapper className="block sm:hidden">

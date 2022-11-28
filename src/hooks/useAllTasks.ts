@@ -1,5 +1,3 @@
-import { useAppSelector } from "../app/hooks";
-import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { useGetTasksQuery } from "../features/tasks/tasksEnpoints";
 import useSelectedBoard from "./useSelectedBoard";
 

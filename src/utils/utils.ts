@@ -1,5 +1,4 @@
 import { ISubtask } from "../@types/types";
-import { RootState } from "../app/store";
 
 export function countCompleted(subtasks: ISubtask[]) {
   let count = 0;

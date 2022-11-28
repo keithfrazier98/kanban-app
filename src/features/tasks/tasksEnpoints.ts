@@ -1,10 +1,5 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import {
-  ITask,
-  ITaskConstructor,
-  ITaskEntities,
-  ITaskQuery,
-} from "../../@types/types";
+import { ITask, ITaskConstructor, ITaskQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
 // Use an adapter for the task data to be used in the extendedTasksApi

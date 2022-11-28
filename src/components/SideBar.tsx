@@ -1,9 +1,8 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import { Eye, EyeCheck, EyeglassOff, EyeOff } from "tabler-icons-react";
+import { Dispatch, SetStateAction } from "react";
+import { Eye, EyeOff } from "tabler-icons-react";
 import { useAppSelector } from "../app/hooks";
 import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
 import BoardMenuItem from "../features/boards/BoardMenuItem";
-import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { selectAllBoards } from "../features/boards/boardsEndpoints";
 import NewBoardBtn from "../features/boards/NewBoardBtn";
 import ToggleTheme from "./ToggleTheme";

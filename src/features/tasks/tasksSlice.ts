@@ -1,6 +1,5 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { useMemo } from "react";
-import { ITaskQuery, ITaskState } from "../../@types/types";
+import { createSlice } from "@reduxjs/toolkit";
+import { ITaskState } from "../../@types/types";
 import { RootState } from "../../app/store";
 import { openModalFunction } from "../../utils/utils";
 

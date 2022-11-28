@@ -1,5 +1,4 @@
 import { rest } from "msw";
-// import { db } from ".";
 import { ISubtask } from "../../@types/types";
 import { getObjectStore } from "../indexeddb";
 import { getTaskStore } from "./taskHandlers";
@@ -49,7 +48,7 @@ export const subtaskHandlers = [
       const addOrSubtract = rest.isCompleted ? 1 : -1;
 
       const previousTask = await waitForDBResponse(taskStore.get(task));
-      const taskUpdate = taskStore.put(
+      taskStore.put(
         {
           ...previousTask,
           completedSubtasks: previousTask.completedSubtasks + addOrSubtract,
@@ -57,7 +56,7 @@ export const subtaskHandlers = [
         task
       );
 
-      const subtaskUpdate = subtaskStore.put({ ...rest, task, id }, id);
+      subtaskStore.put({ ...rest, task, id }, id);
     });
   }),
 
@@ -78,9 +77,10 @@ export const subtaskHandlers = [
     return dbActionErrorWrapper(subtaskId, res, ctx, async () => {
       try {
         const oldTask = await waitForDBResponse(taskStore.get(taskId));
-        if (!oldTask) throw "A task couldn't be found with supplied taskId.";
+        if (!oldTask)
+          throw new Error("A task couldn't be found with supplied taskId.");
 
-        const subtaskDelete = subtaskStore.delete(subtaskId);
+        subtaskStore.delete(subtaskId);
 
         taskStore.put(
           {
