@@ -38,7 +38,6 @@ export default function BoardModifier({
       name,
       id,
       board: {} as any,
-      index: Object.keys(newColumns).length,
       operation: "create",
       tasks: [],
     };
@@ -90,10 +89,9 @@ export default function BoardModifier({
           ...prevState,
           [randomId]: {
             name: "",
-            board: selectedBoard,
+            board: selectedBoard.id,
             id: randomId,
             operation: "create",
-            index: Object.keys(prevState || {}).length,
             tasks: [],
           },
         };

@@ -10,7 +10,6 @@ import { apiSlice } from "../api/apiSlice";
 // Use an adapter for the task data to be used in the extendedTasksApi
 export const tasksAdapter = createEntityAdapter<ITask>({
   selectId: (task) => task.id,
-  sortComparer: (a, b) => b.index - a.index,
 });
 
 const intitialTasksQueryState = tasksAdapter.getInitialState<ITaskQuery>({
@@ -58,7 +57,7 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
         const patchResult = dispatch(
           extendedTasksApi.util.updateQueryData(
             "getTasks",
-            task.board.id,
+            task.board,
             (draft) => {
               tasksAdapter.updateOne(draft, { id: task.id, changes: task });
             }

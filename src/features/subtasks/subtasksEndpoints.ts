@@ -42,7 +42,7 @@ const extendedSubtaskApi = apiSlice.injectEndpoints({
         const patchSubtask = dispatch(
           extendedSubtaskApi.util.updateQueryData(
             "getSubtasks",
-            subtask.task.id,
+            subtask.task,
             (draft) => {
               // store whether the task was already completed
               const oldSubtask = draft.entities[subtask.id];
@@ -56,7 +56,7 @@ const extendedSubtaskApi = apiSlice.injectEndpoints({
               }
 
               subtasksAdapter.updateOne(draft, {
-                id: subtask.task.id,
+                id: subtask.task,
                 changes: subtask,
               });
             }
@@ -69,36 +69,36 @@ const extendedSubtaskApi = apiSlice.injectEndpoints({
         } else if (wasComplete && !isNowComplete) {
           addOrSubtract = -1;
         }
+        //TODO: Fix optimistic update on subtask 
+        // let patchTask;
+        // if (addOrSubtract !== 0) {
+        //   patchTask = dispatch(
+        //     extendedTasksApi.util.updateQueryData(
+        //       "getTasks",
+        //       subtask.task.board.id,
+        //       (draft) => {
+        //         const oldTask = subtask.task;
 
-        let patchTask;
-        if (addOrSubtract !== 0) {
-          patchTask = dispatch(
-            extendedTasksApi.util.updateQueryData(
-              "getTasks",
-              subtask.task.board.id,
-              (draft) => {
-                const oldTask = subtask.task;
+        //         tasksAdapter.updateOne(draft, {
+        //           id: subtask.task.id,
+        //           changes: {
+        //             ...subtask.task,
+        //             completedSubtasks:
+        //               oldTask.completedSubtasks + addOrSubtract,
+        //           },
+        //         });
+        //       }
+        //     )
+        //   );
+        // }
 
-                tasksAdapter.updateOne(draft, {
-                  id: subtask.task.id,
-                  changes: {
-                    ...subtask.task,
-                    completedSubtasks:
-                      oldTask.completedSubtasks + addOrSubtract,
-                  },
-                });
-              }
-            )
-          );
-        }
-
-        try {
-          await queryFulfilled;
-        } catch (error) {
-          //undo any uptimistic updates that were made (regardless the error)
-          patchSubtask.undo();
-          patchTask?.undo();
-        }
+        // try {
+        //   await queryFulfilled;
+        // } catch (error) {
+        //   //undo any uptimistic updates that were made (regardless the error)
+        //   patchSubtask.undo();
+        //   patchTask?.undo();
+        // }
       },
     }),
     deleteSubtask: builder.mutation({

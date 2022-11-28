@@ -24,13 +24,12 @@ export default function AddTask() {
   const [task, setTask] = useState<ITaskConstructor>({
     subtasks: ["", ""],
     status: initialCol?.name || "",
-    board: selectedBoard || ({} as IBoardData),
-    column: initialCol || ({} as IColumn),
+    board: selectedBoard?.id || "",
+    column: initialCol?.id || "",
     completedSubtasks: 0,
     description: "",
     title: "",
     id: "",
-    index: tasks?.ids.length || 0,
   });
 
   const [createTask] = useCreateTaskMutation();
