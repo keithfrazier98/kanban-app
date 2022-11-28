@@ -14,7 +14,11 @@ export default function EditBoard() {
   );
 
   return (
-    <ModalWBackdrop render={render} onOutsideClick={unRender}>
+    <ModalWBackdrop
+      render={render}
+      onOutsideClick={unRender}
+      testid="edit_board_modal"
+    >
       <BoardModifier
         titles={["Edit Board", "Board Name", "Board Columns", "Save Changes"]}
         selectedBoard={selectedBoard || null}

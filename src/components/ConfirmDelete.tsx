@@ -6,15 +6,17 @@ export default function ConfirmDelete({
   onDelete,
   onCancel,
   render,
+  testid,
 }: {
   title: string;
   paragraph: string | JSX.Element;
   onDelete: () => void;
   onCancel: () => void;
   render: boolean;
+  testid?: string;
 }) {
   return (
-    <ModalWBackdrop render={render} onOutsideClick={onCancel}>
+    <ModalWBackdrop render={render} onOutsideClick={onCancel} testid={testid}>
       <span className="ml-2 text-primary-red-active text-sm font-semibold">
         {title}
       </span>

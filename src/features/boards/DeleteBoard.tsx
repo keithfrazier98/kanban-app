@@ -35,6 +35,7 @@ export default function DeleteBoard() {
       title={"Delete this board?"}
       onCancel={unRender}
       onDelete={onDelete}
+      testid="delete_board_modal"
       paragraph={
         <>
           Are you sure you want to delete the '{selectedBoard?.name}' board?
