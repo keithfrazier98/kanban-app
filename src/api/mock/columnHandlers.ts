@@ -91,21 +91,25 @@ export async function updateColumns(
  */
 export const columnHandlers = [
   //handles GET /columns requests
-  // rest.get("/kbapi/columns", (req, res, ctx) => {
-  //   const boardId = req.url.searchParams.get("boardId");
-  //   if (!boardId) {
-  //     return paramMissing(res, ctx, "boardID", "query");
-  //   }
-  //   return res(
-  //     ctx.status(200),
-  //     ctx.delay(RESPONSE_DELAY),
-  //     ctx.json(
-  //       db.column.findMany({
-  //         where: { board: { id: { equals: boardId } } },
-  //       })
-  //     )
-  //   );
-  // }),
+  rest.get("/kbapi/columns", async (req, res, ctx) => {
+    const boardId = req.url.searchParams.get("boardId");
+    if (!boardId) {
+      return paramMissing(res, ctx, "boardID", "query");
+    }
+
+    const columnStore = getColumnStore();
+    const columnIndex = columnStore.index("by_board");
+    console.log(columnIndex)
+    const columnsByBoard: IColumn[] = await waitForDBResponse(
+      columnIndex.getAll(boardId)
+    );
+
+    return res(
+      ctx.status(200),
+      ctx.delay(RESPONSE_DELAY),
+      ctx.json(columnsByBoard)
+    );
+  }),
   // //handles POST /columns (adds new column or columns)
   // rest.post("/kbapi/columns", async (req, res, ctx) => {
   //   const { columns } = await req.json<{ columns: IColumnPostBody }>();

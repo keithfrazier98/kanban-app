@@ -11,7 +11,7 @@ export default function Column({ column }: { column: IColumn }) {
   const selectedBoard = useSelectedBoard();
 
   const { data: tasks } = useGetTasksQuery(selectedBoard?.id, {
-    skip: !selectedBoard,
+    skip: !selectedBoard?.id,
   });
 
   return (
