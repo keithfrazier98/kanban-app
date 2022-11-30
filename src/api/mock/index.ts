@@ -1,4 +1,5 @@
 import { setupWorker, RestHandler, MockedRequest, DefaultBodyType } from "msw";
+import { setupServer } from "msw/node";
 import { boardHandlers } from "./boardHandlers";
 import { columnHandlers } from "./columnHandlers";
 import { taskHandlers } from "./taskHandlers";
@@ -16,3 +17,18 @@ export const handlerConstructor = () => [
 export const getWorker = (
   handlers: RestHandler<MockedRequest<DefaultBodyType>>[]
 ) => setupWorker(...handlers);
+
+export const getServer = (
+  handlers: RestHandler<MockedRequest<DefaultBodyType>>[]
+) => setupServer(...handlers);
+
+export const initializeServiceWorkers = (test: boolean = false) => {
+  const handlers = handlerConstructor();
+  if (test) {
+    const server = getServer(handlers);
+    server.listen({ onUnhandledRequest: "bypass" });
+  } else {
+    const worker = getWorker(handlers);
+    worker.start({ onUnhandledRequest: "bypass" });
+  }
+};

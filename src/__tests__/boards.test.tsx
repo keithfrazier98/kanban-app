@@ -1,16 +1,12 @@
-import {
-  fireEvent,
-  getByText,
-  render,
-  RenderResult,
-  waitFor,
-} from "@testing-library/react";
-import { text } from "node:stream/consumers";
+import { act, render, RenderResult, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
+import { connectToIDB } from "../api/indexeddb";
+import { initializeServiceWorkers } from "../api/mock";
 import App from "../App";
 import { store } from "../app/store";
+import { indexedDB } from "fake-indexeddb";
 
-describe("Common board flows work as expected", () => {
+describe("board ui renders as expected", () => {
   let app: RenderResult<
     typeof import("/Users/keith/development/kanban-project/kanban-app/node_modules/@testing-library/dom/types/queries"),
     HTMLElement,
@@ -20,6 +16,8 @@ describe("Common board flows work as expected", () => {
   const getSidebar = () => app.getByTestId(/sidebar_component/);
 
   beforeEach(() => {
+    connectToIDB(() => initializeServiceWorkers(true), indexedDB);
+
     app = render(
       <Provider store={store}>
         <App />
@@ -46,7 +44,7 @@ describe("Common board flows work as expected", () => {
     const hideSidebar = app.getByTestId(/hide_sidebar/);
     expect(hideSidebar).toBeInTheDocument();
 
-    hideSidebar.click();
+    act(() => hideSidebar.click());
 
     //wait for sidebar to unmount after hidden
     await waitFor(() => {
@@ -56,7 +54,7 @@ describe("Common board flows work as expected", () => {
     const showSidebar = app.getByTestId(/show_sidebar/);
     expect(showSidebar).toBeInTheDocument();
 
-    showSidebar.click();
+    act(() => showSidebar.click());
 
     //wait for show button to unmount after clicked
     await waitFor(() => {
@@ -67,7 +65,7 @@ describe("Common board flows work as expected", () => {
   const openBoardOptions = async () => {
     //get all since mobile and desktop header are mounted at this point
     const boardOptionsBtn = app.getAllByTestId(/board_options_btn/);
-    boardOptionsBtn[0].click();
+    act(() => boardOptionsBtn[0].click());
 
     await waitFor(() => {
       expect(app.getByTestId(/board_options_modal/)).toBeInTheDocument();
@@ -78,25 +76,36 @@ describe("Common board flows work as expected", () => {
     await openBoardOptions();
   });
 
-  test("edit board can be opened via board options modal", async () => {
+  test("edit board can be opened and closed", async () => {
     await openBoardOptions();
 
     const openEditBoard = app.getByText("Edit Board");
-    openEditBoard.click();
+    act(() => openEditBoard.click());
 
     await waitFor(() => {
       expect(app.getByTestId(/edit_board_modal/)).toBeInTheDocument();
     });
+
+    // app.getByTestId(/desktop_header/).click();
+
+    // await waitFor(() => {
+    //   expect(app.getByTestId(/edit_board_modal/)).not.toBeInTheDocument();
+    // });
   });
 
   test("delete board can be opened via board options modal", async () => {
     await openBoardOptions();
 
     const openDeleteBoard = app.getByText("Delete Board");
-    openDeleteBoard.click();
+    act(() => openDeleteBoard.click());
 
     await waitFor(() => {
       expect(app.getByTestId(/delete_board_modal/)).toBeInTheDocument();
     });
   });
 });
+
+//TODO: There should be a way to test changing boards with the sidebar
+// this would involve passing data to the application in the test, instead of
+// calling them in RTKQ, which means this might better be done in E2E tests
+// and only use component testing for testing rendering

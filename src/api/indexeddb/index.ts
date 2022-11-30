@@ -4,44 +4,32 @@ import { datatypes } from "../../@types/types";
 
 const { boards } = mockData;
 type keyArray = IDBValidKey[];
+let database: IDBDatabase;
 
 // helper function for creating an index on the unique id field of a store
 const idIndexHelper = (store: IDBObjectStore) =>
   store.createIndex("by_id", "id", { unique: true });
 
-export let db: IDBDatabase | null = null;
-
-/**
- * Connects to index DB and returns handles to the indexes and object stores.
- */
-export const dbConnectRequest = indexedDB.open("kanban");
-
-dbConnectRequest.onerror = function (this, ev) {
-  throw new Error("Failed to connect to IndexedDB");
-};
-
-dbConnectRequest.onsuccess = function (ev) {
-  console.log("Succesfully connected to IndexedDB");
-  db = (ev.target as IDBOpenDBRequest).result;
-};
-
-dbConnectRequest.onupgradeneeded = function (this, ev) {
+export const setupIDBMockData = (event: Event) => {
   try {
-    console.log("OnSuccess Event: ", ev);
     //@ts-ignore
-    db = ev?.target?.result;
+    let database = event?.target?.result;
 
-    if (!db) throw new Error("Failed to connect to IndexedDB.");
+    if (!database) throw new Error("Failed to connect to IndexedDB.");
     // create a store & index for each entity in the kanban application
-    const boardStore = db.createObjectStore("boards", { keyPath: "id" });
+    const boardStore = database.createObjectStore("boards", { keyPath: "id" });
 
-    const columnStore = db.createObjectStore("columns", { keyPath: "id" });
+    const columnStore = database.createObjectStore("columns", {
+      keyPath: "id",
+    });
     columnStore.createIndex("by_board", "board");
 
-    const taskStore = db.createObjectStore("tasks", { keyPath: "id" });
+    const taskStore = database.createObjectStore("tasks", { keyPath: "id" });
     taskStore.createIndex("by_board", "board");
 
-    const subtaskStore = db.createObjectStore("subtasks", { keyPath: "id" });
+    const subtaskStore = database.createObjectStore("subtasks", {
+      keyPath: "id",
+    });
     subtaskStore.createIndex("by_task", "task");
 
     //create an index with the id attribute of each store
@@ -56,7 +44,7 @@ dbConnectRequest.onupgradeneeded = function (this, ev) {
       const boardKey = boardStore.add(boardProto);
 
       // use the onsuccess method from the board key to get access to the board id created
-      boardKey.onsuccess = function (this, ev) {
+      boardKey.onsuccess = function () {
         const boardColumns: keyArray = [];
         // add each column from the board
         columns.forEach(({ tasks, ...column }) => {
@@ -70,7 +58,7 @@ dbConnectRequest.onupgradeneeded = function (this, ev) {
           };
           const columnKey = columnStore.add(columnProto);
 
-          columnKey.onsuccess = function (this, ev) {
+          columnKey.onsuccess = function () {
             const columnTasks: keyArray = [];
 
             // add each task from the column
@@ -88,7 +76,7 @@ dbConnectRequest.onupgradeneeded = function (this, ev) {
               };
               const taskKey = taskStore.add(taskProto);
 
-              taskKey.onsuccess = function (this, ev) {
+              taskKey.onsuccess = function () {
                 let completedCount = 0;
                 const taskSubtasks: keyArray = [];
 
@@ -118,9 +106,9 @@ dbConnectRequest.onupgradeneeded = function (this, ev) {
                   subtasks: taskSubtasks,
                 });
 
-                key.onerror = (ev) => {
-                  console.log("An error occurred:", ev);
-                };
+                // key.onerror = (event) => {
+                //   console.log("An error occurred:", event);
+                // };
               };
             });
 
@@ -131,7 +119,6 @@ dbConnectRequest.onupgradeneeded = function (this, ev) {
             });
           };
         });
-        console.log("Board Columns: ", boardColumns);
         // append the column data to the board
         boardStore.put({ ...boardProto, columns: boardColumns });
       };
@@ -141,13 +128,40 @@ dbConnectRequest.onupgradeneeded = function (this, ev) {
   }
 };
 
+/**
+ * Connects to index DB.
+ */
+
+export function connectToIDB(callback: () => void, fakeIDB?: IDBFactory) {
+  const dbConnectRequest = fakeIDB
+    ? fakeIDB?.open("kanban")
+    : indexedDB?.open("kanban");
+
+  if (!dbConnectRequest)
+    throw new Error("Couldn't find an indexedDB to connect to");
+
+  dbConnectRequest.onerror = function (this, event) {
+    throw new Error("Failed to connect to IndexedDB");
+  };
+
+  dbConnectRequest.onsuccess = function (event) {
+    if (!fakeIDB) console.log("Succesfully connected to IndexedDB");
+    database = (event.target as IDBOpenDBRequest).result;
+    callback();
+  };
+
+  dbConnectRequest.onupgradeneeded = function (this, event) {
+    //@ts-ignore
+    setupIDBMockData(event);
+  };
+}
 export function getObjectStore(
   storeName: datatypes,
   mode: "readwrite" | "readonly"
 ) {
-  if (!db) throw new Error("No connection to DB has been established.");
+  if (!database) throw new Error("No connection to DB has been established.");
 
-  const tx = db.transaction(storeName, mode);
+  const tx = database.transaction(storeName, mode);
   const store = tx.objectStore(storeName);
 
   return store;
