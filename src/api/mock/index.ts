@@ -13,22 +13,27 @@ export const handlerConstructor = () => [
   ...subtaskHandlers,
 ];
 
-// This configures a Service Worker with the given request
-export const getWorker = (
-  handlers: RestHandler<MockedRequest<DefaultBodyType>>[]
-) => setupWorker(...handlers);
-
-export const getServer = (
-  handlers: RestHandler<MockedRequest<DefaultBodyType>>[]
-) => setupServer(...handlers);
-
-export const initializeServiceWorkers = (test: boolean = false) => {
+/**
+ * Setup service server for Node Env (to be used in tests)
+ * @returns service server with it already listening
+ */
+export const initServiceServer = () => {
   const handlers = handlerConstructor();
-  if (test) {
-    const server = getServer(handlers);
-    server.listen({ onUnhandledRequest: "bypass" });
-  } else {
-    const worker = getWorker(handlers);
-    worker.start({ onUnhandledRequest: "bypass" });
-  }
+
+  const server = setupServer(...handlers);
+  server.listen({ onUnhandledRequest: "bypass" });
+  return server;
+};
+
+/**
+ *
+ * Setup service worker to intercept requests
+ * @returns worker handle for worker already started
+ */
+export const initServiceWorkers = () => {
+  const handlers = handlerConstructor();
+
+  const worker = setupWorker(...handlers);
+  worker.start({ onUnhandledRequest: "bypass" });
+  return worker;
 };

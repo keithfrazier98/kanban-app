@@ -23,6 +23,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint ./ --ignore-path .gitignore",
     "lint:fix": "npm run lint -- --fix"
+
   },
   "eslintConfig": {
     "extends": [

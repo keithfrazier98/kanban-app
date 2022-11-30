@@ -1,6 +1,7 @@
 import mockData from "../data.json";
 import { nanoid } from "@reduxjs/toolkit";
 import { datatypes } from "../../@types/types";
+import { waitForDBResponse } from "../mock/utils";
 
 const { boards } = mockData;
 type keyArray = IDBValidKey[];
@@ -132,7 +133,10 @@ export const setupIDBMockData = (event: Event) => {
  * Connects to index DB.
  */
 
-export function connectToIDB(callback: () => void, fakeIDB?: IDBFactory) {
+export function connectToIDB(
+  callback: () => void,
+  fakeIDB?: IDBFactory
+): Promise<IDBDatabase> {
   const dbConnectRequest = fakeIDB
     ? fakeIDB?.open("kanban")
     : indexedDB?.open("kanban");
@@ -154,6 +158,8 @@ export function connectToIDB(callback: () => void, fakeIDB?: IDBFactory) {
     //@ts-ignore
     setupIDBMockData(event);
   };
+
+  return waitForDBResponse(dbConnectRequest);
 }
 export function getObjectStore(
   storeName: datatypes,

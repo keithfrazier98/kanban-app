@@ -1,7 +1,7 @@
 import { act, render, RenderResult, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { connectToIDB } from "../api/indexeddb";
-import { initializeServiceWorkers } from "../api/mock";
+import { initServiceWorkers } from "../api/mock";
 import App from "../App";
 import { store } from "../app/store";
 import { indexedDB } from "fake-indexeddb";
@@ -16,7 +16,7 @@ describe("board ui renders as expected", () => {
   const getSidebar = () => app.getByTestId(/sidebar_component/);
 
   beforeEach(() => {
-    connectToIDB(() => initializeServiceWorkers(true), indexedDB);
+    connectToIDB(() => initServiceWorkers(true), indexedDB);
 
     app = render(
       <Provider store={store}>
@@ -29,7 +29,8 @@ describe("board ui renders as expected", () => {
     app.unmount();
   });
 
-  test("app loads kanban board, header, and sidebar", () => {
+  test("app loads kanban board, header, and sidebar", async () => {
+    // await waitFor(() => expect(app.getByText(/Roadmap/)).toBeInTheDocument());
     expect(app.getByTestId(/board_component/)).toBeInTheDocument();
     expect(getSidebar()).toBeInTheDocument();
     expect(app.getByTestId(/desktop_header/)).toBeInTheDocument();

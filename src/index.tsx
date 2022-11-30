@@ -5,14 +5,14 @@ import { Provider as ReduxProvider } from "react-redux";
 import { store } from "./app/store";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { initializeServiceWorkers } from "./api/mock";
+import { initServiceWorkers } from "./api/mock";
 import { connectToIDB } from "./api/indexeddb";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);
 
 
-connectToIDB(() => initializeServiceWorkers());
+connectToIDB(() => initServiceWorkers());
 
 root.render(
   <React.StrictMode>
