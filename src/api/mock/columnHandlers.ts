@@ -97,7 +97,6 @@ export const columnHandlers = [
 
     const columnStore = getColumnStore();
     const columnIndex = columnStore.index("by_board");
-    console.log(columnIndex);
     const columnsByBoard: IColumn[] = await waitForDBResponse(
       columnIndex.getAll(boardId)
     );

@@ -1,22 +1,32 @@
 import { act, render, RenderResult, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { connectToIDB } from "../api/indexeddb";
-import { initServiceWorkers } from "../api/mock";
+import { initServiceServer } from "../api/mock";
 import App from "../App";
 import { store } from "../app/store";
 import { indexedDB } from "fake-indexeddb";
+import { SetupServerApi } from "msw/node";
 
 describe("board ui renders as expected", () => {
+  let server: SetupServerApi;
+  let database: IDBDatabase;
   let app: RenderResult<
     typeof import("/Users/keith/development/kanban-project/kanban-app/node_modules/@testing-library/dom/types/queries"),
     HTMLElement,
     HTMLElement
   >;
 
+  const waitForAllByText = async (regexText: RegExp) => {
+    await waitFor(() => {
+      expect(app.getAllByText(regexText)).toBeDefined();
+    });
+  };
+
   const getSidebar = () => app.getByTestId(/sidebar_component/);
 
-  beforeEach(() => {
-    connectToIDB(() => initServiceWorkers(true), indexedDB);
+  beforeEach(async () => {
+    database = await connectToIDB(() => {}, indexedDB);
+    server = initServiceServer();
 
     app = render(
       <Provider store={store}>
@@ -27,14 +37,20 @@ describe("board ui renders as expected", () => {
 
   afterEach(() => {
     app.unmount();
+    server.close();
   });
 
   test("app loads kanban board, header, and sidebar", async () => {
-    // await waitFor(() => expect(app.getByText(/Roadmap/)).toBeInTheDocument());
     expect(app.getByTestId(/board_component/)).toBeInTheDocument();
     expect(getSidebar()).toBeInTheDocument();
     expect(app.getByTestId(/desktop_header/)).toBeInTheDocument();
     expect(app.getByTestId(/mobile_header/)).toBeInTheDocument();
+  });
+
+  test("app loads board names from IDB into the sidebar", async () => {
+    await waitForAllByText(/Roadmap/);
+    await waitForAllByText(/Platform Launch/);
+    await waitForAllByText(/Marketing Plan/);
   });
 
   test("sidebar can be opened and closed", async () => {

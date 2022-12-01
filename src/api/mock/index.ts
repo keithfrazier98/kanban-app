@@ -1,24 +1,26 @@
-import { setupWorker, RestHandler, MockedRequest, DefaultBodyType } from "msw";
+import { setupWorker } from "msw";
 import { setupServer } from "msw/node";
-import { boardHandlers } from "./boardHandlers";
+import { getBoardHandlers } from "./boardHandlers";
 import { columnHandlers } from "./columnHandlers";
 import { taskHandlers } from "./taskHandlers";
 import { subtaskHandlers } from "./subtaskHandlers";
 
 // MSW REST API handlers
-export const handlerConstructor = () => [
-  ...boardHandlers,
-  ...columnHandlers,
-  ...taskHandlers,
-  ...subtaskHandlers,
-];
+export const handlerConstructor = (mockDB?: IDBDatabase) => {
+  return [
+    ...getBoardHandlers(mockDB),
+    ...columnHandlers,
+    ...taskHandlers,
+    ...subtaskHandlers,
+  ];
+};
 
 /**
  * Setup service server for Node Env (to be used in tests)
  * @returns service server with it already listening
  */
-export const initServiceServer = () => {
-  const handlers = handlerConstructor();
+export const initServiceServer = (mockDB?: IDBDatabase) => {
+  const handlers = handlerConstructor(mockDB);
 
   const server = setupServer(...handlers);
   server.listen({ onUnhandledRequest: "bypass" });

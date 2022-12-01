@@ -12,6 +12,7 @@ const idIndexHelper = (store: IDBObjectStore) =>
   store.createIndex("by_id", "id", { unique: true });
 
 export const setupIDBMockData = (event: Event) => {
+  console.log("Initializing IDB with mock data.");
   try {
     //@ts-ignore
     let database = event?.target?.result;
@@ -163,10 +164,11 @@ export function connectToIDB(
 }
 export function getObjectStore(
   storeName: datatypes,
-  mode: "readwrite" | "readonly"
+  mode: "readwrite" | "readonly",
+  mockDB?: IDBDatabase
 ) {
-  if (!database) throw new Error("No connection to DB has been established.");
-
+  if (!database && !mockDB) throw new Error("No connection to DB has been established.");
+  if (mockDB) database = mockDB;
   const tx = database.transaction(storeName, mode);
   const store = tx.objectStore(storeName);
 
