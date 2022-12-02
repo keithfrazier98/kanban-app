@@ -49,8 +49,8 @@ describe("board ui renders as expected", () => {
 
   test("app loads board names from IDB into the sidebar", async () => {
     await waitForAllByText(/Roadmap/);
-    await waitForAllByText(/Platform Launch/);
-    await waitForAllByText(/Marketing Plan/);
+    const boardMenuItems = app.getAllByTestId(/board_menu_item/);
+    expect(boardMenuItems).toHaveLength(3);
   });
 
   test("sidebar can be opened and closed", async () => {
@@ -106,21 +106,60 @@ describe("board ui renders as expected", () => {
     // app.getByTestId(/desktop_header/).click();
 
     // await waitFor(() => {
-    //   expect(app.getByTestId(/edit_board_modal/)).not.toBeInTheDocument();
+    //   expect(app.queryByTestId(/edit_board_modal/)).toBeNull();
     // });
   });
 
-  test("delete board can be opened via board options modal", async () => {
-    await openBoardOptions();
+  const selectDeleteBoardModal = () => app.queryByTestId(/delete_board_modal/);
 
+  const openDeleteBoard = async () => {
     const openDeleteBoard = app.getByText("Delete Board");
     act(() => openDeleteBoard.click());
 
     await waitFor(() => {
-      expect(app.getByTestId(/delete_board_modal/)).toBeInTheDocument();
+      expect(selectDeleteBoardModal()).toBeInTheDocument();
     });
+  };
+
+  test("delete board can be opened via board options modal", async () => {
+    await openBoardOptions();
+    await openDeleteBoard();
+  });
+
+  test("delete board modal can be opened and closed via the cancel button", async () => {
+    await openBoardOptions();
+    await openDeleteBoard();
+    const cancelButton = app.getByTestId("cancel_delete_button");
+
+    act(() => cancelButton.click());
+
+    await waitFor(() => expect(selectDeleteBoardModal()).toBeNull());
+  });
+
+  test("boards can be deleted from the delete board modal", async () => {
+    const header = app.getByTestId("selected_board_header");
+    const boardName = header.innerHTML;
+
+    const getBoardItem = () =>
+      app.queryByTestId(`board_menu_item_${boardName}`);
+
+    expect(getBoardItem()).toBeInTheDocument();
+
+    await openBoardOptions();
+    await openDeleteBoard();
+
+    const deleteBtn = app.getByTestId("confirm_delete_button");
+    act(() => deleteBtn.click());
+
+    await waitFor(() =>
+      expect(app.queryByTestId(`board_menu_item_${boardName}`)).toBeNull()
+    );
   });
 });
+
+// board changes when clicking a new baord in the side bar 
+// board updates when updating board in teh edit board modal 
+
 
 //TODO: There should be a way to test changing boards with the sidebar
 // this would involve passing data to the application in the test, instead of

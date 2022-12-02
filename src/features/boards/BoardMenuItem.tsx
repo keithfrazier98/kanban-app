@@ -16,6 +16,7 @@ export default function BoardMenuItem({
   return (
     <div className="pr-5">
       <button
+        data-testid={`board_menu_item_${item.name}`}
         onClick={() => {
           dispatch(boardSelected({ board: item.id }));
         }}
