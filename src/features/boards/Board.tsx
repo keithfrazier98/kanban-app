@@ -6,7 +6,7 @@ import {
   DropResult,
 } from "react-beautiful-dnd";
 import { IBoardData } from "../../@types/types";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import PortalAwareItem from "../../components/PortalAwareItem";
 import useColumnNames from "../../hooks/useColumnNames";
 import useMoveTask from "../../hooks/useMoveTask";

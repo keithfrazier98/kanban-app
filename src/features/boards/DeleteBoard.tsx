@@ -1,4 +1,4 @@
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import ConfirmDelete from "../../components/ConfirmDelete";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
 import useTransitionState from "../../hooks/useTransitionState";

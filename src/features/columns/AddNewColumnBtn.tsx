@@ -1,4 +1,4 @@
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { editBoardModalOpened } from "../boards/boardsSlice";
 
 export default function AddNewColumnBtn() {

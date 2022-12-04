@@ -1,6 +1,6 @@
 import { LayoutBoardSplit } from "tabler-icons-react";
 import { IBoardData } from "../../@types/types";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
 import { boardSelected } from "./boardsSlice";
 

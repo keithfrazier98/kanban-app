@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import ConfirmDelete from "../../components/ConfirmDelete";
 import useSelectedTask from "../../hooks/useSelectedTask";
 import useTransitionState from "../../hooks/useTransitionState";

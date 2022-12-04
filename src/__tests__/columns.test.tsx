@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
-import { store } from "../app/store";
+import { store } from "../redux/store";
 import Column from "../features/columns/Column";
 
 describe("column ui renders as expected", () => {

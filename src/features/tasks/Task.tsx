@@ -1,5 +1,5 @@
 import { ITask } from "../../@types/types";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { classNames } from "../../utils/utils";
 import { addTaskModalOpened, taskSelected } from "./tasksSlice";
 import { Dots } from "tabler-icons-react";

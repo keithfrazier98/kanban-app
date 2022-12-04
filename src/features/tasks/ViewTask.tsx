@@ -1,4 +1,4 @@
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { useUpdateTaskMutation } from "./tasksEnpoints";
 import { taskSelected } from "./tasksSlice";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";

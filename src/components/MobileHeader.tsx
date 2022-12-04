@@ -1,5 +1,5 @@
 import { Plus } from "tabler-icons-react";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch } from "../redux/hooks";
 import MobileBoardMenu from "../features/boards/MobileBoardMenu";
 import BoardOptions from "../features/boards/BoardOptions";
 import { addTaskModalOpened } from "../features/tasks/tasksSlice";

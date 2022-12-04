@@ -141,6 +141,7 @@ export default function BoardModifier({
         {nameTitle}
       </label>
       <input
+        data-testid="board_name_input"
         className={classNames(
           "w-full text-sm dark:bg-primary-gray-700",
           "dark:border-primary-gray-600 dark:text-gray-300",

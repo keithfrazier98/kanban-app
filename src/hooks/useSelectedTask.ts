@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 import { IBoardData, ITask, ITaskQuery } from "../@types/types";
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../redux/hooks";
 import { useGetTasksQuery } from "../features/tasks/tasksEnpoints";
 import { getOpenTask } from "../features/tasks/tasksSlice";
 import useSelectedBoard from "./useSelectedBoard";

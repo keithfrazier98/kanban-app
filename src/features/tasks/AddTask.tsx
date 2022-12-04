@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { ITaskConstructor } from "../../@types/types";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { ModalWBackdrop } from "../../components/ModalWBackdrop";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
 import useTransitionState from "../../hooks/useTransitionState";

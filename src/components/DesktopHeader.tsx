@@ -1,4 +1,4 @@
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch } from "../redux/hooks";
 import BoardOptions from "../features/boards/BoardOptions";
 import HeaderWrapper from "./HeaderWrapper";
 import { addTaskModalOpened } from "../features/tasks/tasksSlice";

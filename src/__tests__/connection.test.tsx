@@ -1,5 +1,5 @@
 import { connectToIDB } from "../api/indexeddb";
-import { initServiceServer, initServiceWorkers } from "../api/mock";
+import { initServiceServer } from "../api/mock";
 import { rest } from "msw";
 import { indexedDB } from "fake-indexeddb";
 import { setupServer } from "msw/node";

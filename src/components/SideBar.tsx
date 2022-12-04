@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { Eye, EyeOff } from "tabler-icons-react";
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../redux/hooks";
 import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
 import BoardMenuItem from "../features/boards/BoardMenuItem";
 import { selectAllBoards } from "../features/boards/boardsEndpoints";

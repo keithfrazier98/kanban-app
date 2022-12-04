@@ -1,6 +1,6 @@
 import { createEntityAdapter, createSelector } from "@reduxjs/toolkit";
 import { IBoardData, IBoardQuery, IColumnPostBody } from "../../@types/types";
-import { RootState } from "../../app/store";
+import { RootState } from "../../redux/store";
 import { apiSlice } from "../api/apiSlice";
 
 // use an entity adapter for the extendedBoardApi (normalizes query response)

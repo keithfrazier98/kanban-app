@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import { connectToIDB } from "../api/indexeddb";
 import { initServiceServer } from "../api/mock";
 import App from "../App";
-import { store } from "../app/store";
+import { store } from "../redux/store";
 import { indexedDB } from "fake-indexeddb";
 import { SetupServerApi } from "msw/node";
 
@@ -93,15 +93,17 @@ describe("board ui renders as expected", () => {
     await openBoardOptions();
   });
 
-  test("edit board can be opened and closed", async () => {
-    await openBoardOptions();
-
+  const openEditBoard = async () => {
     const openEditBoard = app.getByText("Edit Board");
     act(() => openEditBoard.click());
-
     await waitFor(() => {
       expect(app.getByTestId(/edit_board_modal/)).toBeInTheDocument();
     });
+  };
+
+  test("edit board can be opened and closed", async () => {
+    await openBoardOptions();
+    await openEditBoard();
 
     // app.getByTestId(/desktop_header/).click();
 
@@ -136,14 +138,18 @@ describe("board ui renders as expected", () => {
     await waitFor(() => expect(selectDeleteBoardModal()).toBeNull());
   });
 
-  test("boards can be deleted from the delete board modal", async () => {
+  const getBoardItem = (boardName: string) =>
+    app.queryByTestId(`board_menu_item_${boardName}`);
+
+  const getSelectedBoard = () => {
     const header = app.getByTestId("selected_board_header");
     const boardName = header.innerHTML;
+    return [getBoardItem(boardName), boardName];
+  };
 
-    const getBoardItem = () =>
-      app.queryByTestId(`board_menu_item_${boardName}`);
-
-    expect(getBoardItem()).toBeInTheDocument();
+  test("boards can be deleted from the delete board modal", async () => {
+    const [selectedBoardItem, boardName] = getSelectedBoard();
+    expect(selectedBoardItem).toBeInTheDocument();
 
     await openBoardOptions();
     await openDeleteBoard();
@@ -155,13 +161,50 @@ describe("board ui renders as expected", () => {
       expect(app.queryByTestId(`board_menu_item_${boardName}`)).toBeNull()
     );
   });
+
+  test("board changes when clicking a new board in the side bar", async () => {
+    const [_init, initialBoard] = getSelectedBoard();
+    const allBoards = app.getAllByTestId(/board_menu_item/);
+    const unselectedBoardItem = allBoards.find(
+      (el) => el.innerHTML !== initialBoard
+    );
+
+    const unselectedName = unselectedBoardItem?.innerHTML;
+    
+
+    expect(unselectedBoardItem).toBeInTheDocument();
+    console.log(allBoards[0].innerHTML)
+    expect(unselectedName).not.toEqual(initialBoard);
+
+    act(() => unselectedBoardItem?.click());
+
+    await waitFor(() => {
+      const selectedBoard = app.getByTestId(/selected_board_header/);
+      console.log(unselectedName);
+      expect(selectedBoard.innerHTML).toEqual(unselectedName);
+    });
+  });
+
+  test("board name changes when updated in the edit board modal", async () => {
+    await openBoardOptions();
+    await openEditBoard();
+
+    const editNameInput = app.getByTestId(/board_name_input/);
+    const newName = "testing123";
+    act(() => {
+      editNameInput.innerHTML = newName;
+    });
+
+    await waitFor(() => editNameInput.innerHTML === newName);
+
+    act(() => {
+      app.getByText(/Save Changes/).click();
+    });
+
+    await waitFor(() => {
+      expect(app.getByTestId(/selected_board_header/).innerHTML).toEqual(
+        newName
+      );
+    });
+  });
 });
-
-// board changes when clicking a new baord in the side bar 
-// board updates when updating board in teh edit board modal 
-
-
-//TODO: There should be a way to test changing boards with the sidebar
-// this would involve passing data to the application in the test, instead of
-// calling them in RTKQ, which means this might better be done in E2E tests
-// and only use component testing for testing rendering
