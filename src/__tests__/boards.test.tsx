@@ -1,4 +1,4 @@
-import { act, render, RenderResult, waitFor } from "@testing-library/react";
+import { act, render, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { connectToIDB } from "../api/indexeddb";
 import { initServiceServer } from "../api/mock";
@@ -6,15 +6,12 @@ import App from "../App";
 import { store } from "../redux/store";
 import { indexedDB } from "fake-indexeddb";
 import { SetupServerApi } from "msw/node";
+import { AppRenderResult, closeTest, setupTest } from "./utils";
 
 describe("board ui renders as expected", () => {
   let server: SetupServerApi;
   let database: IDBDatabase;
-  let app: RenderResult<
-    typeof import("/Users/keith/development/kanban-project/kanban-app/node_modules/@testing-library/dom/types/queries"),
-    HTMLElement,
-    HTMLElement
-  >;
+  let app: AppRenderResult;
 
   const waitForAllByText = async (regexText: RegExp) => {
     await waitFor(() => {
@@ -25,19 +22,11 @@ describe("board ui renders as expected", () => {
   const getSidebar = () => app.getByTestId(/sidebar_component/);
 
   beforeEach(async () => {
-    database = await connectToIDB(() => {}, indexedDB);
-    server = initServiceServer();
-
-    app = render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    );
+    await setupTest(database, server, app);
   });
 
-  afterEach(() => {
-    app.unmount();
-    server.close();
+  afterEach(async () => {
+    closeTest(app, server);
   });
 
   test("app loads kanban board, header, and sidebar", async () => {
@@ -170,10 +159,9 @@ describe("board ui renders as expected", () => {
     );
 
     const unselectedName = unselectedBoardItem?.innerHTML;
-    
 
     expect(unselectedBoardItem).toBeInTheDocument();
-    console.log(allBoards[0].innerHTML)
+    console.log(allBoards[0].innerHTML);
     expect(unselectedName).not.toEqual(initialBoard);
 
     act(() => unselectedBoardItem?.click());

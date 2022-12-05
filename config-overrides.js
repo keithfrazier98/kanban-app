@@ -1,3 +1,4 @@
+// msw/node requires polyfills, so react rewired is needed to overwrite react config
 const webpack = require("webpack");
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};

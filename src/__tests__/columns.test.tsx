@@ -1,23 +1,39 @@
-import { render } from "@testing-library/react";
+import { act, render, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
+import { connectToIDB } from "../api/indexeddb";
+import { initServiceServer } from "../api/mock";
+import App from "../App";
 import { store } from "../redux/store";
-import Column from "../features/columns/Column";
+import { indexedDB } from "fake-indexeddb";
+import { SetupServerApi } from "msw/node";
+import { AppRenderResult, closeTest, setupTest } from "./utils";
 
 describe("column ui renders as expected", () => {
+  let server: SetupServerApi;
+  let database: IDBDatabase;
+  let app: AppRenderResult;
+
+  beforeEach(async () => {
+    await setupTest(database, server, app);
+  });
+
+  afterEach(async () => {
+    closeTest(app, server);
+  });
+
   test("column name renders correctly", () => {
-    // const columnName = "Text Column";
+    const platformLaunchBtn = app.getByTestId(
+      "board_menu_item_Platform Launch"
+    );
 
-    // const column = render(
-    //   <Provider store={store}>
-    //     <Column
-    //       key={""}
-    //       column={{ board: "", id: "", name: columnName, tasks: [""] }}
-    //     />
-    //   </Provider>
-    // );
+    act(() => platformLaunchBtn.click());
 
-    // expect(column.findByText(columnName)).toBeInTheDocument();
+    const columns = app.getAllByTestId(/column_name/);
+    expect(columns.length).toBe(3);
 
-    expect(true).toBeTruthy();
+    columns.forEach((col) => {
+      const colNameEl = col.getElementsByTagName("h2");
+      expect(["TODO", "DOING", "DONE"]).toContain(colNameEl[0].innerHTML);
+    });
   });
 });
