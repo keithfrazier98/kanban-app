@@ -12,67 +12,45 @@ import {
 
 const RESPONSE_DELAY = 0;
 
-export async function updateColumns(
-  req: IColumnPostBody,
-  res: ResponseComposition<DefaultBodyType>,
-  ctx: RestContext
-) {
-  try {
-    const {
-      additions = [],
-      updates = [],
-      deletions = [],
-      boardId,
-      newName,
-    } = req;
+export async function updateColumns(req: IColumnPostBody) {
+  const {
+    additions = [],
+    updates = [],
+    deletions = [],
+    boardId,
+    newName,
+  } = req;
 
-    const oldBoard: IBoardData = await boardTx((boards) => boards.get(boardId));
+  const oldBoard: IBoardData = await boardTx((boards) => boards.get(boardId));
 
-    if (!oldBoard)
-      throw new Error(`No board was found with provided id: ${boardId}`);
+  let response: any = [];
 
-    if (!updates && !additions && !deletions) {
-      throw new Error(
-        "No additions, updates, or deletions found in the request body."
-      );
-    }
+  const columnOrder = oldBoard.columns;
 
-    let response: any = [];
+  updates.forEach((col) => {
+    columnTx((columns) => columns.put(col));
+  });
 
-    const columnOrder = oldBoard.columns;
+  additions.forEach((col) => {
+    const id = nanoid();
+    columnTx((columns) => columns.add({ ...col, id, board: boardId }));
+    columnOrder.push(id);
+  });
 
-    updates.forEach((col) => {
-      columnTx((columns) => columns.put(col, col.id));
-    });
+  deletions.forEach((col) => {
+    columnTx((columns) => columns.delete(col.id));
+    columnOrder.filter((id) => col.id !== id);
+  });
 
-    additions.forEach((col) => {
-      const id = nanoid();
-      columnTx((columns) => columns.add({ ...col, id, board: boardId }));
-      columnOrder.push(id);
-    });
+  boardTx((boards) =>
+    boards.put({
+      ...oldBoard,
+      columns: columnOrder,
+      name: newName || oldBoard.name,
+    })
+  );
 
-    deletions.forEach((col) => {
-      columnTx((columns) => columns.delete(col.id));
-      columnOrder.filter((id) => col.id !== id);
-    });
-
-    boardTx((boards) =>
-      boards.put({
-        ...oldBoard,
-        columns: columnOrder,
-        name: newName || oldBoard.name,
-      })
-    );
-
-    return { column: response };
-  } catch (error) {
-    return send405WithBody(
-      res,
-      ctx,
-      error,
-      "An error occured when updating the columns."
-    );
-  }
+  return { column: response };
 }
 
 /**
@@ -101,7 +79,7 @@ export const columnHandlers = [
   //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
     const { columns } = await req.json<{ columns: IColumnPostBody }>();
-    const response = updateColumns(columns, res, ctx);
+    const response = await updateColumns(columns);
     return res(ctx.status(200), ctx.json(response), ctx.delay(RESPONSE_DELAY));
   }),
 
@@ -118,7 +96,7 @@ export const columnHandlers = [
     const column: IColumn = await req.json();
 
     try {
-      const update = columnTx((columns) => columns.put(column, column.id));
+      const update = columnTx((columns) => columns.put(column));
       if (!update) throw new Error("Couldn't update the column.");
 
       return res(ctx.status(204));

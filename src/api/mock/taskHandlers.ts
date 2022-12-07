@@ -1,15 +1,11 @@
 import { nanoid } from "@reduxjs/toolkit";
-import { waitFor } from "@testing-library/react";
 import { rest } from "msw";
 import { ITask, ITaskConstructor } from "../../@types/types";
-import { getObjectStore } from "../indexeddb";
 
 import {
   boardTx,
   columnTx,
-  dbActionErrorWrapper,
   getTaskStore,
-  send405WithBody,
   subtaskTx,
   taskTx,
   waitForDBResponse,
@@ -47,41 +43,27 @@ export const taskHandlers = [
     const column = await columnTx((columns) => columns.get(clientCol));
     const board = await boardTx((boards) => boards.get(clientBoard));
 
-    try {
-      if (!column || !board)
-        throw new Error(
-          "A column or board could not be found for with the data provided"
-        );
+    const taskId = nanoid();
+    const taskEntity = taskTx((tasks) =>
+      tasks.add({ ...task, id: taskId, column, board })
+    );
 
-      const taskId = nanoid();
-      const taskEntity = taskTx((tasks) =>
-        tasks.add({ ...task, id: taskId, column, board })
+    const subtaskEntities = subtasks.map(async (title) => {
+      const subtask = {
+        title,
+        isCompleted: false,
+        task: taskEntity,
+      };
+
+      return await subtaskTx((subtasks) =>
+        subtasks.add({ subtask, id: nanoid() })
       );
+    });
 
-      const subtaskEntities = subtasks.map(async (title) => {
-        const subtask = {
-          title,
-          isCompleted: false,
-          task: taskEntity,
-        };
-
-        return await subtaskTx((subtasks) =>
-          subtasks.add({ subtask, id: nanoid() })
-        );
-      });
-
-      return res(
-        ctx.status(201),
-        ctx.body(JSON.stringify({ taskEntity, subtaskEntities }))
-      );
-    } catch (error) {
-      return send405WithBody(
-        res,
-        ctx,
-        error,
-        "An error occured when trying to create a new task."
-      );
-    }
+    return res(
+      ctx.status(201),
+      ctx.body(JSON.stringify({ taskEntity, subtaskEntities }))
+    );
   }),
 
   // handles PUT /tasks requests (updates a single task)

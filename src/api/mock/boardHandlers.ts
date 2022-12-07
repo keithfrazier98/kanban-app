@@ -33,7 +33,7 @@ export const getBoardHandlers = (mockDB?: IDBDatabase) => {
           })
         );
 
-        updateColumns({ ...rest, boardId: id, newName: null }, res, ctx);
+        updateColumns({ ...rest, boardId: id, newName: null });
         return res(ctx.status(201));
       } catch (error) {
         return send405WithBody(
