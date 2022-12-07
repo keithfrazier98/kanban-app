@@ -8,6 +8,7 @@ module.exports = function override(config) {
     http: require.resolve("stream-http"),
     https: require.resolve("https-browserify"),
     zlib: require.resolve("zlib-browserify"),
+    url: require.resolve("url/")
   });
   config.resolve.fallback = fallback;
   config.plugins = (config.plugins || []).concat([
