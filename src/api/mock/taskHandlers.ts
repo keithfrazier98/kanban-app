@@ -88,30 +88,16 @@ export const taskHandlers = [
   rest.put(TASKS_ENPOINT, async (req, res, ctx) => {
     const taskUpdates = await req.json<ITask[]>();
 
-    try {
-      if (!taskUpdates) throw new Error("No body found in request.");
+    // get needed entities
+    const column = columnTx((columns) => columns.get(taskUpdates[0].column));
+    const board = boardTx((boards) => boards.get(taskUpdates[0].board));
 
-      // get needed entities
-      const column = columnTx((columns) => columns.get(taskUpdates[0].column));
-      const board = boardTx((boards) => boards.get(taskUpdates[0].board));
+    const newEntities = taskUpdates.map(
+      async ({ id, ...task }) =>
+        await taskTx((tasks) => tasks.put({ ...task, board, column }, id))
+    );
 
-      if (!column || !board)
-        throw new Error("Column or Board could not be determined.");
-
-      const newEntities = taskUpdates.map(
-        async ({ id, ...task }) =>
-          await taskTx((tasks) => tasks.put({ ...task, board, column }, id))
-      );
-
-      return res(ctx.status(200), ctx.json(JSON.stringify(newEntities)));
-    } catch (error) {
-      return send405WithBody(
-        res,
-        ctx,
-        error,
-        "An error occured while updating the tasks. "
-      );
-    }
+    return res(ctx.status(200), ctx.json(JSON.stringify(newEntities)));
   }),
 
   //handles PATCH /task requests (update single task)
@@ -125,14 +111,10 @@ export const taskHandlers = [
   rest.delete(TASKS_ENPOINT + "/:taskId", async (req, res, ctx) => {
     const { taskId } = req.params;
 
-    return await dbActionErrorWrapper(taskId, res, ctx, async () => {
-      if (!(typeof taskId === "string"))
-        throw new Error("taskId provided is not a string");
+    if (typeof taskId === "string") {
+      await taskTx((tasks) => tasks.delete(taskId));
+    }
 
-      const deletion = await taskTx((tasks) => tasks.delete(taskId));
-      if (deletion) throw new Error("Unable to perform a succesful deletion.");
-
-      return res(ctx.status(204));
-    });
+    return res(ctx.status(204));
   }),
 ];
