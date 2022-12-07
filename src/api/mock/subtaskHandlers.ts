@@ -40,23 +40,19 @@ export const subtaskHandlers = [
   rest.patch("/kbapi/subtasks", async (req, res, ctx) => {
     const { id, task, ...rest }: ISubtask = await req.json();
 
-    return dbActionErrorWrapper(id, res, ctx, async () => {
-      const addOrSubtract = rest.isCompleted ? 1 : -1;
+    const addOrSubtract = rest.isCompleted ? 1 : -1;
 
-      const previousTask = await taskTx((tasks) => tasks.get(task));
+    const previousTask = await taskTx((tasks) => tasks.get(task));
 
-      await taskTx((tasks) =>
-        tasks.put(
-          {
-            ...previousTask,
-            completedSubtasks: previousTask.completedSubtasks + addOrSubtract,
-          },
-          task
-        )
-      );
+    await taskTx((tasks) =>
+      tasks.put({
+        ...previousTask,
+        completedSubtasks: previousTask.completedSubtasks + addOrSubtract,
+      })
+    );
 
-      await subtaskTx((subtasks) => subtasks.put({ ...rest, task, id }, id));
-    });
+    await subtaskTx((subtasks) => subtasks.put({ ...rest, task, id }));
+    return res(ctx.status(204));
   }),
 
   //handles DELETE /subtask requests
