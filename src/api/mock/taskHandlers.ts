@@ -33,37 +33,23 @@ export const taskHandlers = [
 
   //handles POST /task requests (create single task)
   rest.post(TASKS_ENPOINT, async (req, res, ctx) => {
-    const {
-      subtasks,
-      column: clientCol,
-      board: clientBoard,
-      ...task
-    } = await req.json<ITaskConstructor>();
+    const { subtasks, ...task } = await req.json<ITaskConstructor>();
 
-    const column = await columnTx((columns) => columns.get(clientCol));
-    const board = await boardTx((boards) => boards.get(clientBoard));
-
-    const taskId = nanoid();
-    const taskEntity = taskTx((tasks) =>
-      tasks.add({ ...task, id: taskId, column, board })
+    const taskEntity = await taskTx((tasks) =>
+      tasks.add({ ...task, id: nanoid() })
     );
 
-    const subtaskEntities = subtasks.map(async (title) => {
-      const subtask = {
-        title,
-        isCompleted: false,
-        task: taskEntity,
-      };
+    // const subtaskEntities = subtasks.forEach((title) => {
+    //   const subtask = {
+    //     title,
+    //     isCompleted: false,
+    //     task: taskEntity,
+    //   };
 
-      return await subtaskTx((subtasks) =>
-        subtasks.add({ subtask, id: nanoid() })
-      );
-    });
+    //   subtaskTx((subtasks) => subtasks.add({ ...subtask, id: nanoid() }));
+    // });
 
-    return res(
-      ctx.status(201),
-      ctx.body(JSON.stringify({ taskEntity, subtaskEntities }))
-    );
+    return res(ctx.status(201), ctx.body(JSON.stringify({ taskEntity })));
   }),
 
   // handles PUT /tasks requests (updates a single task)

@@ -12,7 +12,6 @@ export interface ITask {
   description: string;
   column: string;
   board: string;
-  status: string;
   subtasks: string[];
   completedSubtasks: number;
 }

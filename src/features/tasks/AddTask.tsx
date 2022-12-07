@@ -21,7 +21,6 @@ export default function AddTask() {
   // An exception could be thrown here that will show an error on the UI if there is no board or column
   const [task, setTask] = useState<ITaskConstructor>({
     subtasks: ["", ""],
-    status: initialCol?.name || "",
     board: selectedBoard?.id || "",
     column: initialCol?.id || "",
     completedSubtasks: 0,

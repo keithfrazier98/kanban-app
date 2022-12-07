@@ -33,8 +33,8 @@ export default function ViewTask() {
   if (!!task) {
     const {
       description,
-      status,
       title,
+      column,
       completedSubtasks,
       subtasks: subtaskList,
     } = task;
@@ -96,7 +96,7 @@ export default function ViewTask() {
           </Droppable>
           <DropdownList
             items={columnNames}
-            selected={columns?.entities[status].name || ""}
+            selected={columns?.entities[column].name || ""}
             label={"Current Status"}
             onChange={(status: string) => {
               const destination = {
@@ -105,9 +105,9 @@ export default function ViewTask() {
               };
               const source = {
                 index: selectedBoard.columns.findIndex(
-                  (col) => col === task.status
+                  (col) => col === task.column
                 ),
-                droppableId: task.status,
+                droppableId: task.column,
               };
 
               const columnsUpdate = moveTask({

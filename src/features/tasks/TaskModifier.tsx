@@ -16,7 +16,7 @@ export default function TaskModifier({
   elementTitles: string[];
   onSubmit: () => void;
 }) {
-  const { subtasks, title, description, status } = task;
+  const { subtasks, title, description, column } = task;
   const [modalTitle, saveTitle] = elementTitles;
 
   const { columnNames, columns } = useColumnNames();
@@ -138,15 +138,15 @@ export default function TaskModifier({
 
         <DropdownList
           label="Status"
-          onChange={(status) => {
+          onChange={(column) => {
             setTask((pre) => ({
               ...pre,
-              status,
+              column,
             }));
           }}
           items={columnNames}
           selected={
-            columns?.entities[status]?.name ||
+            columns?.entities[column]?.name ||
             columns?.entities[columns?.ids[0]].name ||
             ""
           }

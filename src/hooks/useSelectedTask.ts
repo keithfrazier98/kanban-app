@@ -25,5 +25,5 @@ export default function useSelectedTask() {
     }),
   });
 
-  return { task, selectedBoard } as { task: ITask; selectedBoard: IBoardData };
+  return { task: task || {}, selectedBoard } as { task: ITask; selectedBoard: IBoardData };
 }

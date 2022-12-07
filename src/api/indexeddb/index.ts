@@ -70,7 +70,6 @@ export const setupIDBMockData = (event: Event) => {
 
               const taskProto = {
                 id: taskId,
-                status: columnId,
                 column: columnId,
                 board: boardId,
                 completedSubtasks: 0,
@@ -167,7 +166,8 @@ export function getObjectStore(
   mode: "readwrite" | "readonly",
   mockDB?: IDBDatabase
 ) {
-  if (!database && !mockDB) throw new Error("No connection to DB has been established.");
+  if (!database && !mockDB)
+    throw new Error("No connection to DB has been established.");
   if (mockDB) database = mockDB;
   const tx = database.transaction(storeName, mode);
   const store = tx.objectStore(storeName);

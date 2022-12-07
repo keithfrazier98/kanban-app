@@ -95,18 +95,9 @@ export const columnHandlers = [
   rest.patch("/kbapi/columns", async (req, res, ctx) => {
     const column: IColumn = await req.json();
 
-    try {
-      const update = columnTx((columns) => columns.put(column));
-      if (!update) throw new Error("Couldn't update the column.");
+    const update = columnTx((columns) => columns.put(column));
+    if (!update) throw new Error("Couldn't update the column.");
 
-      return res(ctx.status(204));
-    } catch (error) {
-      send405WithBody(
-        res,
-        ctx,
-        error,
-        "An exception was caught while trying to update a column: "
-      );
-    }
+    return res(ctx.status(204));
   }),
 ];
