@@ -31,7 +31,7 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
         method: "POST",
         body: task,
       }),
-      invalidatesTags: ["Task"],
+      invalidatesTags: ["Task", "Column"],
     }),
     updateTasks: builder.mutation({
       query: (tasks: ITask[]) => ({

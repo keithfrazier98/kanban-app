@@ -35,21 +35,40 @@ export const taskHandlers = [
   rest.post(TASKS_ENPOINT, async (req, res, ctx) => {
     const { subtasks, ...task } = await req.json<ITaskConstructor>();
 
+    //create task entity
     const taskEntity = await taskTx((tasks) =>
-      tasks.add({ ...task, id: nanoid() })
+      tasks.add({ ...task, subtasks, id: nanoid() })
     );
 
-    // const subtaskEntities = subtasks.forEach((title) => {
-    //   const subtask = {
-    //     title,
-    //     isCompleted: false,
-    //     task: taskEntity,
-    //   };
+    //create subtask entities
+    const subtaskEntities: string[] = [];
+    for (let title of subtasks) {
+      const subtask = {
+        title,
+        isCompleted: false,
+        task: taskEntity,
+      };
 
-    //   subtaskTx((subtasks) => subtasks.add({ ...subtask, id: nanoid() }));
-    // });
+      const subtaskEntity = await subtaskTx((subtasks) =>
+        subtasks.add({ ...subtask, id: nanoid() })
+      );
 
-    return res(ctx.status(201), ctx.body(JSON.stringify({ taskEntity })));
+      subtaskEntities.push(subtaskEntity);
+    }
+
+    // add the task entity to the taskOrder in the column entity
+    const column = await columnTx((columns) => columns.get(task.column));
+    console.log(column);
+    const taskOrder = column.tasks.slice();
+
+    taskOrder.push(taskEntity);
+
+    await columnTx((columns) => columns.put({ ...column, tasks: taskOrder }));
+
+    return res(
+      ctx.status(201),
+      ctx.body(JSON.stringify({ taskEntity, subtaskEntities }))
+    );
   }),
 
   // handles PUT /tasks requests (updates a single task)
