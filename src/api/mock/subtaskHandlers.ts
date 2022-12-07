@@ -1,16 +1,15 @@
 import { rest } from "msw";
 import { ISubtask } from "../../@types/types";
 import { getObjectStore } from "../indexeddb";
-import { getTaskStore } from "./taskHandlers";
 import {
   dbActionErrorWrapper,
   idToString,
   send405WithBody,
+  subtaskTx,
+  taskTx,
   waitForDBResponse,
 } from "./utils";
 const RESPONSE_DELAY = 0;
-
-export const getSubtaskStore = () => getObjectStore("subtasks", "readwrite");
 
 // /**
 //  *  Definitions for CRUD opertations on the subtasks table.
@@ -29,10 +28,10 @@ export const subtaskHandlers = [
       );
     }
 
-    const subtaskStore = getSubtaskStore();
-    const subtaskIndex = subtaskStore.index("by_task");
-
-    const subtasks = await waitForDBResponse(subtaskIndex.getAll(taskId));
+    const subtasks = await subtaskTx((subtasks) => {
+      const index = subtasks.index("by_task");
+      return index.getAll(taskId);
+    });
 
     return res(ctx.status(200), ctx.delay(RESPONSE_DELAY), ctx.json(subtasks));
   }),
@@ -41,22 +40,22 @@ export const subtaskHandlers = [
   rest.patch("/kbapi/subtasks", async (req, res, ctx) => {
     const { id, task, ...rest }: ISubtask = await req.json();
 
-    const subtaskStore = getSubtaskStore();
-    const taskStore = getTaskStore();
-
     return dbActionErrorWrapper(id, res, ctx, async () => {
       const addOrSubtract = rest.isCompleted ? 1 : -1;
 
-      const previousTask = await waitForDBResponse(taskStore.get(task));
-      taskStore.put(
-        {
-          ...previousTask,
-          completedSubtasks: previousTask.completedSubtasks + addOrSubtract,
-        },
-        task
+      const previousTask = await taskTx((tasks) => tasks.get(task));
+
+      await taskTx((tasks) =>
+        tasks.put(
+          {
+            ...previousTask,
+            completedSubtasks: previousTask.completedSubtasks + addOrSubtract,
+          },
+          task
+        )
       );
 
-      subtaskStore.put({ ...rest, task, id }, id);
+      await subtaskTx((subtasks) => subtasks.put({ ...rest, task, id }, id));
     });
   }),
 
@@ -69,20 +68,18 @@ export const subtaskHandlers = [
     const subtaskId = idToString(subtaskIdParam);
     const taskId = idToString(taskIdParam);
 
-    // get stores for tasks and ids
-    const subtaskStore = getSubtaskStore();
-    const taskStore = getTaskStore();
-
     // return update logic wrapped in response handler
     return dbActionErrorWrapper(subtaskId, res, ctx, async () => {
-      try {
-        const oldTask = await waitForDBResponse(taskStore.get(taskId));
-        if (!oldTask)
-          throw new Error("A task couldn't be found with supplied taskId.");
+      const oldTask = await taskTx((tasks) => tasks.get(taskId));
+      if (!oldTask)
+        throw new Error("A task couldn't be found with supplied taskId.");
 
-        subtaskStore.delete(subtaskId);
+      // delete the subtask
+      await subtaskTx((subtasks) => subtasks.delete(subtaskId));
 
-        taskStore.put(
+      // filter the deleted subtasks out of the subtask order array
+      await taskTx((tasks) =>
+        tasks.put(
           {
             ...oldTask,
             subtasks: oldTask.subtasks.filter(
@@ -90,15 +87,8 @@ export const subtaskHandlers = [
             ),
           },
           subtaskId
-        );
-      } catch (error) {
-        return send405WithBody(
-          res,
-          ctx,
-          error,
-          "Aborting subtask deletion: failed to update totalSubtasks in parent task."
-        );
-      }
+        )
+      );
     });
   }),
 ];

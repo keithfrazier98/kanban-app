@@ -1,10 +1,4 @@
-import { act, render, waitFor } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { connectToIDB } from "../api/indexeddb";
-import { initServiceServer } from "../api/mock";
-import App from "../App";
-import { store } from "../redux/store";
-import { indexedDB } from "fake-indexeddb";
+import { act } from "@testing-library/react";
 import { SetupServerApi } from "msw/node";
 import { AppRenderResult, closeTest, setupTest } from "./utils";
 

@@ -38,7 +38,7 @@ export default function BoardModifier({
       return {
         name,
         id,
-        board: {} as any,
+        board: "",
         operation: "create",
         tasks: [],
       };
@@ -111,7 +111,7 @@ export default function BoardModifier({
       columnsAmt.current = columns.ids.length;
       setNewColumns(columns.entities);
     }
-  }, [columns, formatNewCol, selectedBoard?.id]);
+  }, [selectedBoard?.id]);
 
   const mappedColumnInputs = (
     <>

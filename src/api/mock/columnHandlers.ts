@@ -1,18 +1,16 @@
 import { nanoid } from "@reduxjs/toolkit";
 import { rest, ResponseComposition, DefaultBodyType, RestContext } from "msw";
 import { IBoardData, IColumn, IColumnPostBody } from "../../@types/types";
-import { getObjectStore } from "../indexeddb";
-import { getBoardsStore } from "./boardHandlers";
 import {
+  boardTx,
+  columnTx,
+  getColumnStore,
   idToString,
-  paramMissing,
   send405WithBody,
   waitForDBResponse,
 } from "./utils";
 
 const RESPONSE_DELAY = 0;
-
-export const getColumnStore = () => getObjectStore("columns", "readwrite");
 
 export async function updateColumns(
   req: IColumnPostBody,
@@ -28,19 +26,10 @@ export async function updateColumns(
       newName,
     } = req;
 
-    const boardStore = getBoardsStore();
-    const columns = getColumnStore();
-
-    const oldBoard: IBoardData = await waitForDBResponse(
-      boardStore.get(boardId)
-    );
+    const oldBoard: IBoardData = await boardTx((boards) => boards.get(boardId));
 
     if (!oldBoard)
       throw new Error(`No board was found with provided id: ${boardId}`);
-
-    if (newName) {
-      boardStore.put({ ...oldBoard, name: newName });
-    }
 
     if (!updates && !additions && !deletions) {
       throw new Error(
@@ -53,27 +42,29 @@ export async function updateColumns(
     const columnOrder = oldBoard.columns;
 
     updates.forEach((col) => {
-      columns.put(col);
+      columnTx((columns) => columns.put(col, col.id));
     });
 
     additions.forEach((col) => {
       const id = nanoid();
-      columns.add({ ...col, id });
+      columnTx((columns) => columns.add({ ...col, id, board: boardId }));
       columnOrder.push(id);
     });
 
     deletions.forEach((col) => {
-      columns.delete(col.id);
+      columnTx((columns) => columns.delete(col.id));
       columnOrder.filter((id) => col.id !== id);
     });
 
-    boardStore.put({ ...oldBoard, columns });
-
-    return res(
-      ctx.status(201),
-      ctx.delay(RESPONSE_DELAY),
-      ctx.json({ column: response })
+    boardTx((boards) =>
+      boards.put({
+        ...oldBoard,
+        columns: columnOrder,
+        name: newName || oldBoard.name,
+      })
     );
+
+    return { column: response };
   } catch (error) {
     return send405WithBody(
       res,
@@ -92,11 +83,10 @@ export const columnHandlers = [
   rest.get("/kbapi/columns", async (req, res, ctx) => {
     const boardId = req.url.searchParams.get("boardId");
     if (!boardId) {
-      return paramMissing(res, ctx, "boardID", "query");
+      return send405WithBody(res, ctx, {}, "Invalid boardId");
     }
 
-    const columnStore = getColumnStore();
-    const columnIndex = columnStore.index("by_board");
+    const columnIndex = getColumnStore().index("by_board");
     const columnsByBoard: IColumn[] = await waitForDBResponse(
       columnIndex.getAll(boardId)
     );
@@ -107,26 +97,28 @@ export const columnHandlers = [
       ctx.json(columnsByBoard)
     );
   }),
+
   //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
     const { columns } = await req.json<{ columns: IColumnPostBody }>();
-    return updateColumns(columns, res, ctx);
+    const response = updateColumns(columns, res, ctx);
+    return res(ctx.status(200), ctx.json(response), ctx.delay(RESPONSE_DELAY));
   }),
+
   // handles DELETE /columns (deletes col by id)
   rest.delete("/kbapi/columns/:id", async (req, res, ctx) => {
     const { id: idParam } = req.params;
     const id = idToString(idParam);
-    const columnStore = getColumnStore();
-    const deletion = await waitForDBResponse(columnStore.delete(id));
+    const deletion = columnTx((columns) => columns.delete(id));
     if (!deletion) return res(ctx.status(204));
   }),
+
   // handles PATCH /columns (updates single column)
   rest.patch("/kbapi/columns", async (req, res, ctx) => {
     const column: IColumn = await req.json();
-    const columnStore = getColumnStore();
 
     try {
-      const update = columnStore.put(column, column.id);
+      const update = columnTx((columns) => columns.put(column, column.id));
       if (!update) throw new Error("Couldn't update the column.");
 
       return res(ctx.status(204));

@@ -1,14 +1,10 @@
 import { rest } from "msw";
 import { IBoardData, IColumnPostBody } from "../../@types/types";
 import { updateColumns } from "../mock/columnHandlers";
-import { send405WithBody, waitForDBResponse } from "./utils";
-import { getObjectStore } from "../indexeddb";
+import { boardTx, send405WithBody, waitForDBResponse } from "./utils";
 import { nanoid } from "@reduxjs/toolkit";
 
 const RESPONSE_DELAY = 0;
-
-export const getBoardsStore = (mockDB?: IDBDatabase) =>
-  getObjectStore("boards", "readwrite", mockDB);
 
 /**
  *  Definitions for CRUD opertations on the boards table.
@@ -17,10 +13,7 @@ export const getBoardHandlers = (mockDB?: IDBDatabase) => {
   return [
     //handles GET /boards requests
     rest.get("/kbapi/boards", async (_, res, ctx) => {
-      const boardStore = getBoardsStore(mockDB);
-      const boardsRequest = boardStore?.getAll();
-      const boards: IBoardData[] = await waitForDBResponse(boardsRequest);
-      console.log(boards)
+      const boards = await boardTx((boards) => boards?.getAll());
       return res(ctx.status(200), ctx.delay(RESPONSE_DELAY), ctx.json(boards));
     }),
 
@@ -30,12 +23,18 @@ export const getBoardHandlers = (mockDB?: IDBDatabase) => {
 
       try {
         if (!name) throw new Error("newName field is missing in request body.");
-        const boardStore = getBoardsStore(mockDB);
 
         const id = nanoid();
-        boardStore.add({ id, name });
+        await boardTx((boards) =>
+          boards.add({
+            id,
+            name,
+            columns: [],
+          })
+        );
 
-        return updateColumns({ ...rest, boardId: id, newName: name }, res, ctx);
+        updateColumns({ ...rest, boardId: id, newName: null }, res, ctx);
+        return res(ctx.status(201));
       } catch (error) {
         return send405WithBody(
           res,
@@ -47,12 +46,10 @@ export const getBoardHandlers = (mockDB?: IDBDatabase) => {
     }),
     rest.put("/kbapi/boards", async (req, res, ctx) => {
       const { board }: { board: IBoardData } = await req.json();
-      const boardStore = getBoardsStore();
 
       try {
         if (!board) throw new Error("No board data found in request body.");
-        const update = boardStore.put(board, board.id);
-
+        const update = await boardTx((boards) => boards.put(board));
         if (update) {
           return res(ctx.status(204));
         } else {
@@ -74,18 +71,13 @@ export const getBoardHandlers = (mockDB?: IDBDatabase) => {
 
     rest.delete("/kbapi/boards/:boardId", async (req, res, ctx) => {
       const { boardId } = req.params;
-      const boardStore = getBoardsStore(mockDB);
+
       try {
         if (!boardId) {
-          send405WithBody(
-            res,
-            ctx,
-            {},
-            "No ID found in url request parameters."
-          );
+          throw new Error("No ID found in url request parameters.");
         } else if (typeof boardId === "string") {
           // deletion response should be undefined is successful
-          const deletion = await waitForDBResponse(boardStore.delete(boardId));
+          const deletion = await boardTx((board) => board.delete(boardId));
           if (!deletion) return res(ctx.status(204));
         } else {
           throw new Error("Invalid board ID in url request parameters. ");
