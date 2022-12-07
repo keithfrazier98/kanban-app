@@ -1,14 +1,7 @@
 import { rest } from "msw";
 import { ISubtask } from "../../@types/types";
-import { getObjectStore } from "../indexeddb";
-import {
-  dbActionErrorWrapper,
-  idToString,
-  send405WithBody,
-  subtaskTx,
-  taskTx,
-  waitForDBResponse,
-} from "./utils";
+import { dbActionErrorWrapper, idToString, subtaskTx, taskTx } from "./utils";
+
 const RESPONSE_DELAY = 0;
 
 // /**
@@ -75,15 +68,12 @@ export const subtaskHandlers = [
 
       // filter the deleted subtasks out of the subtask order array
       await taskTx((tasks) =>
-        tasks.put(
-          {
-            ...oldTask,
-            subtasks: oldTask.subtasks.filter(
-              (subtask: string) => subtask !== subtaskId
-            ),
-          },
-          subtaskId
-        )
+        tasks.put({
+          ...oldTask,
+          subtasks: oldTask.subtasks.filter(
+            (subtask: string) => subtask !== subtaskId
+          ),
+        })
       );
     });
   }),

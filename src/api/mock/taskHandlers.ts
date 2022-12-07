@@ -116,25 +116,9 @@ export const taskHandlers = [
 
   //handles PATCH /task requests (update single task)
   rest.patch(TASKS_ENPOINT, async (req, res, ctx) => {
-    const {
-      id,
-      column: oldColumn,
-      board,
-      ...restOfTask
-    }: ITask = await req.json();
-    return dbActionErrorWrapper(id, res, ctx, async () => {
-      const task = await taskTx((tasks) => tasks.get(id));
-
-      let newColumn = task?.column;
-      if (restOfTask.status !== oldColumn) {
-        const entity = await columnTx((columns) =>
-          columns.get(restOfTask.status)
-        );
-        if (entity) newColumn = entity;
-      }
-
-      await taskTx((tasks) => tasks.put({ ...restOfTask, column: newColumn }));
-    });
+    const newTask = await req.json();
+    await taskTx((tasks) => tasks.put(newTask));
+    res(ctx.status(204));
   }),
 
   //handles DELETE /task reqeusts (single deletion)
