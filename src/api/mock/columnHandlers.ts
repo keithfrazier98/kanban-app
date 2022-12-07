@@ -1,94 +1,56 @@
+import { nanoid } from "@reduxjs/toolkit";
 import { rest, ResponseComposition, DefaultBodyType, RestContext } from "msw";
-import { db } from ".";
-import { IColumn, IColumnPostBody } from "../../@types/types";
+import { IBoardData, IColumn, IColumnPostBody } from "../../@types/types";
 import {
-  dbActionErrorWrapper,
+  boardTx,
+  columnTx,
+  getColumnStore,
   idToString,
-  paramMissing,
   send405WithBody,
+  waitForDBResponse,
 } from "./utils";
 
 const RESPONSE_DELAY = 0;
 
-export async function updateColumns(
-  req: IColumnPostBody,
-  res: ResponseComposition<DefaultBodyType>,
-  ctx: RestContext
-) {
-  try {
-    const {
-      additions = [],
-      updates = [],
-      deletions = [],
-      boardId,
-      newName,
-    } = req;
+export async function updateColumns(req: IColumnPostBody) {
+  const {
+    additions = [],
+    updates = [],
+    deletions = [],
+    boardId,
+    newName,
+  } = req;
 
-    if (newName) {
-      db.board.update({
-        where: { id: { equals: boardId } },
-        data: { name: newName },
-      });
-    }
+  const oldBoard: IBoardData = await boardTx((boards) => boards.get(boardId));
 
-    const board = db.board.findFirst({
-      where: { id: { equals: boardId } },
-    });
+  let response: any = [];
 
-    if (!updates && !additions && !deletions) {
-      return res(
-        ctx.status(405),
-        ctx.delay(RESPONSE_DELAY),
-        ctx.json({
-          error:
-            "No additions, updates, or deletions found in the request body.",
-        })
-      );
-    }
+  const columnOrder = oldBoard.columns;
 
-    if (!board)
-      return send405WithBody(
-        res,
-        ctx,
-        {},
-        `No board was found with provided id: ${boardId}`
-      );
+  updates.forEach((col) => {
+    columnTx((columns) => columns.put(col));
+  });
 
-    let response: any = [];
+  additions.forEach((col) => {
+    const id = nanoid();
+    columnTx((columns) => columns.add({ ...col, id, board: boardId }));
+    columnOrder.push(id);
+  });
 
-    updates.forEach((col) => {
-      const { board: old, ...rest } = col;
-      db.column.update({
-        where: { id: { equals: col.id } },
-        data: { ...rest, board },
-      });
-    });
+  deletions.forEach((col) => {
+    columnTx((columns) => columns.delete(col.id));
+    columnOrder.filter((id) => col.id !== id);
+  });
 
-    const columns: string[] = [...board.columns] as string[];
-    additions.forEach((col) => {
-      const newColumn = db.column.create({ ...col, board });
-      response.push(newColumn);
-      columns.push(newColumn.id);
-    });
+  boardTx((boards) =>
+    boards.put({
+      ...oldBoard,
+      columns: columnOrder,
+      name: newName || oldBoard.name,
+    })
+  );
 
-    deletions.forEach((col) => {
-      response.push(db.column.delete({ where: { id: { equals: col.id } } }));
-      columns.splice(columns.findIndex((id) => id === col.id));
-    });
-
-    db.board.update({
-      where: { id: { equals: boardId } },
-      data: { ...board, columns },
-    });
-
-    return res(
-      ctx.status(201),
-      ctx.delay(RESPONSE_DELAY),
-      ctx.json({ column: response })
-    );
-  } catch (error) {
-    return send405WithBody(res, ctx, error, "");
-  }
+  return { column: response };
 }
 
 /**
@@ -96,42 +58,46 @@ export async function updateColumns(
  */
 export const columnHandlers = [
   //handles GET /columns requests
-  rest.get("/kbapi/columns", (req, res, ctx) => {
+  rest.get("/kbapi/columns", async (req, res, ctx) => {
     const boardId = req.url.searchParams.get("boardId");
     if (!boardId) {
-      return paramMissing(res, ctx, "boardID", "query");
+      return send405WithBody(res, ctx, {}, "Invalid boardId");
     }
+
+    const columnIndex = getColumnStore().index("by_board");
+    const columnsByBoard: IColumn[] = await waitForDBResponse(
+      columnIndex.getAll(boardId)
+    );
+
     return res(
       ctx.status(200),
       ctx.delay(RESPONSE_DELAY),
-      ctx.json(
-        db.column.findMany({
-          where: { board: { id: { equals: boardId } } },
-        })
-      )
+      ctx.json(columnsByBoard)
     );
   }),
 
   //handles POST /columns (adds new column or columns)
   rest.post("/kbapi/columns", async (req, res, ctx) => {
     const { columns } = await req.json<{ columns: IColumnPostBody }>();
-    return updateColumns(columns, res, ctx);
+    const response = await updateColumns(columns);
+    return res(ctx.status(200), ctx.json(response), ctx.delay(RESPONSE_DELAY));
   }),
 
   // handles DELETE /columns (deletes col by id)
   rest.delete("/kbapi/columns/:id", async (req, res, ctx) => {
     const { id: idParam } = req.params;
     const id = idToString(idParam);
-    return dbActionErrorWrapper(id, res, ctx, () =>
-      db.column.delete({ where: { id: { equals: id } } })
-    );
+    const deletion = columnTx((columns) => columns.delete(id));
+    if (!deletion) return res(ctx.status(204));
   }),
 
   // handles PATCH /columns (updates single column)
   rest.patch("/kbapi/columns", async (req, res, ctx) => {
-    const { id, name }: IColumn = await req.json();
-    return dbActionErrorWrapper(id, res, ctx, () =>
-      db.column.update({ where: { id: { equals: id } }, data: { name } })
-    );
+    const column: IColumn = await req.json();
+
+    const update = columnTx((columns) => columns.put(column));
+    if (!update) throw new Error("Couldn't update the column.");
+
+    return res(ctx.status(204));
   }),
 ];

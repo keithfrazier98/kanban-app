@@ -1,13 +1,9 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import ConfirmDelete from "../../components/ConfirmDelete";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
 import useTransitionState from "../../hooks/useTransitionState";
 import { useDeleteBoardMutation, useGetBoardsQuery } from "./boardsEndpoints";
-import {
-  boardSelected,
-  deleteBoardModalOpened,
-  getSelectedBoard,
-} from "./boardsSlice";
+import { boardSelected, deleteBoardModalOpened } from "./boardsSlice";
 
 export default function DeleteBoard() {
   const selectedBoard = useSelectedBoard();
@@ -39,6 +35,7 @@ export default function DeleteBoard() {
       title={"Delete this board?"}
       onCancel={unRender}
       onDelete={onDelete}
+      testid="delete_board_modal"
       paragraph={
         <>
           Are you sure you want to delete the '{selectedBoard?.name}' board?

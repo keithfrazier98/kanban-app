@@ -1,9 +1,8 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import { Eye, EyeCheck, EyeglassOff, EyeOff } from "tabler-icons-react";
-import { useAppSelector } from "../app/hooks";
+import { Dispatch, SetStateAction } from "react";
+import { Eye, EyeOff } from "tabler-icons-react";
+import { useAppSelector } from "../redux/hooks";
 import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
 import BoardMenuItem from "../features/boards/BoardMenuItem";
-import { getSelectedBoard } from "../features/boards/boardsSlice";
 import { selectAllBoards } from "../features/boards/boardsEndpoints";
 import NewBoardBtn from "../features/boards/NewBoardBtn";
 import ToggleTheme from "./ToggleTheme";
@@ -14,7 +13,7 @@ import useSelectedBoard from "../hooks/useSelectedBoard";
  * Static Sidebar for desktop
  * @returns
  */
-export default function SideBar({
+export default function Sidebar({
   sidebarOpen,
   setSidebarOpen,
 }: {
@@ -27,6 +26,7 @@ export default function SideBar({
     <>
       <Transition
         as={"section"}
+        data-testid="sidebar_component"
         show={sidebarOpen}
         enter="transition ease-in-out duration-300 transform"
         enterFrom="-translate-x-full"
@@ -68,6 +68,7 @@ export default function SideBar({
             <div className="mb-12">
               <ToggleTheme />
               <button
+                data-testid="hide_sidebar"
                 onClick={() => {
                   setSidebarOpen(!sidebarOpen);
                 }}
@@ -79,16 +80,23 @@ export default function SideBar({
           </div>
         </div>
       </Transition>{" "}
-      <button
+      <Transition
+        as={"button"}
+        show={!sidebarOpen}
+        data-testid="show_sidebar"
         onClick={() => {
           setSidebarOpen(!sidebarOpen);
         }}
-        className={`absolute bottom-8 left-0 rounded-r-full bg-primary-indigo-active p-4 text-white z-20 ${
-          sidebarOpen ? "hidden" : "hidden sm:block"
-        }`}
+        enter="transition ease-in-out duration-300 transform"
+        enterFrom="-translate-x-full"
+        enterTo="translate-x-0"
+        leave="transition ease-in-out duration-300 transform"
+        leaveFrom="translate-x-0"
+        leaveTo="-translate-x-full"
+        className={`absolute bottom-8 left-0 rounded-r-full bg-primary-indigo-active p-4 text-white z-20`}
       >
         <Eye />
-      </button>
+      </Transition>
     </>
   );
 }

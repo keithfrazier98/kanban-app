@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   IBoardData,
   IColumnPostBody,
@@ -27,22 +27,24 @@ export default function BoardModifier({
   const [newColumns, setNewColumns] = useState<IColumnEntities>({});
   const columnsAmt = useRef<number>(0);
   const [boardName, setBoardName] = useState<string>(selectedBoard?.name || "");
-  const { data: columns, isSuccess } = useGetColumnsQuery(selectedBoard?.id);
+  const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
   const [updateColumns] = useUpdateColumnsMutation();
   const [createBoard] = useCreateBoardMutation();
 
-  const formatNewCol = (name: string, id: string): IColumn => {
-    if (!newColumns)
-      throw new Error("newColumns must be defined to create a new column");
-    return {
-      name,
-      id,
-      board: {} as any,
-      index: Object.keys(newColumns).length,
-      operation: "create",
-      tasks: [],
-    };
-  };
+  const formatNewCol = useCallback(
+    (name: string, id: string): IColumn => {
+      if (!newColumns)
+        throw new Error("newColumns must be defined to create a new column");
+      return {
+        name,
+        id,
+        board: "",
+        operation: "create",
+        tasks: [],
+      };
+    },
+    [newColumns]
+  );
 
   function handleSaveBoard() {
     if (!selectedBoard || !newColumns) return;
@@ -90,10 +92,9 @@ export default function BoardModifier({
           ...prevState,
           [randomId]: {
             name: "",
-            board: selectedBoard,
+            board: selectedBoard.id,
             id: randomId,
             operation: "create",
-            index: Object.keys(prevState || {}).length,
             tasks: [],
           },
         };
@@ -110,7 +111,7 @@ export default function BoardModifier({
       columnsAmt.current = columns.ids.length;
       setNewColumns(columns.entities);
     }
-  }, [columns]);
+  }, [selectedBoard?.id]);
 
   const mappedColumnInputs = (
     <>
@@ -140,6 +141,7 @@ export default function BoardModifier({
         {nameTitle}
       </label>
       <input
+        data-testid="board_name_input"
         className={classNames(
           "w-full text-sm dark:bg-primary-gray-700",
           "dark:border-primary-gray-600 dark:text-gray-300",

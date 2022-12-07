@@ -1,5 +1,5 @@
 import { ITask } from "../../@types/types";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { classNames } from "../../utils/utils";
 import { addTaskModalOpened, taskSelected } from "./tasksSlice";
 import { Dots } from "tabler-icons-react";
@@ -27,7 +27,7 @@ export default function Task({
         "w-full px-2 text-left mb-5"
       )}
       onClick={() => {
-        if (placeholder) dispatch(addTaskModalOpened({ open: true }));
+        if (placeholder) dispatch(addTaskModalOpened({ open: true }))
       }}
     >
       {/** Use the task div as the ref (instead of button) so the preview doesn't show padding. */}

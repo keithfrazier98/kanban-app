@@ -6,21 +6,32 @@
     "@headlessui/react": "^1.7.3",
     "@mswjs/data": "^0.10.2",
     "@reduxjs/toolkit": "^1.8.1",
+    "https-browserify": "^1.0.0",
+    "msw": "^0.49.1",
+    "process": "^0.11.10",
     "react": "^18.2.0",
+    "react-app-rewired": "^2.2.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^18.2.0",
     "react-outside-click-handler": "^1.3.0",
     "react-redux": "^8.0.1",
     "react-scripts": "5.0.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
     "tabler-icons-react": "^1.55.0",
     "tailwind-scrollbar": "^2.0.1",
-    "web-vitals": "^2.1.0"
+    "timers-browserify": "^2.0.12",
+    "url": "^0.11.0",
+    "web-vitals": "^2.1.0",
+    "zlib-browserify": "^0.0.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-scripts eject",
+    "lint": "eslint ./ --ignore-path .gitignore",
+    "lint:fix": "npm run lint -- --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +63,7 @@
     "@types/react-dom": "^18.0.2",
     "@types/react-outside-click-handler": "^1.3.1",
     "autoprefixer": "^10.4.12",
+    "fake-indexeddb": "^4.0.1",
     "postcss": "^8.4.18",
     "tailwindcss": "^3.1.8",
     "typescript": "^4.6.0"

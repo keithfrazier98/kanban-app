@@ -1,4 +1,4 @@
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../redux/hooks";
 import { selectBoardById } from "../features/boards/boardsEndpoints";
 import { getSelectedBoard } from "../features/boards/boardsSlice";
 

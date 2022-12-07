@@ -1,7 +1,7 @@
 import { useState } from "react";
 import DesktopHeader from "./components/DesktopHeader";
 import MobileHeader from "./components/MobileHeader";
-import SideBar from "./components/SideBar";
+import Sidebar from "./components/Sidebar";
 import Board from "./features/boards/Board";
 import { classNames } from "./utils/utils";
 import ModalDispatch from "./components/ModalDispatch";
@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div className="w-full h-full overflow-hidden flex">
-      <SideBar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div
         className={classNames(
           sidebarOpen ? "w-64 mr-[3.09rem]" : "w-0",

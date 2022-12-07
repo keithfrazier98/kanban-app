@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IBoardData, IBoardState } from "../../@types/types";
-import { RootState } from "../../app/store";
+import { IBoardState } from "../../@types/types";
+import { RootState } from "../../redux/store";
 import { openModalFunction } from "../../utils/utils";
 
 // Setup boards slice to hold the current board state

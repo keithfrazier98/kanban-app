@@ -1,16 +1,10 @@
 import { createEntityAdapter } from "@reduxjs/toolkit";
-import {
-  ITask,
-  ITaskConstructor,
-  ITaskEntities,
-  ITaskQuery,
-} from "../../@types/types";
+import { ITask, ITaskConstructor, ITaskQuery } from "../../@types/types";
 import { apiSlice } from "../api/apiSlice";
 
 // Use an adapter for the task data to be used in the extendedTasksApi
 export const tasksAdapter = createEntityAdapter<ITask>({
   selectId: (task) => task.id,
-  sortComparer: (a, b) => b.index - a.index,
 });
 
 const intitialTasksQueryState = tasksAdapter.getInitialState<ITaskQuery>({
@@ -37,7 +31,7 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
         method: "POST",
         body: task,
       }),
-      invalidatesTags: ["Task"],
+      invalidatesTags: ["Task", "Column"],
     }),
     updateTasks: builder.mutation({
       query: (tasks: ITask[]) => ({
@@ -58,7 +52,7 @@ export const extendedTasksApi = apiSlice.injectEndpoints({
         const patchResult = dispatch(
           extendedTasksApi.util.updateQueryData(
             "getTasks",
-            task.board.id,
+            task.board,
             (draft) => {
               tasksAdapter.updateOne(draft, { id: task.id, changes: task });
             }

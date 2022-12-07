@@ -1,4 +1,4 @@
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../redux/hooks";
 import AddBoard from "../features/boards/AddBoard";
 import DeleteBoard from "../features/boards/DeleteBoard";
 import EditBoard from "../features/boards/EditBoard";

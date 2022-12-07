@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import ConfirmDelete from "../../components/ConfirmDelete";
 import useSelectedTask from "../../hooks/useSelectedTask";
 import useTransitionState from "../../hooks/useTransitionState";
@@ -20,7 +20,7 @@ export default function DeleteTask() {
   };
 
   const { openDeleteTaskModal, openTask } = useAppSelector(selectTaskSlice);
-  const [render, unRender] = useTransitionState(onCancel);
+  const [_, unRender] = useTransitionState(onCancel);
   return (
     <ConfirmDelete
       render={!!(openDeleteTaskModal && openTask)}

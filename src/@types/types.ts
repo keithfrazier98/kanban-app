@@ -3,19 +3,17 @@ export interface ISubtask {
   id: string;
   title: string;
   isCompleted: boolean;
-  task: ITask;
+  task: string;
 }
 
 export interface ITask {
   id: string;
   title: string;
   description: string;
-  column: IColumn;
-  board: IBoardData;
-  status: string;
+  column: string;
+  board: string;
   subtasks: string[];
   completedSubtasks: number;
-  index: number;
 }
 
 export interface IColumnConstructor {
@@ -32,8 +30,7 @@ export type opTypes = "delete" | "update" | "create" | undefined;
 export interface IColumn {
   id: string;
   name: string;
-  board: IBoardData;
-  index: number;
+  board: string;
   operation?: opTypes;
   tasks: string[];
 }

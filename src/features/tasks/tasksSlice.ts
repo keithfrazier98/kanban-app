@@ -1,7 +1,6 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { useMemo } from "react";
-import { ITaskQuery, ITaskState } from "../../@types/types";
-import { RootState } from "../../app/store";
+import { createSlice } from "@reduxjs/toolkit";
+import { ITaskState } from "../../@types/types";
+import { RootState } from "../../redux/store";
 import { openModalFunction } from "../../utils/utils";
 
 // Setup slice to hold the openTask state

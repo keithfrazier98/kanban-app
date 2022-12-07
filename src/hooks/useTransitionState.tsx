@@ -21,7 +21,7 @@ export default function useTransitionState(
         // all modals take 150ms to fade out
       }, 150);
     }
-  }, [render]);
+  }, [render, unMountFunction]);
 
   return [render, () => setRender(false)];
 }

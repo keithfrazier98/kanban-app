@@ -1,9 +1,7 @@
 import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { ArrowBack, X } from "tabler-icons-react";
 import { IColumn, IColumnEntities, opTypes } from "../../@types/types";
-import { useAppSelector } from "../../app/hooks";
 import { useGetColumnsQuery } from "../columns/columnsEndpoints";
-import { getSelectedBoard } from "../boards/boardsSlice";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
 
 export default function ColumnInput({

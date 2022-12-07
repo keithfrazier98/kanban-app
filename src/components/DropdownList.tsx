@@ -1,9 +1,8 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { classNames } from "../utils/utils";
-import { Check, ChevronDown } from "tabler-icons-react";
-import { useAppDispatch } from "../app/hooks";
+import { ChevronDown } from "tabler-icons-react";
 
 export default function DropdownList({
   items,

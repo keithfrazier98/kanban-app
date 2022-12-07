@@ -5,10 +5,9 @@ import {
   Droppable,
   DropResult,
 } from "react-beautiful-dnd";
-import { IBoardData, IColumnPostBody, IColumn } from "../../@types/types";
-import { useAppDispatch } from "../../app/hooks";
+import { IBoardData } from "../../@types/types";
+import { useAppDispatch } from "../../redux/hooks";
 import PortalAwareItem from "../../components/PortalAwareItem";
-import useAllTasks from "../../hooks/useAllTasks";
 import useColumnNames from "../../hooks/useColumnNames";
 import useMoveTask from "../../hooks/useMoveTask";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
@@ -33,7 +32,7 @@ export default function Board() {
     if (!selectedBoard && boards) {
       dispatch(boardSelected({ board: String(boards.ids[0]) || null }));
     }
-  }, [boards, columns, selectedBoard]);
+  }, [boards, columns, selectedBoard, dispatch]);
 
   const { moveTask } = useMoveTask();
 
@@ -68,6 +67,7 @@ export default function Board() {
 
   return (
     <main
+      data-testid="board_component"
       className={classNames(
         "flex overflow-hidden h-full",
         "transform transition-all"

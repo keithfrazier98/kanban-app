@@ -1,11 +1,9 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDown } from "tabler-icons-react";
 import { ReactComponent as MobileLogo } from "../../assets/logo-mobile.svg";
-import { useAppSelector } from "../../app/hooks";
-import { getSelectedBoard } from "./boardsSlice";
+import { useAppSelector } from "../../redux/hooks";
 import { selectAllBoards } from "./boardsEndpoints";
-
 import ToggleTheme from "../../components/ToggleTheme";
 import BoardMenuItem from "./BoardMenuItem";
 import NewBoardBtn from "./NewBoardBtn";

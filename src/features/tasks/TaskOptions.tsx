@@ -1,7 +1,7 @@
 import { useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import { DotsVertical } from "tabler-icons-react";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch } from "../../redux/hooks";
 import { classNames } from "../../utils/utils";
 import { deleteTaskModalOpened, editTaskModalOpened } from "./tasksSlice";
 

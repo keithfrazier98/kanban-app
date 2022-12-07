@@ -1,8 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 import { IBoardData, ITask, ITaskQuery } from "../@types/types";
-import { useAppSelector } from "../app/hooks";
-import { getSelectedBoard } from "../features/boards/boardsSlice";
+import { useAppSelector } from "../redux/hooks";
 import { useGetTasksQuery } from "../features/tasks/tasksEnpoints";
 import { getOpenTask } from "../features/tasks/tasksSlice";
 import useSelectedBoard from "./useSelectedBoard";
@@ -26,5 +25,5 @@ export default function useSelectedTask() {
     }),
   });
 
-  return { task, selectedBoard } as { task: ITask; selectedBoard: IBoardData };
+  return { task: task || {}, selectedBoard } as { task: ITask; selectedBoard: IBoardData };
 }
