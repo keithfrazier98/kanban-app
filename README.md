@@ -1,46 +1,34 @@
-# Getting Started with Create React App
+# Kanban App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
+> An offline kanban application built with React, Redux, TailwindCSS, and HeadlessUI, powered by Service Workers and IndexedDB.
 
-## Available Scripts
+> <span style="color: yellow">ATTENTION: </span>This application is a work in progress, so there are bugs a plentiful. The beta version can be [accessed here](https://kanban-app-tan.vercel.app/).
 
-In the project directory, you can run:
+## Comprehensive List of Key Dependencies & Tools
 
-### `yarn start`
+- [React](https://reactjs.org/) with [Jest](https://jestjs.io/)
+- [Redux Toolkit Query](https://redux-toolkit.js.org/tutorials/rtk-query)
+- [TailwindCSS](https://tailwindcss.com/) & [TailwindUI](https://tailwindui.com/)
+- [HeadlessUI](https://headlessui.com/)
+- [Mock Service Workers (MSW)](https://mswjs.io/docs/)
+- [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) (browser API)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+This kanban application was built as a learning exercise for Redux, MSW and IndexedDB, as well as frontend implementation in general. It works offline using service workers with MSW which accesses the IndexedDB API directly in the browser and persists the storage through sessions. **The application UI design was supplied by [Frontend Mentor](https://www.frontendmentor.io/).**
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Redux, RTKQ, & react-beautiful-dnd
 
-### `yarn test`
+This application uses Redux for state and cache management through the [Redux Toolkit Query API](https://redux-toolkit.js.org/tutorials/rtk-query). Before any change is fully updated in the database, RTKQ **optimistically updates the state**, then calls the database for the updated information behind the scenes. If there happens to be any error, RTKQ will also undo the state changes, and proceed to fetch the correct data from the database. All requests made are cached in the RTKQ store for use without extra requests. Even though the HTTP requests are intercepted by MSW and stored in IDB, **the decision to cache responses was made because of future intentions of creating a backend API for this application**.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This application also has a drag-and-drop feature for columns, tasks, and subtasks. This feature is built with [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd), which is also built on redux.
 
-### `yarn build`
+## TailwindCSS, TailwindUI && HeadlessUI
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The project was started with template components from Tailwind UI, which has built-in accessibility (aria) labels, as well as uses proper semantic elements, and uses HeadlessUI out of the box. Further custom styles were then applied with tailwind CSS.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## MSW and IndexedDB
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Initially, this was going to be a full-stack project, with a backend rest API that manages a database, hence the decision to use MSW. Service Workers are a part of the most common browser APIs and are a great way to test application features that make external requests. They work by intercepting HTTP requests and responding with mock data (user defined), bypassing the need to make a request that could fail for several uncontrollable reasons. IndexedDB is globally available to service workers and is accessed at the top level of the MSW implementation to maintain data for the application in the in-browser storage.
 
-### `yarn eject`
+> The front end was initially built using `mswjs/data`, which features an _in-memory_ database API, and React's state provider feature using the `useContext` hook was going to be the state management method. I later decided to learn and use Redux with RTKQ as well as hold off on building a backend for simplicities sake. Since the service worker logic was pretty much entirely built out, I decided to remove the in-memory store and go with a more permanent in-browser storage solution, hence IndexedDB.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Using service workers in tandem with IndexedDB adds another level of complexity that isn't entirely necessary, considering it would be possible to access IndexedDB without MSW. The advantage of using MSW will be the ability to toggle offline and online mode, as well as persist data to a backend even in intermittent internet reception, once a backend API is built. The only caveat is the backend API has to be exactly the same as the MSW implementation, or else things will break.
