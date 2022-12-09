@@ -13,6 +13,8 @@ import { uniqueId } from "lodash";
 import ColumnInput from "../columns/ColumnInput";
 import { useCreateBoardMutation } from "./boardsEndpoints";
 import { classNames } from "../../utils/utils";
+import { useAppDispatch } from "src/redux/hooks";
+import { editBoardModalOpened } from "./boardsSlice";
 
 export default function BoardModifier({
   titles,
@@ -30,6 +32,7 @@ export default function BoardModifier({
   const { data: columns } = useGetColumnsQuery(selectedBoard?.id);
   const [updateColumns] = useUpdateColumnsMutation();
   const [createBoard] = useCreateBoardMutation();
+  const dispatch = useAppDispatch();
 
   const formatNewCol = useCallback(
     (name: string, id: string): IColumn => {
@@ -48,6 +51,9 @@ export default function BoardModifier({
 
   function handleSaveBoard() {
     if (!selectedBoard || !newColumns) return;
+
+    dispatch(editBoardModalOpened({ open: false }));
+
     const postBody: IColumnPostBody = {
       additions: [],
       deletions: [],

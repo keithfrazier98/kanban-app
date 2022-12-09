@@ -88,13 +88,15 @@ export default function ColumnInput({
       <label className="sr-only">Column {column.name} input</label>
       <input
         type="text"
+        data-testid="column_name_input"
         value={column.name}
         className="flex-1 text-sm border rounded px-3 py-2 dark:text-gray-300 dark:border-primary-gray-600 dark:bg-primary-gray-700"
         onChange={handleType}
       />
       <div className="pl-2">
         <button
-          className="text-gray-400 w-6 h-6 flex justify-center "
+          data-testid="delete_col_btn"
+          className="text-gray-400 w-6 h-6 flex justify-center"
           onClick={handleDelBtn}
         >
           {column.operation === "delete" ? <ArrowBack /> : <X />}

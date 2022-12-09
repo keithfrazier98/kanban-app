@@ -6,7 +6,14 @@ import App from "../App";
 import { store } from "../redux/store";
 import { indexedDB } from "fake-indexeddb";
 import { SetupServerApi } from "msw/node";
-import { AppRenderResult, closeTest, setupTest } from "./utils";
+import {
+  AppRenderResult,
+  closeTest,
+  openBoardOptions,
+  openEditBoard,
+  setupTest,
+  waitForModalToClose,
+} from "./utils";
 
 describe("board ui renders as expected", () => {
   let server: SetupServerApi;
@@ -68,37 +75,16 @@ describe("board ui renders as expected", () => {
     });
   });
 
-  const openBoardOptions = async () => {
-    //get all since mobile and desktop header are mounted at this point
-    const boardOptionsBtn = app.getAllByTestId(/board_options_btn/);
-    act(() => boardOptionsBtn[0].click());
-
-    await waitFor(() => {
-      expect(app.getByTestId(/board_options_modal/)).toBeInTheDocument();
-    });
-  };
-
   test("board options modal can be opened", async () => {
-    await openBoardOptions();
+    await openBoardOptions(app);
   });
 
-  const openEditBoard = async () => {
-    const openEditBoard = app.getByText("Edit Board");
-    act(() => openEditBoard.click());
-    await waitFor(() => {
-      expect(app.getByTestId(/edit_board_modal/)).toBeInTheDocument();
-    });
-  };
-
   test("edit board can be opened and closed", async () => {
-    await openBoardOptions();
-    await openEditBoard();
+    await openBoardOptions(app);
+    await openEditBoard(app);
 
-    // app.getByTestId(/desktop_header/).click();
-
-    // await waitFor(() => {
-    //   expect(app.queryByTestId(/edit_board_modal/)).toBeNull();
-    // });
+    act(()=> app.getByText("Save Changes").click())
+    await waitForModalToClose(app, "edit_board_modal")
   });
 
   const selectDeleteBoardModal = () => app.queryByTestId(/delete_board_modal/);
@@ -113,12 +99,12 @@ describe("board ui renders as expected", () => {
   };
 
   test("delete board can be opened via board options modal", async () => {
-    await openBoardOptions();
+    await openBoardOptions(app);
     await openDeleteBoard();
   });
 
   test("delete board modal can be opened and closed via the cancel button", async () => {
-    await openBoardOptions();
+    await openBoardOptions(app);
     await openDeleteBoard();
     const cancelButton = app.getByTestId("cancel_delete_button");
 
@@ -140,7 +126,7 @@ describe("board ui renders as expected", () => {
     const [selectedBoardItem, boardName] = getSelectedBoard();
     expect(selectedBoardItem).toBeInTheDocument();
 
-    await openBoardOptions();
+    await openBoardOptions(app);
     await openDeleteBoard();
 
     const deleteBtn = app.getByTestId("confirm_delete_button");
@@ -174,8 +160,8 @@ describe("board ui renders as expected", () => {
   });
 
   test("board name changes when updated in the edit board modal", async () => {
-    await openBoardOptions();
-    await openEditBoard();
+    await openBoardOptions(app);
+    await openEditBoard(app);
 
     const editNameInput = app.getByTestId(/board_name_input/);
     const newName = "testing123";
