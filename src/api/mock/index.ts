@@ -4,14 +4,17 @@ import { getBoardHandlers } from "./boardHandlers";
 import { columnHandlers } from "./columnHandlers";
 import { taskHandlers } from "./taskHandlers";
 import { subtaskHandlers } from "./subtaskHandlers";
+import { getTxHelpers } from "../indexeddb";
 
 // MSW REST API handlers
 export const handlerConstructor = (mockDB?: IDBDatabase) => {
+  const helpers = getTxHelpers(mockDB);
+
   return [
-    ...getBoardHandlers(mockDB),
-    ...columnHandlers,
-    ...taskHandlers,
-    ...subtaskHandlers,
+    ...getBoardHandlers(helpers),
+    ...columnHandlers(helpers),
+    ...taskHandlers(helpers),
+    ...subtaskHandlers(helpers),
   ];
 };
 

@@ -1,10 +1,4 @@
-import { act, render, waitFor } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { connectToIDB } from "../api/indexeddb";
-import { initServiceServer } from "../api/mock";
-import App from "../App";
-import { store } from "../redux/store";
-import { indexedDB } from "fake-indexeddb";
+import { act, waitFor } from "@testing-library/react";
 import { SetupServerApi } from "msw/node";
 import {
   AppRenderResult,
@@ -83,8 +77,8 @@ describe("board ui renders as expected", () => {
     await openBoardOptions(app);
     await openEditBoard(app);
 
-    act(()=> app.getByText("Save Changes").click())
-    await waitForModalToClose(app, "edit_board_modal")
+    act(() => app.getByText("Save Changes").click());
+    await waitForModalToClose(app, "edit_board_modal");
   });
 
   const selectDeleteBoardModal = () => app.queryByTestId(/delete_board_modal/);

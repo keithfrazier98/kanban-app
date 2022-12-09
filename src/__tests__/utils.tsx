@@ -6,6 +6,7 @@ import { store } from "../redux/store";
 import { Provider } from "react-redux";
 import App from "../App";
 import { act } from "react-dom/test-utils";
+import { indexedDB } from "fake-indexeddb";
 
 export type AppRenderResult = RenderResult<
   typeof import("/Users/keith/development/kanban-project/kanban-app/node_modules/@testing-library/dom/types/queries"),
@@ -19,7 +20,7 @@ export const setupTest = async (
   app: AppRenderResult
 ) => {
   database = await connectToIDB(() => {}, indexedDB);
-  server = initServiceServer();
+  server = initServiceServer(database);
 
   app = render(
     <Provider store={store}>

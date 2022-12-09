@@ -1,7 +1,6 @@
 import mockData from "../data.json";
 import { nanoid } from "@reduxjs/toolkit";
-import { datatypes } from "../../@types/types";
-import { waitForDBResponse } from "../mock/utils";
+import { datatypes, TxCallback, TxHelpers } from "../../@types/types";
 
 const { boards } = mockData;
 type keyArray = IDBValidKey[];
@@ -161,6 +160,7 @@ export function connectToIDB(
 
   return waitForDBResponse(dbConnectRequest);
 }
+
 export function getObjectStore(
   storeName: datatypes,
   mode: "readwrite" | "readonly",
@@ -173,4 +173,79 @@ export function getObjectStore(
   const store = tx.objectStore(storeName);
 
   return store;
+}
+
+export async function waitForDBResponse(request: IDBRequest): Promise<any> {
+  return await new Promise((resolve, reject) => {
+    const interval = setInterval(() => {
+      if (request.readyState === "done") {
+        clearInterval(interval);
+        resolve(request.result);
+      }
+    }, 5);
+  });
+}
+
+export async function executeDbTx(
+  store: datatypes,
+  cb: TxCallback,
+  mockDB?: IDBDatabase
+) {
+  let transaction;
+
+  switch (store) {
+    case "boards":
+      transaction = getBoardsStore(mockDB);
+      break;
+    case "columns":
+      transaction = getColumnStore(mockDB);
+      break;
+    case "subtasks":
+      transaction = getSubtaskStore(mockDB);
+      break;
+    default:
+      transaction = getTaskStore(mockDB);
+      break;
+  }
+
+  return await waitForDBResponse(cb(transaction));
+}
+
+/**
+ * Returns helper functions with mockDB enclosed if provided.
+ * If a DB is not provided, the browser IDB will be the fallback.
+ * @param mockDB - provide a fake IDB for tests
+ * @returns
+ */
+export function getTxHelpers(mockDB?: IDBDatabase): TxHelpers {
+  return {
+    async columnTx(cb: TxCallback) {
+      return await executeDbTx("columns", cb, mockDB);
+    },
+    async boardTx(cb: TxCallback) {
+      return await executeDbTx("boards", cb, mockDB);
+    },
+    async subtaskTx(cb: TxCallback) {
+      return await executeDbTx("subtasks", cb, mockDB);
+    },
+    async taskTx(cb: TxCallback) {
+      return await executeDbTx("tasks", cb, mockDB);
+    },
+  };
+}
+
+export function getBoardsStore(mockDB?: IDBDatabase) {
+  return getObjectStore("boards", "readwrite", mockDB);
+}
+
+export function getColumnStore(mockDB?: IDBDatabase) {
+  return getObjectStore("columns", "readwrite", mockDB);
+}
+
+export function getSubtaskStore(mockDB?: IDBDatabase) {
+  return getObjectStore("subtasks", "readwrite", mockDB);
+}
+
+export function getTaskStore(mockDB?: IDBDatabase) {
+  return getObjectStore("tasks", "readwrite", mockDB);
 }
