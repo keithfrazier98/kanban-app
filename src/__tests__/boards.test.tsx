@@ -1,4 +1,5 @@
 import { act, waitFor } from "@testing-library/react";
+import { indexedDB } from "fake-indexeddb";
 import { SetupServerApi } from "msw/node";
 import {
   AppRenderResult,
@@ -23,7 +24,7 @@ describe("board ui renders as expected", () => {
   const getSidebar = () => app.getByTestId(/sidebar_component/);
 
   beforeEach(async () => {
-    await setupTest(database, server, app);
+    [database, server, app] = await setupTest(indexedDB);
   });
 
   afterEach(async () => {
