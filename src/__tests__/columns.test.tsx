@@ -30,4 +30,9 @@ describe("column ui renders as expected", () => {
       expect(["TODO", "DOING", "DONE"]).toContain(colNameEl[0].innerHTML);
     });
   });
+
+  // columns can be deleted
+  // columns can be added
+  // columns can be edited
+  // columns can be added to a new board
 });
