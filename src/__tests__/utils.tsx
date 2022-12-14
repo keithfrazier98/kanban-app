@@ -58,3 +58,16 @@ export const waitForModalToClose = async (
     expect(app.queryByTestId(testId)).toBeNull();
   });
 };
+
+export const saveChanges = (app: AppRenderResult) => {
+  act(() => app.getByText("Save Changes").click());
+};
+
+export const waitForAllByText = async (
+  app: AppRenderResult,
+  regexText: RegExp
+) => {
+  await waitFor(() => {
+    expect(app.getAllByText(regexText)).toBeDefined();
+  });
+};

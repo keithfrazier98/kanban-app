@@ -5,6 +5,7 @@ import {
   AppRenderResult,
   closeTest,
   openEditBoard,
+  saveChanges,
   setupTest,
   waitForModalToClose,
 } from "./utils";
@@ -15,7 +16,7 @@ describe("column ui renders as expected", () => {
   let app: AppRenderResult;
 
   beforeEach(async () => {
-    [database, server, app] = await setupTest(indexedDB);;
+    [database, server, app] = await setupTest(indexedDB);
   });
 
   afterEach(async () => {
@@ -40,10 +41,6 @@ describe("column ui renders as expected", () => {
       expect(["TODO", "DOING", "DONE"]).toContain(colNameEl[0].innerHTML);
     });
   });
-
-  const saveChanges = (app: AppRenderResult) => {
-    act(() => app.getByText("Save Changes").click());
-  };
 
   test("columns can be deleted", async () => {
     //select all the columns

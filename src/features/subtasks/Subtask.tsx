@@ -29,6 +29,7 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
           <div className="relative flex items-center hover:cursor-pointer">
             <input
               type="checkbox"
+              data-testid={`subtask_checkbox_${subtask.id}`}
               checked={subtask?.isCompleted}
               className={classNames(
                 subtask.isCompleted
@@ -41,6 +42,7 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
             />
             {subtask?.isCompleted ? (
               <div
+                data-testid={`subtask_is_checked_${subtask.id}`}
                 className={classNames(
                   "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hover:cursor-pointer"
                 )}

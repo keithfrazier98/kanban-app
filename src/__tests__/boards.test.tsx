@@ -1,4 +1,4 @@
-import { act, waitFor } from "@testing-library/react";
+import { act, fireEvent, waitFor } from "@testing-library/react";
 import { indexedDB } from "fake-indexeddb";
 import { SetupServerApi } from "msw/node";
 import {
@@ -6,7 +6,9 @@ import {
   closeTest,
   openBoardOptions,
   openEditBoard,
+  saveChanges,
   setupTest,
+  waitForAllByText,
   waitForModalToClose,
 } from "./utils";
 
@@ -14,12 +16,6 @@ describe("board ui renders as expected", () => {
   let server: SetupServerApi;
   let database: IDBDatabase;
   let app: AppRenderResult;
-
-  const waitForAllByText = async (regexText: RegExp) => {
-    await waitFor(() => {
-      expect(app.getAllByText(regexText)).toBeDefined();
-    });
-  };
 
   const getSidebar = () => app.getByTestId(/sidebar_component/);
 
@@ -39,7 +35,7 @@ describe("board ui renders as expected", () => {
   });
 
   test("app loads board names from IDB into the sidebar", async () => {
-    await waitForAllByText(/Roadmap/);
+    await waitForAllByText(app, /Roadmap/);
     const boardMenuItems = app.getAllByTestId(/board_menu_item/);
     expect(boardMenuItems).toHaveLength(3);
   });
@@ -108,18 +104,30 @@ describe("board ui renders as expected", () => {
     await waitFor(() => expect(selectDeleteBoardModal()).toBeNull());
   });
 
-  const getBoardItem = (boardName: string) =>
-    app.queryByTestId(`board_menu_item_${boardName}`);
+  const getBoardItem = async (boardName: string) => {
+    const getItem = () => app.getByTestId(`board_menu_item_${boardName}`);
 
-  const getSelectedBoard = () => {
+    await waitFor(() => {
+      expect(getItem()).toBeInTheDocument();
+    });
+
+    return getItem();
+  };
+
+  const getSelectedBoard = async () => {
+    await waitFor(() => {
+      expect(app.getByTestId("selected_board_header")).toBeInTheDocument();
+    });
     const header = app.getByTestId("selected_board_header");
     const boardName = header.innerHTML;
-    return [getBoardItem(boardName), boardName];
+
+    const boardMenuItem = getBoardItem(boardName);
+
+    return [boardMenuItem, boardName];
   };
 
   test("boards can be deleted from the delete board modal", async () => {
-    const [selectedBoardItem, boardName] = getSelectedBoard();
-    expect(selectedBoardItem).toBeInTheDocument();
+    const [_, boardName] = await getSelectedBoard();
 
     await openBoardOptions(app);
     await openDeleteBoard();
@@ -133,24 +141,23 @@ describe("board ui renders as expected", () => {
   });
 
   test("board changes when clicking a new board in the side bar", async () => {
-    const [_init, initialBoard] = getSelectedBoard();
+    const [_init, initialBoard] = await getSelectedBoard();
     const allBoards = app.getAllByTestId(/board_menu_item/);
-    const unselectedBoardItem = allBoards.find(
-      (el) => el.innerHTML !== initialBoard
-    );
-
-    const unselectedName = unselectedBoardItem?.innerHTML;
+    const unselectedBoardItem = allBoards.find((el) => {
+      const title = el.lastChild;
+      return title?.textContent !== initialBoard;
+    });
 
     expect(unselectedBoardItem).toBeInTheDocument();
-    console.log(allBoards[0].innerHTML);
-    expect(unselectedName).not.toEqual(initialBoard);
 
     act(() => unselectedBoardItem?.click());
 
     await waitFor(() => {
       const selectedBoard = app.getByTestId(/selected_board_header/);
-      console.log(unselectedName);
-      expect(selectedBoard.innerHTML).toEqual(unselectedName);
+
+      expect(selectedBoard.innerHTML).toEqual(
+        unselectedBoardItem?.lastChild?.textContent
+      );
     });
   });
 
@@ -158,17 +165,19 @@ describe("board ui renders as expected", () => {
     await openBoardOptions(app);
     await openEditBoard(app);
 
-    const editNameInput = app.getByTestId(/board_name_input/);
+    const editNameInput = app.getByTestId(
+      /board_name_input/
+    ) as HTMLInputElement;
+
     const newName = "testing123";
     act(() => {
-      editNameInput.innerHTML = newName;
+      fireEvent.change(editNameInput, { target: { value: newName } });
     });
 
-    await waitFor(() => editNameInput.innerHTML === newName);
+    await waitFor(() => expect(editNameInput.value).toBe(newName));
 
-    act(() => {
-      app.getByText(/Save Changes/).click();
-    });
+    saveChanges(app);
+    await waitForModalToClose(app, "edit_board_modal");
 
     await waitFor(() => {
       expect(app.getByTestId(/selected_board_header/).innerHTML).toEqual(

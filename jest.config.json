@@ -1,3 +1,4 @@
 {
+  "testMatch": ["**/?(*.)+(spec|test).[jt]s?(x)"],
   "setupFiles": ["fake-indexeddb/auto"]
 }

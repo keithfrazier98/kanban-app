@@ -27,7 +27,7 @@ export default function Task({
         "w-full px-2 text-left mb-5"
       )}
       onClick={() => {
-        if (placeholder) dispatch(addTaskModalOpened({ open: true }))
+        if (placeholder) dispatch(addTaskModalOpened({ open: true }));
       }}
     >
       {/** Use the task div as the ref (instead of button) so the preview doesn't show padding. */}
@@ -44,6 +44,7 @@ export default function Task({
             <div className="flex justify-between items-start">
               <p className="font-bold text-sm dark:text-white">{task?.title}</p>
               <button
+                data-testid={`open_task_btn_${task?.id}`}
                 onClick={() => {
                   dispatch(taskSelected({ taskId: task?.id || "" }));
                 }}
