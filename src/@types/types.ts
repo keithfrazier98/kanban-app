@@ -101,3 +101,12 @@ export interface IColumnPostBody {
   columnOrder?: string[];
   newName: null | string;
 }
+
+export type TxCallback = (transaction: IDBObjectStore) => any;
+
+export interface TxHelpers {
+  columnTx(cb: TxCallback): Promise<any>;
+  boardTx(cb: TxCallback): Promise<any>;
+  subtaskTx(cb: TxCallback): Promise<any>;
+  taskTx(cb: TxCallback): Promise<any>;
+}

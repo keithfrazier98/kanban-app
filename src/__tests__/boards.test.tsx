@@ -1,28 +1,26 @@
-import { act, render, waitFor } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { connectToIDB } from "../api/indexeddb";
-import { initServiceServer } from "../api/mock";
-import App from "../App";
-import { store } from "../redux/store";
+import { act, fireEvent, waitFor } from "@testing-library/react";
 import { indexedDB } from "fake-indexeddb";
 import { SetupServerApi } from "msw/node";
-import { AppRenderResult, closeTest, setupTest } from "./utils";
+import {
+  AppRenderResult,
+  closeTest,
+  openBoardOptions,
+  openEditBoard,
+  saveChanges,
+  setupTest,
+  waitForAllByText,
+  waitForModalToClose,
+} from "./utils";
 
 describe("board ui renders as expected", () => {
   let server: SetupServerApi;
   let database: IDBDatabase;
   let app: AppRenderResult;
 
-  const waitForAllByText = async (regexText: RegExp) => {
-    await waitFor(() => {
-      expect(app.getAllByText(regexText)).toBeDefined();
-    });
-  };
-
   const getSidebar = () => app.getByTestId(/sidebar_component/);
 
   beforeEach(async () => {
-    await setupTest(database, server, app);
+    [database, server, app] = await setupTest(indexedDB);
   });
 
   afterEach(async () => {
@@ -37,7 +35,7 @@ describe("board ui renders as expected", () => {
   });
 
   test("app loads board names from IDB into the sidebar", async () => {
-    await waitForAllByText(/Roadmap/);
+    await waitForAllByText(app, /Roadmap/);
     const boardMenuItems = app.getAllByTestId(/board_menu_item/);
     expect(boardMenuItems).toHaveLength(3);
   });
@@ -68,37 +66,16 @@ describe("board ui renders as expected", () => {
     });
   });
 
-  const openBoardOptions = async () => {
-    //get all since mobile and desktop header are mounted at this point
-    const boardOptionsBtn = app.getAllByTestId(/board_options_btn/);
-    act(() => boardOptionsBtn[0].click());
-
-    await waitFor(() => {
-      expect(app.getByTestId(/board_options_modal/)).toBeInTheDocument();
-    });
-  };
-
   test("board options modal can be opened", async () => {
-    await openBoardOptions();
+    await openBoardOptions(app);
   });
 
-  const openEditBoard = async () => {
-    const openEditBoard = app.getByText("Edit Board");
-    act(() => openEditBoard.click());
-    await waitFor(() => {
-      expect(app.getByTestId(/edit_board_modal/)).toBeInTheDocument();
-    });
-  };
-
   test("edit board can be opened and closed", async () => {
-    await openBoardOptions();
-    await openEditBoard();
+    await openBoardOptions(app);
+    await openEditBoard(app);
 
-    // app.getByTestId(/desktop_header/).click();
-
-    // await waitFor(() => {
-    //   expect(app.queryByTestId(/edit_board_modal/)).toBeNull();
-    // });
+    act(() => app.getByText("Save Changes").click());
+    await waitForModalToClose(app, "edit_board_modal");
   });
 
   const selectDeleteBoardModal = () => app.queryByTestId(/delete_board_modal/);
@@ -113,12 +90,12 @@ describe("board ui renders as expected", () => {
   };
 
   test("delete board can be opened via board options modal", async () => {
-    await openBoardOptions();
+    await openBoardOptions(app);
     await openDeleteBoard();
   });
 
   test("delete board modal can be opened and closed via the cancel button", async () => {
-    await openBoardOptions();
+    await openBoardOptions(app);
     await openDeleteBoard();
     const cancelButton = app.getByTestId("cancel_delete_button");
 
@@ -127,20 +104,32 @@ describe("board ui renders as expected", () => {
     await waitFor(() => expect(selectDeleteBoardModal()).toBeNull());
   });
 
-  const getBoardItem = (boardName: string) =>
-    app.queryByTestId(`board_menu_item_${boardName}`);
+  const getBoardItem = async (boardName: string) => {
+    const getItem = () => app.getByTestId(`board_menu_item_${boardName}`);
 
-  const getSelectedBoard = () => {
+    await waitFor(() => {
+      expect(getItem()).toBeInTheDocument();
+    });
+
+    return getItem();
+  };
+
+  const getSelectedBoard = async () => {
+    await waitFor(() => {
+      expect(app.getByTestId("selected_board_header")).toBeInTheDocument();
+    });
     const header = app.getByTestId("selected_board_header");
     const boardName = header.innerHTML;
-    return [getBoardItem(boardName), boardName];
+
+    const boardMenuItem = getBoardItem(boardName);
+
+    return [boardMenuItem, boardName];
   };
 
   test("boards can be deleted from the delete board modal", async () => {
-    const [selectedBoardItem, boardName] = getSelectedBoard();
-    expect(selectedBoardItem).toBeInTheDocument();
+    const [_, boardName] = await getSelectedBoard();
 
-    await openBoardOptions();
+    await openBoardOptions(app);
     await openDeleteBoard();
 
     const deleteBtn = app.getByTestId("confirm_delete_button");
@@ -152,42 +141,43 @@ describe("board ui renders as expected", () => {
   });
 
   test("board changes when clicking a new board in the side bar", async () => {
-    const [_init, initialBoard] = getSelectedBoard();
+    const [_init, initialBoard] = await getSelectedBoard();
     const allBoards = app.getAllByTestId(/board_menu_item/);
-    const unselectedBoardItem = allBoards.find(
-      (el) => el.innerHTML !== initialBoard
-    );
-
-    const unselectedName = unselectedBoardItem?.innerHTML;
+    const unselectedBoardItem = allBoards.find((el) => {
+      const title = el.lastChild;
+      return title?.textContent !== initialBoard;
+    });
 
     expect(unselectedBoardItem).toBeInTheDocument();
-    console.log(allBoards[0].innerHTML);
-    expect(unselectedName).not.toEqual(initialBoard);
 
     act(() => unselectedBoardItem?.click());
 
     await waitFor(() => {
       const selectedBoard = app.getByTestId(/selected_board_header/);
-      console.log(unselectedName);
-      expect(selectedBoard.innerHTML).toEqual(unselectedName);
+
+      expect(selectedBoard.innerHTML).toEqual(
+        unselectedBoardItem?.lastChild?.textContent
+      );
     });
   });
 
   test("board name changes when updated in the edit board modal", async () => {
-    await openBoardOptions();
-    await openEditBoard();
+    await openBoardOptions(app);
+    await openEditBoard(app);
 
-    const editNameInput = app.getByTestId(/board_name_input/);
+    const editNameInput = app.getByTestId(
+      /board_name_input/
+    ) as HTMLInputElement;
+
     const newName = "testing123";
     act(() => {
-      editNameInput.innerHTML = newName;
+      fireEvent.change(editNameInput, { target: { value: newName } });
     });
 
-    await waitFor(() => editNameInput.innerHTML === newName);
+    await waitFor(() => expect(editNameInput.value).toBe(newName));
 
-    act(() => {
-      app.getByText(/Save Changes/).click();
-    });
+    saveChanges(app);
+    await waitForModalToClose(app, "edit_board_modal");
 
     await waitFor(() => {
       expect(app.getByTestId(/selected_board_header/).innerHTML).toEqual(

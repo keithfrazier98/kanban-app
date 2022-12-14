@@ -27,7 +27,7 @@ export default function BoardMenuItem({
         }`}
       >
         <LayoutBoardSplit className="w-5 h-5 mr-4" />
-        {item.name}
+        <span>{item.name}</span>
       </button>
     </div>
   );

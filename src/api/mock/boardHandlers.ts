@@ -1,7 +1,7 @@
 import { rest } from "msw";
-import { IBoardData, IColumnPostBody } from "../../@types/types";
+import { IBoardData, IColumnPostBody, TxHelpers } from "../../@types/types";
 import { updateColumns } from "../mock/columnHandlers";
-import { boardTx, send405WithBody, waitForDBResponse } from "./utils";
+import { send405WithBody } from "./utils";
 import { nanoid } from "@reduxjs/toolkit";
 
 const RESPONSE_DELAY = 0;
@@ -9,7 +9,8 @@ const RESPONSE_DELAY = 0;
 /**
  *  Definitions for CRUD opertations on the boards table.
  */
-export const getBoardHandlers = (mockDB?: IDBDatabase) => {
+export const getBoardHandlers = (helpers: TxHelpers) => {
+  const { boardTx } = helpers;
   return [
     //handles GET /boards requests
     rest.get("/kbapi/boards", async (_, res, ctx) => {
@@ -33,7 +34,7 @@ export const getBoardHandlers = (mockDB?: IDBDatabase) => {
           })
         );
 
-        updateColumns({ ...rest, boardId: id, newName: null });
+        updateColumns({ ...rest, boardId: id, newName: null }, helpers);
         return res(ctx.status(201));
       } catch (error) {
         return send405WithBody(

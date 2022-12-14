@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   DragDropContext,
   Draggable,
@@ -15,12 +15,19 @@ import { classNames } from "../../utils/utils";
 import AddNewColumnBtn from "../columns/AddNewColumnBtn";
 import Column from "../columns/Column";
 import { useUpdateColumnsMutation } from "../columns/columnsEndpoints";
-import { useGetBoardsQuery, useUpdateBoardMutation } from "./boardsEndpoints";
+import {
+  extendedBoardsApi,
+  useGetBoardsQuery,
+  useUpdateBoardMutation,
+} from "./boardsEndpoints";
 import { boardSelected } from "./boardsSlice";
 
 export default function Board() {
   const [updateBoard] = useUpdateBoardMutation();
-  const { data: boards } = useGetBoardsQuery(undefined);
+  const [pollInterval, setPollInterval] = useState(500);
+  const { data: boards } = useGetBoardsQuery(undefined, {
+    pollingInterval: pollInterval,
+  });
   const selectedBoard = useSelectedBoard();
 
   const dispatch = useAppDispatch();
@@ -31,6 +38,10 @@ export default function Board() {
   useEffect(() => {
     if (!selectedBoard && boards) {
       dispatch(boardSelected({ board: String(boards.ids[0]) || null }));
+    }
+
+    if (boards) {
+      setPollInterval(0);
     }
   }, [boards, columns, selectedBoard, dispatch]);
 
@@ -83,7 +94,7 @@ export default function Board() {
           {columns ? (
             <Droppable
               droppableId="columns-droppable"
-              key="columns-droppable"
+              key={"columns-droppable"}
               type="COLUMN"
               direction="horizontal"
             >

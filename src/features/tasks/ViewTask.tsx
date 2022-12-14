@@ -52,7 +52,7 @@ export default function ViewTask() {
           updateTask({ ...task, subtasks: subtaskUpdate });
         }}
       >
-        <ModalWBackdrop render={render} onOutsideClick={unRender}>
+        <ModalWBackdrop render={render} onOutsideClick={unRender} testid="view_task_modal">
           <div className="flex justify-between items-center w-full">
             <h3 className="font-bold text-lg md:text-base leading-6 dark:text-white">
               {title}
