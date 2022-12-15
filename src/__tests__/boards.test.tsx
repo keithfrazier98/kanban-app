@@ -40,7 +40,7 @@ describe("board ui renders as expected", () => {
     expect(boardMenuItems).toHaveLength(3);
   });
 
-  test("sidebar can be opened and closed", async () => {
+  test("board features work as expected", async () => {
     // sidebar initializes as open
     const sidebar = getSidebar();
     expect(sidebar).toBeInTheDocument();

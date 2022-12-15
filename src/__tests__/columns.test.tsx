@@ -10,7 +10,7 @@ import {
   waitForModalToClose,
 } from "./utils";
 
-describe("column ui renders as expected", () => {
+describe("column features work as expected", () => {
   let server: SetupServerApi;
   let database: IDBDatabase;
   let app: AppRenderResult;
