@@ -18,7 +18,6 @@ export default function Task({
   placeholder?: boolean;
 }) {
   const dispatch = useAppDispatch();
-
   return (
     <div
       key={`task-${task?.id}`}

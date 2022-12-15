@@ -71,3 +71,55 @@ export const waitForAllByText = async (
     expect(app.getAllByText(regexText)).toBeDefined();
   });
 };
+
+export const openEditTaskModal = async (app: AppRenderResult) => {
+  await openViewTask(app);
+  const taskOptionsBtn = await app.findByTestId("task_options_btn");
+  act(() => {
+    taskOptionsBtn.click();
+  });
+
+  expect(await app.findByTestId("task_options_menu")).toBeInTheDocument();
+
+  // open edit task modal
+  const openEditTaskBtn = await app.findByText("Edit Task");
+  act(() => {
+    openEditTaskBtn.click();
+  });
+
+  expect(await app.findByTestId("edit_task_modal")).toBeInTheDocument();
+};
+
+export const openViewTask = async (app: AppRenderResult) => {
+  await app.findByText("Build UI for onboarding flow");
+  const openTaskBtns = await app.findAllByTestId(/open_task_btn/);
+
+  act(() => {
+    console.log(
+      "Total tasks on board: ",
+      openTaskBtns.length,
+      "\nTask 1: ",
+      openTaskBtns[0].getAttributeNames(),
+      "\n"
+    );
+    const attNames = openTaskBtns[0].getAttributeNames();
+    console.log(openTaskBtns[0].getAttribute(attNames[0]));
+    openTaskBtns[0].click();
+  });
+
+  expect(await app.findByTestId("view_task_modal")).toBeInTheDocument();
+};
+
+export const regexSelectors = {
+  subtaskCheckbox: /subtask_checkbox/,
+  subtaskIsChecked: /subtask_is_checked/,
+  checkedSubtasks: /subtask_is_checked_(.*)/,
+  deleteSubtask: /delete_subtask/,
+  subtaskItem: /subtask_list_item/,
+  subtaskInputs: /subtask_input/,
+  addTaskModal: /add_task_modal/,
+  addNewSubtask: /Add New Subtask/,
+  addNewTask: /Add New Task/,
+  saveTask: "Save Task",
+  editTaskModal: "edit_task_modal",
+};

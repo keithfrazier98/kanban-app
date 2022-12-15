@@ -92,6 +92,7 @@ export default function TaskModifier({
                   className="flex items-center"
                 >
                   <input
+                    data-testid={`subtask_input_${subtask}`}
                     placeholder={subPlaceholders[i]}
                     value={subtaskData?.entities[subtask]?.title || ""}
                     className="modalInput my-1 flex-grow"
@@ -103,6 +104,7 @@ export default function TaskModifier({
                     }}
                   />
                   <button
+                    data-testid={`delete_subtask_${subtask}`}
                     className="w-6 h-6 text-gray-500 ml-2"
                     onClick={() => {
                       const newSubtasks = subtasks.slice();

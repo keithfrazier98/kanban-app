@@ -10,8 +10,9 @@ export default function TaskOptions() {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="relative">
+    <div className="relative" data-testid="task_options_menu">
       <button
+        data-testid="task_options_btn"
         onClick={() => {
           setOpenOptions(true);
         }}

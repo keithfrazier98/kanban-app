@@ -47,8 +47,6 @@ export default function ViewTask() {
           const subtaskUpdate = subtaskList.slice();
           subtaskUpdate.splice(source.index, 1);
           subtaskUpdate.splice(destination.index, 0, draggableId);
-
-          console.log(result, subtaskUpdate);
           updateTask({ ...task, subtasks: subtaskUpdate });
         }}
       >
