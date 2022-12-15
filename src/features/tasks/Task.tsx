@@ -41,7 +41,12 @@ export default function Task({
         ) : (
           <>
             <div className="flex justify-between items-start">
-              <p className="font-bold text-sm dark:text-white">{task?.title}</p>
+              <p
+                className="font-bold text-sm dark:text-white"
+                data-testid={`task_title_${task?.id}`}
+              >
+                {task?.title}
+              </p>
               <button
                 data-testid={`open_task_btn_${task?.id}`}
                 onClick={() => {

@@ -1,4 +1,10 @@
-import { waitFor, act, fireEvent } from "@testing-library/react";
+import {
+  waitFor,
+  act,
+  fireEvent,
+  findByTestId,
+  findByText,
+} from "@testing-library/react";
 import { indexedDB } from "fake-indexeddb";
 import { SetupServerApi } from "msw/node";
 import {
@@ -23,6 +29,7 @@ const {
   addNewTask,
   saveTask: saveTaskSelector,
   editTaskModal,
+  viewTaskModal,
 } = regexSelectors;
 
 describe("subtask features work as expected", () => {
@@ -134,9 +141,7 @@ describe("subtask features work as expected", () => {
     });
 
     // wait for and expect the modal to unmount
-    waitFor(() => {
-      expect(app.getByTestId("edit_task_modal")).toBeNull();
-    });
+    await waitForModalToClose(app, "edit_task_modal");
 
     //open task and check if the subtasks saved
     await openViewTask(app);
@@ -236,12 +241,42 @@ describe("subtask features work as expected", () => {
     await waitForModalToClose(app, editTaskModal);
 
     // open the task and check the task was saved properly
+    const taskTitle = await app.findByText(newTaskTitle);
+    const taskMatch = taskTitle.innerText.match(/task_title_(.*)/);
+    expect(taskMatch).toBeTruthy();
+
+    if (!taskMatch) return;
+    const newTaskId = taskMatch[1];
+
+    const openViewNewTask = await app.findByTestId(`task_title_${newTaskId}`);
+    act(() => {
+      openViewNewTask.click();
+    });
+
+    expect(await app.findByTestId(viewTaskModal)).toBeInTheDocument();
+
+    for (const title in titles) {
+      const subtask = await app.findByText(title);
+      expect(subtask).toBeInTheDocument();
+    }
   });
 
-  test("subtasks titles can be changed", () => {
-    // open edit task modal 
-    // change the title of a subtask 
-    // save and wait for modal to close 
-    // get task by title to check it was saved properly 
+  test("subtasks titles can be changed", async () => {
+    // open edit task modal
+    await openEditTaskModal(app);
+
+    // change the title of a subtask and save
+    const taskTitleEl = await app.findByTestId("task_title_input");
+    const newTaskTitle = "New Title Test";
+    act(() => {
+      fireEvent.change(taskTitleEl, { target: { value: newTaskTitle } });
+      app.getByText("Save Task").click();
+    });
+
+    // wait for modal to close
+    await waitForModalToClose(app, "edit_task_modal");
+
+    // get task by title to check it was saved properly
+    expect(await app.findByText(newTaskTitle)).toBeInTheDocument();
   });
 });

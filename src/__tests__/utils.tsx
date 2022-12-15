@@ -107,7 +107,9 @@ export const openViewTask = async (app: AppRenderResult) => {
     openTaskBtns[0].click();
   });
 
-  expect(await app.findByTestId("view_task_modal")).toBeInTheDocument();
+  expect(
+    await app.findByTestId(regexSelectors.viewTaskModal)
+  ).toBeInTheDocument();
 };
 
 export const regexSelectors = {
@@ -122,4 +124,5 @@ export const regexSelectors = {
   addNewTask: /Add New Task/,
   saveTask: "Save Task",
   editTaskModal: "edit_task_modal",
+  viewTaskModal: "view_task_modal",
 };

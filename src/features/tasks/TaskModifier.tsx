@@ -61,6 +61,7 @@ export default function TaskModifier({
           Title
         </label>
         <input
+          data-testid={`task_title_input`}
           type="text"
           name="title"
           placeholder="e.g. Take coffee break"
