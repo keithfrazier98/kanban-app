@@ -1,10 +1,4 @@
-import {
-  waitFor,
-  act,
-  fireEvent,
-  findByTestId,
-  findByText,
-} from "@testing-library/react";
+import { waitFor, act, fireEvent } from "@testing-library/react";
 import { indexedDB } from "fake-indexeddb";
 import { SetupServerApi } from "msw/node";
 import {
@@ -16,6 +10,7 @@ import {
   waitForAllByText,
   regexSelectors,
   waitForModalToClose,
+  getIdFromTaskTitle,
 } from "./utils";
 
 const {
@@ -39,11 +34,6 @@ describe("subtask features work as expected", () => {
 
   beforeEach(async () => {
     [database, server, app] = await setupTest(indexedDB);
-    await Promise.resolve((res: any) => {
-      setTimeout(() => {
-        res();
-      }, 2000);
-    });
     await waitForAllByText(app, /Roadmap/);
     // Select a board with known tasks
     const platformLaunchBtn = app.getByTestId(
@@ -241,14 +231,10 @@ describe("subtask features work as expected", () => {
     await waitForModalToClose(app, editTaskModal);
 
     // open the task and check the task was saved properly
-    const taskTitle = await app.findByText(newTaskTitle);
-    const taskMatch = taskTitle.innerText.match(/task_title_(.*)/);
-    expect(taskMatch).toBeTruthy();
+    const newTaskId = await getIdFromTaskTitle(app, newTaskTitle);
+    expect(newTaskId).toBeDefined();
 
-    if (!taskMatch) return;
-    const newTaskId = taskMatch[1];
-
-    const openViewNewTask = await app.findByTestId(`task_title_${newTaskId}`);
+    const openViewNewTask = await app.findByTestId(`open_task_btn_${newTaskId}`);
     act(() => {
       openViewNewTask.click();
     });

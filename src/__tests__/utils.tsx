@@ -125,4 +125,23 @@ export const regexSelectors = {
   saveTask: "Save Task",
   editTaskModal: "edit_task_modal",
   viewTaskModal: "view_task_modal",
+  createNewTaskBtnTxt: "Create Task"
+};
+
+export const getIdFromTaskTitle = async (
+  app: AppRenderResult,
+  title: string
+) => {
+  const taskTitle = await app.findByText(title);
+  const match = taskTitle.innerText.match(/task_title_(.*)/);
+  if (match) return match[1];
+};
+
+export const getIdFromColumnTitle = async (
+  app: AppRenderResult,
+  title: string
+) => {
+  const columnTitle = await app.findByText(title);
+  const match = columnTitle.innerText.match(/column_title_(.*)/);
+  if (match) return match[1];
 };

@@ -23,7 +23,12 @@ export default function Column({ column }: { column: IColumn }) {
       <div className="flex items-center justify-between mb-6 text-base text-gray-400 font-bold">
         <div className="flex items-center">
           <div className="rounded-full w-3 h-3 bg-primary-indigo-active"></div>
-          <h2 className="mx-2 tracking-widest">{column.name.toUpperCase()}</h2>
+          <h2
+            className="mx-2 tracking-widest"
+            data-testid={`column_title_${column.id}`}
+          >
+            {column.name.toUpperCase()}
+          </h2>
           <p> {`( ${column.tasks.length} )`}</p>
         </div>
         <div className="mr-4 rotate-90">
@@ -39,6 +44,7 @@ export default function Column({ column }: { column: IColumn }) {
         >
           {(provided) => (
             <div
+              data-testid={`column_container_${column.id}`}
               className="flex flex-col h-full overflow-y-scroll no-scrollbar"
               ref={provided.innerRef}
               {...provided.droppableProps}

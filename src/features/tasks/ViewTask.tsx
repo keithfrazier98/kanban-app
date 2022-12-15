@@ -96,6 +96,7 @@ export default function ViewTask() {
             items={columnNames}
             selected={columns?.entities[column].name || ""}
             label={"Current Status"}
+            testid="task_status_dropdown"
             onChange={(status: string) => {
               const destination = {
                 index: selectedBoard.columns.findIndex((col) => col === status),
