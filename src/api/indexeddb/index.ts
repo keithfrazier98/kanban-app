@@ -2,7 +2,7 @@ import mockData from "../data.json";
 import { nanoid } from "@reduxjs/toolkit";
 import { datatypes, TxCallback, TxHelpers } from "../../@types/types";
 
-const { boards } = mockData;
+const boards  = mockData.boards.reverse();
 type keyArray = IDBValidKey[];
 let database: IDBDatabase;
 

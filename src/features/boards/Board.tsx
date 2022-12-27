@@ -36,7 +36,16 @@ export default function Board() {
   const { columns } = useColumnNames();
 
   useEffect(() => {
-    if (!selectedBoard && boards) {
+    const returningUser = localStorage.getItem("returningUser");
+
+    if (!returningUser && boards) {
+      const sampleBoard = Object.values(boards.entities).find(
+        (board) => board?.name === "Platform Launch"
+      );
+
+      if (sampleBoard) dispatch(boardSelected({ board: sampleBoard.id }));
+      localStorage.setItem("returningUser", "true");
+    } else if (!selectedBoard && boards) {
       dispatch(boardSelected({ board: String(boards.ids[0]) || null }));
     }
 
