@@ -28,9 +28,9 @@ export default function TaskOptions() {
         >
           <div
             className={classNames(
-              "absolute top-full w-40 rounded-md py-2 -translate-x-1/3",
+              "absolute top-full w-40 rounded-md py-2",
               "translate-y-2 shadow-md bg-white flex flex-col text-left",
-              "dark:bg-primary-gray-700 z-20"
+              "dark:bg-primary-gray-700 z-20 right-0"
             )}
           >
             <button

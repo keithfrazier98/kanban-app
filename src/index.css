@@ -54,3 +54,13 @@ body,
 .no-scrollbar {
   @apply scrollbar-none;
 }
+
+/* width */
+.subtasksTrack::-webkit-scrollbar {
+  @apply w-1;
+}
+
+/* Track */
+.subtasksTrack::-webkit-scrollbar-track {
+  @apply rounded-full;
+}
