@@ -14,7 +14,7 @@ function App() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       <div
         className={classNames(
-          sidebarOpen ? "w-64 mr-[3.09rem]" : "w-0",
+          `${sidebarOpen ? "w-0 md:w-64 md:mr-[3.09rem]":"w-0f"}` ,
           "flex transition-all duration-300 ease-in-out"
         )}
       />

@@ -30,6 +30,7 @@ export default function DeleteTask() {
         unRender();
         deleteTask(task.id);
       }}
+      testid="delete_task_modal"
       paragraph={
         <>
           Are you sure you want to delete the "{task?.title}" task and its

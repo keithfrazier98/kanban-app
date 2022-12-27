@@ -90,6 +90,11 @@ export const openEditTaskModal = async (app: AppRenderResult) => {
   expect(await app.findByTestId("edit_task_modal")).toBeInTheDocument();
 };
 
+/**
+ * This function specifically opens the first task in the Platform Launch 
+ * board so that board has to be opened. 
+ * @param app 
+ */
 export const openViewTask = async (app: AppRenderResult) => {
   await app.findByText("Build UI for onboarding flow");
   const openTaskBtns = await app.findAllByTestId(/open_task_btn/);

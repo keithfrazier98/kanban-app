@@ -88,7 +88,7 @@ describe("subtask features work as expected", () => {
     const getAllCheckedTasks = async () =>
       await app.findAllByTestId(subtaskIsChecked);
 
-    const getUpdatedUneckedTask = async () =>
+    const getUpdatedUncheckedTask = async () =>
       await app.findByTestId(`subtask_is_checked_${uncheckedId}`);
 
     waitFor(async () => {
@@ -97,7 +97,7 @@ describe("subtask features work as expected", () => {
       );
     });
 
-    expect(await getUpdatedUneckedTask()).toBeInTheDocument();
+    expect(await getUpdatedUncheckedTask()).toBeInTheDocument();
 
     act(() => {
       uncheckedSubtask?.click();
@@ -107,7 +107,9 @@ describe("subtask features work as expected", () => {
       expect(await getAllCheckedTasks()).toEqual(checkedSubtasks.length);
     });
 
-    expect(await getUpdatedUneckedTask()).toBeNull();
+    waitFor(async () => {
+      expect(await getUpdatedUncheckedTask()).toBeNull();
+    });
   });
 
   test("subtasks can be deleted", async () => {
@@ -136,7 +138,9 @@ describe("subtask features work as expected", () => {
     //open task and check if the subtasks saved
     await openViewTask(app);
     const subtasks = await app.findAllByTestId(subtaskItem);
-    expect(subtasks.length).toEqual(remainingBtns.length);
+    await waitFor(() => {
+      expect(subtasks.length).toEqual(remainingBtns.length);
+    });
   });
 
   test("subtasks can be reordered", () => {
@@ -234,7 +238,9 @@ describe("subtask features work as expected", () => {
     const newTaskId = await getIdFromTaskTitle(app, newTaskTitle);
     expect(newTaskId).toBeDefined();
 
-    const openViewNewTask = await app.findByTestId(`open_task_btn_${newTaskId}`);
+    const openViewNewTask = await app.findByTestId(
+      `open_task_btn_${newTaskId}`
+    );
     act(() => {
       openViewNewTask.click();
     });

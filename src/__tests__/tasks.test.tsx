@@ -1,6 +1,5 @@
-import { act, findByTestId, findByText } from "@testing-library/react";
+import { act, waitFor } from "@testing-library/react";
 import { SetupServerApi } from "msw/lib/node";
-import { arrayBuffer } from "stream/consumers";
 import {
   AppRenderResult,
   closeTest,
@@ -9,6 +8,7 @@ import {
   setupTest,
   waitForAllByText,
   regexSelectors,
+  openViewTask,
 } from "./utils";
 
 const { addNewTask, createNewTaskBtnTxt } = regexSelectors;
@@ -101,13 +101,44 @@ describe("task features should work as expected", () => {
     await assertColumnChildren("NOW", 12);
   });
 
-  test("tasks can be deleted", () => {
+  test("tasks can be deleted", async () => {
+    // Select a board with known tasks
+    const platformLaunchBtn = app.getByTestId(
+      "board_menu_item_Platform Launch"
+    );
+
+    act(() => {
+      platformLaunchBtn.click();
+    });
+
     // open the view task modal
+    await openViewTask(app);
+
     // open task options
+    const taskOptions = await app.findByTestId("task_options_btn");
+    act(() => {
+      taskOptions.click();
+    });
+
     // open delete task modal
+    const deleteTaskBtn = await app.findByText("Delete Task");
+    act(() => {
+      deleteTaskBtn.click();
+    });
+
     // delete task and wait for modal to close
+    await waitFor(() => {
+      expect(app.getByTestId("delete_task_modal")).not.toBeInTheDocument();
+    });
+
     // check that that task is no longer in the document
+    await waitFor(() => {
+      expect(
+        app.getByText("Build UI for onboarding flow")
+      ).not.toBeInTheDocument();
+    });
   });
+  
   test("tasks can be added to a new column (with add task button)", () => {
     // create a new column
     // open the add task modal
