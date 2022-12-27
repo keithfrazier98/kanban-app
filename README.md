@@ -2,7 +2,7 @@
 
 > An offline kanban application built with React, Redux, TailwindCSS, and HeadlessUI, powered by Service Workers and IndexedDB.
 
-> <span style="color: yellow">ATTENTION: </span>This application is a work in progress, so there are bugs a plentiful. The beta version can be [accessed here](https://kanban-app-tan.vercel.app/).
+> [Live Application ->](https://kanban-app-tan.vercel.app/).
 
 ## Comprehensive List of Key Dependencies & Tools
 
