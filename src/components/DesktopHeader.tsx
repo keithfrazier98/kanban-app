@@ -8,7 +8,7 @@ export default function DesktopHeader() {
   const board = useSelectedBoard();
   const dispatch = useAppDispatch();
   return (
-    <HeaderWrapper className="hidden sm:block">
+    <HeaderWrapper className="hidden md:block">
       <div data-testid="desktop_header" className="flex justify-between items-center flex-1 h-full px-5">
         <h2 data-testid="selected_board_header" className="text-xl font-semibold dark:text-white">{board?.name}</h2>
         <div className="flex items-center">

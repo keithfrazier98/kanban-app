@@ -35,7 +35,7 @@ export function ModalWBackdrop({
           className={classNames(
             "px-4 py-6 bg-white dark:bg-primary-gray-600",
             "rounded-md sm:max-w-[26rem] min-w-full sm:min-w-[26rem] max-h-full",
-            "overflow-y-scroll"
+            "overflow-y-scroll no-scrollbar"
           )}
         >
           <OutsideClickHandler onOutsideClick={onOutsideClick}>
