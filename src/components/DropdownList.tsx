@@ -9,11 +9,13 @@ export default function DropdownList({
   selected,
   label,
   onChange,
+  testid,
 }: {
   items: [string, string][];
   selected: string;
   label: string;
   onChange: (selected: string) => void;
+  testid?: string;
 }) {
   return (
     <Listbox
@@ -68,6 +70,7 @@ export default function DropdownList({
                   const [name, id] = item;
                   return (
                     <Listbox.Option
+                      data-testid={`status_${name}`}
                       key={`status-${i}`}
                       className={({ active }) =>
                         classNames(

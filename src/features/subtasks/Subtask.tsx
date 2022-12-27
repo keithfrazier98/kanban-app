@@ -12,9 +12,10 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
 
   return (
     <li
+      data-testid={`subtask_list_item_${subtask?.id}`}
       key={`subtask-${subtask?.id}`}
       className={classNames(
-        subtask.isCompleted
+        subtask?.isCompleted
           ? ""
           : "dark:bg-opacity-50 dark:bg-primary-indigo-active",
         "px-2 py-3 rounded hover:bg-opacity-50 hover:cursor-grab",
@@ -29,10 +30,10 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
           <div className="relative flex items-center hover:cursor-pointer">
             <input
               type="checkbox"
-              data-testid={`subtask_checkbox_${subtask.id}`}
+              data-testid={`subtask_checkbox_${subtask?.id}`}
               checked={subtask?.isCompleted}
               className={classNames(
-                subtask.isCompleted
+                subtask?.isCompleted
                   ? "bg-primary-indigo-active"
                   : "bg-white dark:bg-primary-gray-600",
                 "appearance-none w-4 h-4 border rounded-sm ",
@@ -42,7 +43,7 @@ export default function Subtask({ subtask }: { subtask: ISubtask }) {
             />
             {subtask?.isCompleted ? (
               <div
-                data-testid={`subtask_is_checked_${subtask.id}`}
+                data-testid={`subtask_is_checked_${subtask?.id}`}
                 className={classNames(
                   "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hover:cursor-pointer"
                 )}

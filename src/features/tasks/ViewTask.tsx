@@ -47,8 +47,6 @@ export default function ViewTask() {
           const subtaskUpdate = subtaskList.slice();
           subtaskUpdate.splice(source.index, 1);
           subtaskUpdate.splice(destination.index, 0, draggableId);
-
-          console.log(result, subtaskUpdate);
           updateTask({ ...task, subtasks: subtaskUpdate });
         }}
       >
@@ -98,6 +96,7 @@ export default function ViewTask() {
             items={columnNames}
             selected={columns?.entities[column].name || ""}
             label={"Current Status"}
+            testid="task_status_dropdown"
             onChange={(status: string) => {
               const destination = {
                 index: selectedBoard.columns.findIndex((col) => col === status),

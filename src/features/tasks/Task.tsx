@@ -18,7 +18,6 @@ export default function Task({
   placeholder?: boolean;
 }) {
   const dispatch = useAppDispatch();
-
   return (
     <div
       key={`task-${task?.id}`}
@@ -33,7 +32,7 @@ export default function Task({
       {/** Use the task div as the ref (instead of button) so the preview doesn't show padding. */}
       <div className="flex px-4 py-6 flex-col dark:bg-primary-gray-600 bg-white rounded-md shadow-lg">
         {placeholder ? (
-          <div className="flex justify-center">
+          <div id="task_placeholder" className="flex justify-center">
             {" "}
             <p className="text-sm font-medium text-gray-400">
               + Create New Task
@@ -42,7 +41,12 @@ export default function Task({
         ) : (
           <>
             <div className="flex justify-between items-start">
-              <p className="font-bold text-sm dark:text-white">{task?.title}</p>
+              <p
+                className="font-bold text-sm dark:text-white"
+                data-testid={`task_title_${task?.id}`}
+              >
+                {task?.title}
+              </p>
               <button
                 data-testid={`open_task_btn_${task?.id}`}
                 onClick={() => {

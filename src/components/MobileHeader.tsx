@@ -9,7 +9,7 @@ import HeaderWrapper from "./HeaderWrapper";
 export default function MobileHeader() {
   const dispatch = useAppDispatch();
   return (
-    <HeaderWrapper className="block sm:hidden">
+    <HeaderWrapper className="block md:hidden">
       <div
         data-testid="mobile_header"
         className="flex flex-1 justify-between pl-4 items-center"

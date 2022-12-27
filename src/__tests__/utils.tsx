@@ -71,3 +71,82 @@ export const waitForAllByText = async (
     expect(app.getAllByText(regexText)).toBeDefined();
   });
 };
+
+export const openEditTaskModal = async (app: AppRenderResult) => {
+  await openViewTask(app);
+  const taskOptionsBtn = await app.findByTestId("task_options_btn");
+  act(() => {
+    taskOptionsBtn.click();
+  });
+
+  expect(await app.findByTestId("task_options_menu")).toBeInTheDocument();
+
+  // open edit task modal
+  const openEditTaskBtn = await app.findByText("Edit Task");
+  act(() => {
+    openEditTaskBtn.click();
+  });
+
+  expect(await app.findByTestId("edit_task_modal")).toBeInTheDocument();
+};
+
+/**
+ * This function specifically opens the first task in the Platform Launch 
+ * board so that board has to be opened. 
+ * @param app 
+ */
+export const openViewTask = async (app: AppRenderResult) => {
+  await app.findByText("Build UI for onboarding flow");
+  const openTaskBtns = await app.findAllByTestId(/open_task_btn/);
+
+  act(() => {
+    console.log(
+      "Total tasks on board: ",
+      openTaskBtns.length,
+      "\nTask 1: ",
+      openTaskBtns[0].getAttributeNames(),
+      "\n"
+    );
+    const attNames = openTaskBtns[0].getAttributeNames();
+    console.log(openTaskBtns[0].getAttribute(attNames[0]));
+    openTaskBtns[0].click();
+  });
+
+  expect(
+    await app.findByTestId(regexSelectors.viewTaskModal)
+  ).toBeInTheDocument();
+};
+
+export const regexSelectors = {
+  subtaskCheckbox: /subtask_checkbox/,
+  subtaskIsChecked: /subtask_is_checked/,
+  checkedSubtasks: /subtask_is_checked_(.*)/,
+  deleteSubtask: /delete_subtask/,
+  subtaskItem: /subtask_list_item/,
+  subtaskInputs: /subtask_input/,
+  addTaskModal: /add_task_modal/,
+  addNewSubtask: /Add New Subtask/,
+  addNewTask: /Add New Task/,
+  saveTask: "Save Task",
+  editTaskModal: "edit_task_modal",
+  viewTaskModal: "view_task_modal",
+  createNewTaskBtnTxt: "Create Task"
+};
+
+export const getIdFromTaskTitle = async (
+  app: AppRenderResult,
+  title: string
+) => {
+  const taskTitle = await app.findByText(title);
+  const match = taskTitle.innerText.match(/task_title_(.*)/);
+  if (match) return match[1];
+};
+
+export const getIdFromColumnTitle = async (
+  app: AppRenderResult,
+  title: string
+) => {
+  const columnTitle = await app.findByText(title);
+  const match = columnTitle.innerText.match(/column_title_(.*)/);
+  if (match) return match[1];
+};

@@ -21,12 +21,19 @@ export default function EditTask() {
     dispatch(editTaskModalOpened({ open: false }));
   });
   return (
-    <ModalWBackdrop render={render} onOutsideClick={unRender}>
+    <ModalWBackdrop
+      render={render}
+      onOutsideClick={unRender}
+      testid="edit_task_modal"
+    >
       <TaskModifier
         elementTitles={["Edit Task", "Save Task"]}
         task={newTask}
         setTask={setNewTask}
-        onSubmit={() => updateTask(newTask)}
+        onSubmit={() => {
+          updateTask(newTask);
+          unRender();
+        }}
       />
     </ModalWBackdrop>
   );

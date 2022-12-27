@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Eye, EyeOff } from "tabler-icons-react";
 import { useAppSelector } from "../redux/hooks";
 import { ReactComponent as MobileLogo } from "../assets/logo-mobile.svg";
@@ -22,10 +22,17 @@ export default function Sidebar({
 }) {
   const boards = useAppSelector(selectAllBoards);
   const board = useSelectedBoard();
+
   return (
-    <>
+    <div className="relative">
+      <div
+        className={`w-full transition-width ease-in-out ${
+          sidebarOpen ? "md:w-64" : "w-0"
+        }`}
+      />
       <Transition
         as={"section"}
+        id="sidebarMenu"
         data-testid="sidebar_component"
         show={sidebarOpen}
         enter="transition ease-in-out duration-300 transform"
@@ -97,6 +104,6 @@ export default function Sidebar({
       >
         <Eye />
       </Transition>
-    </>
+    </div>
   );
 }

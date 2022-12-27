@@ -12,12 +12,7 @@ function App() {
   return (
     <div className="w-full h-full overflow-hidden flex">
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div
-        className={classNames(
-          sidebarOpen ? "w-64 mr-[3.09rem]" : "w-0",
-          "flex transition-all duration-300 ease-in-out"
-        )}
-      />
+      
       <div
         className={classNames(
           "flex h-full flex-col w-full overflow-hidden transition-all transform",

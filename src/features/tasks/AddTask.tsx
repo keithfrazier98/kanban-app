@@ -35,7 +35,11 @@ export default function AddTask() {
   });
 
   return (
-    <ModalWBackdrop render={render} onOutsideClick={unRender}>
+    <ModalWBackdrop
+      render={render}
+      onOutsideClick={unRender}
+      testid="add_task_modal"
+    >
       <TaskModifier
         elementTitles={["Add New Task", "Create Task"]}
         task={task}

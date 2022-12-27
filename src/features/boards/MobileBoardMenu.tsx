@@ -8,6 +8,7 @@ import ToggleTheme from "../../components/ToggleTheme";
 import BoardMenuItem from "./BoardMenuItem";
 import NewBoardBtn from "./NewBoardBtn";
 import useSelectedBoard from "../../hooks/useSelectedBoard";
+import { classNames } from "src/utils/utils";
 
 export default function MobileBoardMenu() {
   const boards = useAppSelector(selectAllBoards);
@@ -36,7 +37,13 @@ export default function MobileBoardMenu() {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute flex flex-col z-10 top-full translate-y-5 rounded-lg bg-white dark:bg-primary-gray-600 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Items
+              className={classNames(
+                "absolute flex flex-col left-0 mx-2 z-10 top-full shadow-lg ring-1",
+                "translate-y-5 rounded-lg bg-white dark:bg-primary-gray-600",
+                "ring-black ring-opacity-5 focus:outline-none"
+              )}
+            >
               <span className="m-4 font-medium text-gray-400 min-w-[16rem]">
                 All Boards {`(${boards.length})`}
               </span>
