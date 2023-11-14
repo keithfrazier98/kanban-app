@@ -17,7 +17,7 @@ This kanban application was built as a learning exercise for Redux, MSW and Inde
 
 ## Redux, RTKQ, & react-beautiful-dnd
 
-This application uses Redux for state and cache management through the [Redux Toolkit Query API](https://redux-toolkit.js.org/tutorials/rtk-query). Before any change is fully updated in the database, RTKQ **optimistically updates the state**, then calls the database for the updated information behind the scenes. If there happens to be any error, RTKQ will also undo the state changes, and proceed to fetch the correct data from the database. All requests made are cached in the RTKQ store to avoid redundant requests. Even though the HTTP requests are intercepted by MSW and stored in IDB, **the decision to cache responses was made because of future intentions of creating a backend API for this application**.
+This application uses Redux for state and cache management through the [Redux Toolkit Query API](https://redux-toolkit.js.org/tutorials/rtk-query). Before any change is fully updated in the database, RTKQ optimistically updates the state, then calls the database for the updated information behind the scenes. If there happens to be any error, RTKQ will also undo the state changes, and proceed to fetch the correct data from the database. All requests made are cached in the RTKQ store to avoid redundant requests. Even though the HTTP requests are intercepted by MSW and stored in IDB, the decision to cache responses was made because of future intentions of creating a backend API for this application.
 
 This application also has a drag-and-drop feature for columns, tasks, and subtasks. This feature is built with [react-beautiful-dnd](https://github.com/atlassian/react-beautiful-dnd).
 
